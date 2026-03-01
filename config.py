@@ -17,12 +17,14 @@ RESULTS_PATH = PROJECT_ROOT / "results"
 PROMPTS_PATH = PROJECT_ROOT / "llm" / "prompts"
 
 # === LLM Provider Settings ===
-DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "groq")
+DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "ollama")
 
 # Model assignments per role
-MAIN_LLM_MODEL = os.getenv("MAIN_LLM_MODEL", "llama-3.1-70b-versatile")
-CURATOR_MODEL = os.getenv("CURATOR_MODEL", "llama-3.1-8b-instant")
-SUMMARIZER_MODEL = os.getenv("SUMMARIZER_MODEL", "llama-3.1-8b-instant")
+# For Ollama: use "ollama/model_name" format
+# For Groq: "llama-3.1-70b-versatile", "llama-3.1-8b-instant"
+MAIN_LLM_MODEL = os.getenv("MAIN_LLM_MODEL", "ollama/llama3.1:8b")
+CURATOR_MODEL = os.getenv("CURATOR_MODEL", "ollama/qwen2.5:3b")
+SUMMARIZER_MODEL = os.getenv("SUMMARIZER_MODEL", "ollama/qwen2.5:3b")
 
 # Provider API keys
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")

@@ -26,16 +26,19 @@ Assistant: {assistant_msg}
 
 One-sentence summary:"""
 
-CONSTRAINT_EXTRACTOR_PROMPT = """Analyze this user message. Extract any explicit rules, preferences, constraints, or limits the user is setting.
+CONSTRAINT_EXTRACTOR_PROMPT = """Extract constraints from this user message. A constraint is ANY of these:
+- A rule: "never do X", "always do Y", "don't do Z"
+- A preference: "I prefer X", "use X not Y", "I like X better"
+- A limit: "keep it under X", "max X"
+- A fact to remember: "my name is X", "we use X", "remember that X"
 
 User message: {user_msg}
 
-If there are constraints, return a JSON list:
-[{{"text": "the constraint", "category": "RULE|PREFERENCE|LIMIT|FACT", "priority": 3}}]
+Return a JSON list. Example:
+[{{"text": "User prefers Python over JavaScript", "category": "PREFERENCE", "priority": 3}}]
 
-If there are NO constraints, return: []
-
-Return ONLY valid JSON, no explanation."""
+If truly NOTHING to extract, return: []
+Return ONLY the JSON list, nothing else."""
 
 
 class PostProcessor:
@@ -119,8 +122,15 @@ class PostProcessor:
             )
             
             cleaned = response.strip()
+            # Strip markdown code fences
             if cleaned.startswith("```"):
-                cleaned = cleaned.split("\n", 1)[1].rsplit("```", 1)[0]
+                cleaned = cleaned.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+            
+            # Try to find JSON array in the response
+            bracket_start = cleaned.find("[")
+            bracket_end = cleaned.rfind("]")
+            if bracket_start != -1 and bracket_end != -1:
+                cleaned = cleaned[bracket_start:bracket_end + 1]
             
             constraints_data = json.loads(cleaned)
             if not isinstance(constraints_data, list):
@@ -136,7 +146,9 @@ class PostProcessor:
                 for c in constraints_data
                 if "text" in c
             ]
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.debug(f"Constraint extraction failed: {e}, response was: {response[:200] if 'response' in dir() else 'N/A'}")
             return []
 
     def _generate_summaries(self, user_msg: str, assistant_msg: str) -> Tuple[str, str]:
