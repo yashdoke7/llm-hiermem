@@ -103,8 +103,8 @@ class PostProcessor:
         """Use LLM to extract constraints from user message."""
         # Quick regex pre-check: skip extraction if no constraint-like language
         constraint_signals = [
-            r"\b(don'?t|never|always|must|should not|make sure|important|rule)\b",
-            r"\b(prefer|use .+ instead|only use|not .+ but)\b",
+            r"\b(don'?t|never|always|must|should not|make sure|important|rules?|follow|remember)\b",
+            r"\b(prefer|use .+ instead|only use|not .+ but|please .+ all)\b",
         ]
         has_signal = any(re.search(p, user_msg, re.IGNORECASE) for p in constraint_signals)
         if not has_signal:
