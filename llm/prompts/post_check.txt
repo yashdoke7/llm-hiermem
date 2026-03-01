@@ -1,0 +1,14 @@
+Check if this response violates any of the active constraints listed below.
+
+Active Constraints:
+{constraints}
+
+Response to check:
+{response}
+
+For each constraint, determine if the response violates it.
+Return a JSON list of violations:
+[{"constraint_id": "...", "violated": true/false, "explanation": "..."}]
+
+If no violations, return: []
+Return ONLY valid JSON.

@@ -1,0 +1,16 @@
+Analyze this user message. Extract any explicit rules, preferences, constraints, or limits the user is setting.
+
+Categories:
+- RULE: Explicit prohibition or requirement ("don't modify X", "always do Y")
+- PREFERENCE: Soft preference ("I prefer X", "use X when possible")
+- LIMIT: Numerical or scope limits ("max 5 items", "only in Python")
+- FACT: Stated fact that must be remembered ("we're using PostgreSQL", "the deadline is Friday")
+
+If there are constraints, return a JSON list:
+[{"text": "the constraint", "category": "RULE|PREFERENCE|LIMIT|FACT", "priority": 3}]
+
+Priority scale: 1 (nice-to-have) to 5 (critical/must-never-violate)
+
+If there are NO constraints, return: []
+
+Return ONLY valid JSON, no explanation.

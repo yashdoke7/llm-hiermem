@@ -1,0 +1,3 @@
+Summarize this conversation turn in ONE concise sentence (max 30 words).
+Focus on: decisions made, actions taken, facts stated, rules set.
+Do not include pleasantries or filler. Be specific and factual.
