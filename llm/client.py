@@ -3,13 +3,91 @@ LLM Client — Multi-provider wrapper for LLM API calls.
 
 Supports: Groq, OpenAI, Anthropic, Google, Ollama (local).
 Uses litellm for unified API when available, falls back to direct calls.
+Includes sliding-window rate limiter (modeled on llm-reasoning-pipeline).
 """
 
 import time
 import json
-from typing import Optional
+from typing import Optional, List, Tuple
 
 import config
+
+
+class TokenBudget:
+    """Sliding-window rate limiter for API free tiers.
+    
+    Tracks actual token usage in a 60s window and waits proactively
+    when approaching limits, rather than reacting to 429 errors.
+    """
+
+    def __init__(self, tpm_limit: int = 12000, rpm_limit: int = 30,
+                 min_gap: float = 5.0):
+        self.tpm_limit = tpm_limit
+        self.rpm_limit = rpm_limit
+        self.min_gap = min_gap
+        self._requests: List[float] = []
+        self._tokens: List[Tuple[float, int]] = []
+        self._last_request: float = 0.0
+
+    def _clean(self, window: float = 60.0):
+        now = time.time()
+        self._requests = [t for t in self._requests if now - t < window]
+        self._tokens = [(t, n) for t, n in self._tokens if now - t < window]
+
+    def wait_if_needed(self, estimated_tokens: int = 500):
+        """Block until it's safe to make another request."""
+        # Enforce minimum gap between requests
+        now = time.time()
+        since_last = now - self._last_request
+        if since_last < self.min_gap:
+            time.sleep(self.min_gap - since_last)
+
+        self._clean()
+
+        # Check RPM: trigger at 60% to be safe
+        rpm_threshold = int(self.rpm_limit * 0.6)
+        if len(self._requests) >= rpm_threshold:
+            sleep = 62 - (time.time() - self._requests[0])
+            if sleep > 0:
+                print(f"  [Rate limit] RPM pause {sleep:.0f}s ({len(self._requests)}/{self.rpm_limit} RPM)")
+                time.sleep(sleep)
+            self._clean()
+
+        # Check TPM: trigger at 60% to be safe
+        used = sum(n for _, n in self._tokens)
+        tpm_threshold = int(self.tpm_limit * 0.6)
+        if used + estimated_tokens >= tpm_threshold:
+            if self._tokens:
+                sleep = 62 - (time.time() - self._tokens[0][0])
+                if sleep > 0:
+                    print(f"  [Rate limit] TPM pause {sleep:.0f}s ({used}/{self.tpm_limit} TPM)")
+                    time.sleep(sleep)
+            self._clean()
+
+    def record(self, tokens: int):
+        """Record a completed request's token usage."""
+        now = time.time()
+        self._last_request = now
+        self._requests.append(now)
+        self._tokens.append((now, tokens))
+
+
+# Shared rate limiters per provider (so all LLMClient instances share the budget)
+_budgets = {}
+
+
+def _get_budget(provider: str) -> Optional[TokenBudget]:
+    """Get or create a shared TokenBudget for the provider."""
+    if provider == "ollama":
+        return None  # No rate limiting for local
+    if provider not in _budgets:
+        if provider == "groq":
+            _budgets[provider] = TokenBudget(tpm_limit=12000, rpm_limit=30, min_gap=5.0)
+        elif provider == "openai":
+            _budgets[provider] = TokenBudget(tpm_limit=90000, rpm_limit=60, min_gap=1.0)
+        else:
+            _budgets[provider] = TokenBudget(tpm_limit=60000, rpm_limit=60, min_gap=1.0)
+    return _budgets[provider]
 
 
 class LLMClient:
@@ -27,41 +105,69 @@ class LLMClient:
 
     def __init__(self, provider: str = None):
         self.provider = provider or config.DEFAULT_PROVIDER
-        self._last_call_time = 0
         self._call_count = 0
+        self._budget = _get_budget(self.provider)
 
     def call(self, system_prompt: str, user_prompt: str,
              model: str = None, temperature: float = 0.3,
              max_tokens: int = 2000) -> str:
-        """
-        Make an LLM API call.
-        
-        Args:
-            system_prompt: System message
-            user_prompt: User message
-            model: Model name (provider-specific)
-            temperature: Sampling temperature
-            max_tokens: Max response tokens
-            
-        Returns:
-            The LLM's response text
-        """
+        """Make an LLM API call with proactive rate limiting and retry."""
         model = model or config.MAIN_LLM_MODEL
-        self._rate_limit()
 
-        try:
-            return self._call_litellm(system_prompt, user_prompt, model,
-                                       temperature, max_tokens)
-        except ImportError:
-            return self._call_direct(system_prompt, user_prompt, model,
-                                      temperature, max_tokens)
+        # Estimate tokens for this request
+        est_prompt_tokens = (len(system_prompt) + len(user_prompt)) // 4
+        est_total = est_prompt_tokens + max_tokens
+
+        for attempt in range(config.MAX_RETRIES):
+            # Proactive wait based on sliding window
+            if self._budget:
+                self._budget.wait_if_needed(est_total)
+
+            try:
+                try:
+                    resp = self._call_litellm(system_prompt, user_prompt, model,
+                                               temperature, max_tokens)
+                except ImportError:
+                    resp = self._call_direct(system_prompt, user_prompt, model,
+                                              temperature, max_tokens)
+                
+                # Record actual usage (estimate: prompt + response)
+                actual_tokens = est_prompt_tokens + len(resp) // 4
+                if self._budget:
+                    self._budget.record(actual_tokens)
+                self._call_count += 1
+                return resp
+
+            except Exception as e:
+                err_str = str(e).lower()
+                is_rate_limit = ("rate_limit" in err_str or "rate limit" in err_str 
+                                 or "429" in err_str)
+                is_daily_limit = ("tokens per day" in err_str or "tpd" in err_str)
+                
+                if is_daily_limit:
+                    raise RuntimeError(
+                        "Groq daily token quota exhausted. Wait until reset or "
+                        "upgrade at console.groq.com/settings/billing"
+                    ) from e
+                
+                if is_rate_limit:
+                    wait = min(20 * (2 ** attempt), 65)
+                    print(f"  [Rate limited] Waiting {wait:.0f}s before retry "
+                          f"{attempt+1}/{config.MAX_RETRIES}...")
+                    time.sleep(wait)
+                    # Record estimated tokens so the budget knows the window is hot
+                    if self._budget:
+                        self._budget.record(est_total // 2)
+                    continue
+                raise
+
+        raise RuntimeError(f"Rate limited after {config.MAX_RETRIES} retries")
 
     def _call_litellm(self, system_prompt, user_prompt, model,
                        temperature, max_tokens) -> str:
         """Use litellm for unified API."""
         import litellm
         
-        # Map provider to litellm model format
         model_str = self._litellm_model_string(model)
         
         response = litellm.completion(
@@ -152,12 +258,3 @@ class LLMClient:
         if model.startswith(prefix):
             return model
         return f"{prefix}{model}"
-
-    def _rate_limit(self):
-        """Simple rate limiting per provider."""
-        delay = config.RATE_LIMIT_DELAY.get(self.provider, 0)
-        elapsed = time.time() - self._last_call_time
-        if elapsed < delay:
-            time.sleep(delay - elapsed)
-        self._last_call_time = time.time()
-        self._call_count += 1

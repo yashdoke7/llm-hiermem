@@ -68,9 +68,9 @@ ENABLE_AUTO_SUMMARIZE = True
 TEMPERATURE_MAIN = 0.3
 TEMPERATURE_CURATOR = 0.0     # Deterministic curator
 TEMPERATURE_SUMMARIZER = 0.0  # Deterministic summarization
-MAX_RETRIES = 3
+MAX_RETRIES = 5
 RATE_LIMIT_DELAY = {
-    "groq": 2.5,
+    "groq": 20.0,
     "openai": 0.5,
     "anthropic": 0.5,
     "google": 1.0,
