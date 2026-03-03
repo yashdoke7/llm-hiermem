@@ -17,9 +17,13 @@ env/
 *.swp
 *.swo
 
-# Results and logs (large, regenerable)
-results/*
-!results/.gitkeep
+# Results — raw logs are gitignored, published summaries are tracked
+results/raw/
+!results/raw/.gitkeep
+results/*_partial.json
+
+# Published results are tracked
+!results/published/
 
 # ChromaDB local storage
 chroma_data/

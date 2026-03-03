@@ -31,6 +31,19 @@ def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
     return metrics
 
 
+def _get_results(conv: Dict) -> List[Dict]:
+    """Get turn results, handling both old and new key names."""
+    return conv.get("results", conv.get("turn_logs", []))
+
+
+def _find_response_at_turn(results: List[Dict], turn: int) -> str:
+    """Find the response text at a given turn number."""
+    for r in results:
+        if r.get("turn") == turn:
+            return r.get("response", "")
+    return None
+
+
 def compute_cvr(conversations: List[Dict]) -> float:
     """Compute Constraint Violation Rate across all conversations."""
     total_checks = 0
@@ -38,29 +51,22 @@ def compute_cvr(conversations: List[Dict]) -> float:
     
     for conv in conversations:
         checkpoints = conv.get("checkpoints", [])
-        results = conv.get("results", [])
+        results = _get_results(conv)
         
         for cp in checkpoints:
-            turn = cp.get("turn", 0)
-            test = cp.get("test", "")
-            expected = cp.get("answer", True)
-            
-            # Find the response at this turn
-            response_at_turn = None
-            for r in results:
-                if r.get("turn") == turn:
-                    response_at_turn = r.get("response", "")
-                    break
-            
-            if response_at_turn is not None:
+            response = _find_response_at_turn(results, cp.get("turn", 0))
+            if response is not None:
                 total_checks += 1
-                passed = evaluate_checkpoint(response_at_turn, test, expected)
+                passed = evaluate_checkpoint(
+                    response, cp.get("test", ""),
+                    cp.get("answer", True), cp.get("keywords", [])
+                )
                 if not passed:
                     violations += 1
     
     if total_checks == 0:
         return 0.0
-    return violations / total_checks
+    return round(violations / total_checks, 4)
 
 
 def compute_task_accuracy(conversations: List[Dict]) -> float:
@@ -70,27 +76,19 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
     
     for conv in conversations:
         checkpoints = conv.get("checkpoints", [])
-        results = conv.get("results", [])
+        results = _get_results(conv)
         
         for cp in checkpoints:
-            turn = cp.get("turn", 0)
-            test = cp.get("test", "")
-            expected = cp.get("answer", True)
-            
-            response_at_turn = None
-            for r in results:
-                if r.get("turn") == turn:
-                    response_at_turn = r.get("response", "")
-                    break
-            
-            if response_at_turn is not None:
+            response = _find_response_at_turn(results, cp.get("turn", 0))
+            if response is not None:
                 total += 1
-                if evaluate_checkpoint(response_at_turn, test, expected):
+                if evaluate_checkpoint(response, cp.get("test", ""),
+                                       cp.get("answer", True), cp.get("keywords", [])):
                     correct += 1
     
     if total == 0:
         return 0.0
-    return correct / total
+    return round(correct / total, 4)
 
 
 def compute_degradation_curve(conversations: List[Dict],
@@ -106,43 +104,42 @@ def compute_degradation_curve(conversations: List[Dict],
         
         for conv in conversations:
             checkpoints = conv.get("checkpoints", [])
-            results = conv.get("results", [])
+            results = _get_results(conv)
             
             for cp in checkpoints:
                 if cp.get("turn", 0) <= turn_threshold:
-                    turn = cp["turn"]
-                    response_at_turn = None
-                    for r in results:
-                        if r.get("turn") == turn:
-                            response_at_turn = r.get("response", "")
-                            break
-                    
-                    if response_at_turn is not None:
+                    response = _find_response_at_turn(results, cp["turn"])
+                    if response is not None:
                         total += 1
-                        if evaluate_checkpoint(response_at_turn, cp.get("test", ""),
-                                             cp.get("answer", True)):
+                        if evaluate_checkpoint(response, cp.get("test", ""),
+                                               cp.get("answer", True), cp.get("keywords", [])):
                             correct += 1
         
-        curve[turn_threshold] = correct / total if total > 0 else 0.0
+        curve[turn_threshold] = round(correct / total, 4) if total > 0 else 0.0
     
     return curve
 
 
-def evaluate_checkpoint(response: str, test: str, expected_answer) -> bool:
+def evaluate_checkpoint(response: str, test: str, expected_answer,
+                        keywords: List[str] = None) -> bool:
     """
     Evaluate whether a response passes a checkpoint test.
     
-    Supports:
-      - Boolean checks: "Is response in bullet points?" → True/False
-      - Keyword checks: "Does code use PostgreSQL?" → check for keyword
-      - Exact match: Compare strings
+    Uses the keywords list from the checkpoint (most reliable),
+    falls back to test string parsing if no keywords provided.
     """
     response_lower = response.lower()
     test_lower = test.lower()
     
-    # Keyword-based checks
+    # Primary: use provided keywords (from dataset)
+    if keywords:
+        for kw in keywords:
+            if kw.lower() in response_lower:
+                return bool(expected_answer)
+        return not bool(expected_answer)
+    
+    # Fallback: keyword-based checks from test string
     if "contain" in test_lower or "use" in test_lower or "mention" in test_lower:
-        # Extract what to look for
         for keyword in _extract_test_keywords(test):
             if keyword.lower() in response_lower:
                 return bool(expected_answer)
