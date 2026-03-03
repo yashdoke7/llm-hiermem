@@ -36,3 +36,6 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
+
+docs/HierMem_Blueprint.md
+docs/HierMem_Blueprint.docx

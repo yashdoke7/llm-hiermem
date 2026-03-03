@@ -62,11 +62,11 @@ Every conversation turn goes through 5 stages:
 
 3. ASSEMBLER      Builds attention-optimized context with 4 zones:
                   ┌─────────────────────────────────┐
-                  │ Zone 1: Constraints (TOP)        │ ← highest attention
-                  │ Recent Turns (last 3)            │
-                  │ Zone 2: Retrieved Context         │
-                  │ Zone 3: Peripheral Summaries      │ ← lowest attention
-                  │ Zone 4: Current Prompt (BOTTOM)   │ ← high attention
+                  │ Zone 1: Constraints (TOP)       │ ← highest attention
+                  │ Recent Turns (last 3)           │
+                  │ Zone 2: Retrieved Context       │
+                  │ Zone 3: Peripheral Summaries    │ ← lowest attention
+                  │ Zone 4: Current Prompt (BOTTOM) │ ← high attention
                   └─────────────────────────────────┘
 
 4. MAIN LLM      Generates response from assembled context (~6000 tokens adaptive)
