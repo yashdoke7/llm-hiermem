@@ -102,18 +102,32 @@ class ConstraintStore:
 
     def _extract_keywords(self, text: str) -> List[str]:
         """Extract potential keywords from constraint text for violation checking."""
-        # Simple approach: extract quoted strings, capitalized words, file names
         keywords = []
-        # Quoted strings
+        # Quoted strings (highest quality)
         keywords.extend(re.findall(r'"([^"]+)"', text))
         keywords.extend(re.findall(r"'([^']+)'", text))
         # File-like patterns (word.ext)
         keywords.extend(re.findall(r'\b[\w-]+\.\w+\b', text))
-        # If no keywords found, use significant words (>4 chars)
+        # If no keywords found, use significant words (>4 chars), filtering stopwords
         if not keywords:
+            stopwords = {
+                "always", "never", "please", "should", "would", "could",
+                "about", "their", "there", "these", "those", "which",
+                "because", "every", "where", "being", "after", "before",
+                "while", "other", "might", "still", "since", "under",
+                "above", "below", "between", "through", "during", "until",
+                "again", "further", "first", "second", "third", "given",
+                "using", "based", "ensure", "include", "following", "without",
+                "really", "quite", "often", "sometimes", "important",
+                "confuse", "confuses",
+            }
             words = text.split()
-            keywords = [w.strip(".,!?;:") for w in words if len(w) > 4]
-        return keywords[:10]  # Cap at 10 keywords
+            keywords = [
+                w.strip(".,!?;:")
+                for w in words
+                if len(w) > 4 and w.lower().strip(".,!?;:") not in stopwords
+            ]
+        return keywords[:10]
 
     def _evict_lowest_priority(self):
         """Remove the lowest priority constraint to make room."""

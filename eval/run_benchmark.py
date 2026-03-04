@@ -16,7 +16,7 @@ from baselines.raw_llm import RawLLMBaseline
 from baselines.rag_baseline import RAGBaseline
 from baselines.rag_summary import RAGSummaryBaseline
 from baselines.memgpt_style import MemGPTStyleBaseline
-from eval.metrics import compute_all_metrics
+from eval.metrics import compute_all_metrics, init_llm_judge
 import config
 
 
@@ -41,21 +41,26 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
     benchmark_dir = datasets_dir / benchmark_name
     if benchmark_dir.is_dir():
         files = sorted(benchmark_dir.rglob("*.json"))
-        # Skip metadata files
-        files = [f for f in files if f.name != "dataset_meta.json"]
+        # Skip metadata files and raw export files
+        skip_dirs = {"real_exports"}
+        files = [f for f in files 
+                 if f.name != "dataset_meta.json"
+                 and not any(sd in f.parts for sd in skip_dirs)]
         if files:
             all_data = []
             for f in files:
-                data = json.loads(f.read_text())
+                data = json.loads(f.read_text(encoding="utf-8"))
                 if isinstance(data, list):
-                    all_data.extend(data)
-                elif isinstance(data, dict):
+                    # Only include conversations with required benchmark fields
+                    valid = [d for d in data if isinstance(d, dict) and "turns" in d and "checkpoints" in d]
+                    all_data.extend(valid)
+                elif isinstance(data, dict) and "turns" in data and "checkpoints" in data:
                     all_data.append(data)
             return all_data
     
     direct = datasets_dir / f"{benchmark_name}.json"
     if direct.exists():
-        return json.loads(direct.read_text())
+        return json.loads(direct.read_text(encoding="utf-8"))
     
     raise FileNotFoundError(f"Benchmark '{benchmark_name}' not found in {datasets_dir}")
 
@@ -208,7 +213,9 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     results_file.write_text(json.dumps(all_results, indent=2))
     print(f"\nAll results saved to {results_file}")
     
-    # Compute metrics
+    # Compute metrics (with LLM judge if available)
+    print("\nInitializing LLM judge for evaluation...")
+    init_llm_judge()
     metrics = compute_all_metrics(all_results)
     metrics_file = output_dir / "metrics.json"
     metrics_file.write_text(json.dumps(metrics, indent=2))
@@ -252,9 +259,48 @@ if __name__ == "__main__":
                         help="Output directory")
     parser.add_argument("--max-convos", type=int, default=None,
                         help="Limit number of conversations (for quick testing)")
+    parser.add_argument("--rescore", type=str, default=None,
+                        help="Re-score existing results directory (skip running, just re-evaluate)")
     args = parser.parse_args()
-    
-    systems = list(SYSTEMS.keys()) if "all" in args.systems else args.systems
-    output_dir = Path(args.output) if args.output else None
-    
-    run_benchmark(systems, args.benchmark, output_dir, args.max_convos)
+
+    if args.rescore:
+        # Re-score mode: load existing results and recompute metrics
+        rescore_dir = Path(args.rescore)
+        results_file = rescore_dir / "results.json"
+        if not results_file.exists():
+            print(f"Error: {results_file} not found")
+            exit(1)
+        all_results = json.loads(results_file.read_text(encoding="utf-8"))
+        print(f"Re-scoring results from {rescore_dir}")
+        print("Initializing LLM judge...")
+        init_llm_judge()
+
+        # Debug: show checkpoint evaluation details
+        from eval.metrics import evaluate_checkpoint, _get_results, _find_response_at_turn, _deduplicate_checkpoints, _get_constraint_text
+        for sys_name, convos in all_results.items():
+            print(f"\n--- {sys_name} ---")
+            for ci, conv in enumerate(convos):
+                checkpoints = _deduplicate_checkpoints(conv.get("checkpoints", []))
+                results = _get_results(conv)
+                constraint_text = _get_constraint_text(conv)
+                print(f"  Convo {ci}: {len(checkpoints)} checkpoints, {len(results)} turns, constraint_text={constraint_text[:80]}...")
+                for cp in checkpoints:
+                    response = _find_response_at_turn(results, cp.get("turn", 0))
+                    if response and not response.startswith("ERROR:"):
+                        passed = evaluate_checkpoint(
+                            response, constraint_text,
+                            cp.get("constraint_tested", ""),
+                            cp.get("keywords", [])
+                        )
+                        print(f"    Turn {cp['turn']}: {'PASS' if passed else 'FAIL'} (keywords={cp.get('keywords',[])})")
+                        print(f"      Response preview: {response[:120]}...")
+
+        metrics = compute_all_metrics(all_results)
+        metrics_file = rescore_dir / "metrics_rescored.json"
+        metrics_file.write_text(json.dumps(metrics, indent=2))
+        print(f"\nRe-scored metrics saved to {metrics_file}")
+        print(json.dumps(metrics, indent=2))
+    else:
+        systems = list(SYSTEMS.keys()) if "all" in args.systems else args.systems
+        output_dir = Path(args.output) if args.output else None
+        run_benchmark(systems, args.benchmark, output_dir, args.max_convos)

@@ -9,6 +9,7 @@ This is the heart of the system. For each user turn:
   5. Post-processor updates memory stores
 """
 
+import re
 from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
@@ -21,6 +22,14 @@ from core.assembler import ContextAssembler, ContextChunk, AssembledContext
 from core.post_processor import PostProcessor
 from retrieval.router import RetrievalRouter
 import config
+
+
+def _strip_hallucinated_continuation(text: str) -> str:
+    """Remove fake User:/Assistant: exchanges the LLM hallucinates."""
+    match = re.search(r'\n\s*User\s*:', text)
+    if match:
+        return text[:match.start()].rstrip()
+    return text
 
 
 @dataclass
@@ -140,6 +149,7 @@ class HierMemPipeline:
                 model=config.MAIN_LLM_MODEL,
                 temperature=config.TEMPERATURE_MAIN,
             )
+            response = _strip_hallucinated_continuation(response)
         else:
             # --- Full HierMem pipeline ---
             # Step 1: Curator selects context
@@ -175,12 +185,18 @@ class HierMemPipeline:
                 model=config.MAIN_LLM_MODEL,
                 temperature=config.TEMPERATURE_MAIN,
             )
+            response = _strip_hallucinated_continuation(response)
 
         # Step 6: Post-process (always runs — keeps memory updated)
+        # Pass retry info so post-processor can re-call on violation
+        retry_context = context if use_passthrough else assembled.full_text
         final_response, warnings = self.post_processor.process(
             turn_number=turn_num,
             user_msg=user_message,
-            assistant_msg=response
+            assistant_msg=response,
+            retry_llm=self.main_llm,
+            retry_context=retry_context,
+            system_prompt=system_prompt,
         )
 
         if use_passthrough:
@@ -206,12 +222,14 @@ class HierMemPipeline:
         return total
 
     def _build_full_history(self, current_message: str) -> str:
-        """Build full conversation history as plain text (passthrough mode)."""
+        """Build full conversation history as plain text (passthrough mode).
+        
+        In passthrough mode, we send clean conversation history WITHOUT
+        zone markers or formatted constraints. The constraints are already
+        present naturally in the conversation (the user stated them).
+        Adding [RULE|P2] markers confuses small models.
+        """
         lines = []
-        # Include constraints at top if any exist
-        constraints = self.constraint_store.get_display_text()
-        if constraints and constraints != "No active constraints.":
-            lines.append(f"=== ACTIVE RULES & CONSTRAINTS ===\n{constraints}")
         for r in self.history:
             lines.append(f"User: {r.user_message}")
             lines.append(f"Assistant: {r.assistant_response}")

@@ -2,19 +2,23 @@
 Post-Processor — Runs after every Main LLM response.
 
 Responsibilities:
-  1. Check for constraint violations (keyword/regex)
+  1. Check for constraint violations (LLM-based + keyword fallback)
   2. Extract new constraints from user messages
   3. Generate turn summary for L1/L2
   4. Update the hierarchical archive
 """
 
+import json
+import logging
 import re
 from typing import List, Optional, Tuple
 
 from llm.client import LLMClient
-from core.constraint_store import ConstraintStore
+from core.constraint_store import Constraint, ConstraintStore
 from core.archive import HierarchicalArchive
 import config
+
+logger = logging.getLogger(__name__)
 
 
 SUMMARIZER_PROMPT = """Summarize this conversation turn in ONE concise sentence (max 30 words).
@@ -58,7 +62,9 @@ class PostProcessor:
         self.archive = archive
 
     def process(self, turn_number: int, user_msg: str,
-                assistant_msg: str) -> Tuple[str, List[str]]:
+                assistant_msg: str,
+                retry_llm=None, retry_context: str = None,
+                system_prompt: str = "You are a helpful assistant.") -> Tuple[str, List[str]]:
         """
         Full post-processing pipeline.
         
@@ -66,19 +72,33 @@ class PostProcessor:
             turn_number: Current turn number
             user_msg: User's message this turn
             assistant_msg: Main LLM's response
+            retry_llm: LLM client for violation retry (optional)
+            retry_context: The context that was sent to produce assistant_msg (for retry)
+            system_prompt: System prompt for retry calls
             
         Returns:
             Tuple of (possibly modified response, list of warnings)
         """
         warnings = []
 
-        # 1. Check constraint violations
+        # 1. Check constraint violations (LLM-based) and retry if possible
         if config.ENABLE_VIOLATION_CHECK:
-            violations = self.constraint_store.check_violation(assistant_msg)
+            violations = self._check_violations_llm(assistant_msg)
             if violations:
                 warning_text = self._format_violation_warning(violations)
-                warnings.append(warning_text)
-                # TODO: Option to regenerate with violation warning injected
+                # Retry once with violation feedback injected
+                if retry_llm and retry_context and config.ENABLE_VIOLATION_RETRY:
+                    retried, retry_warning = self._retry_with_violation_feedback(
+                        retry_llm, retry_context, assistant_msg,
+                        violations, system_prompt
+                    )
+                    if retried:
+                        assistant_msg = retried
+                        warnings.append(f"violation_retry: {len(violations)} violations corrected")
+                    else:
+                        warnings.append(warning_text)
+                else:
+                    warnings.append(warning_text)
 
         # 2. Extract new constraints from user message
         if config.ENABLE_CONSTRAINT_EXTRACTION:
@@ -174,6 +194,46 @@ class PostProcessor:
             fallback = f"User asked about: {user_msg[:50]}... Assistant responded with: {assistant_msg[:50]}..."
             return fallback, fallback[:100]
 
+    def _check_violations_llm(self, response: str) -> List[Constraint]:
+        """Use LLM to accurately check if response violates active constraints."""
+        active = self.constraint_store.get_all_active()
+        if not active:
+            return []
+
+        constraints_numbered = "\n".join(
+            f"{i+1}. {c.text}" for i, c in enumerate(active)
+        )
+        prompt = (
+            f"Check if this assistant response violates any of these rules.\n\n"
+            f"Rules:\n{constraints_numbered}\n\n"
+            f"Response:\n{response[:800]}\n\n"
+            f"For each rule, output its number ONLY if it is clearly VIOLATED.\n"
+            f"If all rules are followed, output: NONE\n"
+            f"Output only rule numbers (comma-separated) or NONE:"
+        )
+
+        try:
+            result = self.llm.call(
+                system_prompt="You are a strict constraint violation checker. Only flag clear violations.",
+                user_prompt=prompt,
+                model=config.SUMMARIZER_MODEL,
+                temperature=0.0,
+                max_tokens=50
+            )
+            result = result.strip().upper()
+            if "NONE" in result or not result:
+                return []
+
+            violations = []
+            for num_str in re.findall(r'\d+', result):
+                idx = int(num_str) - 1
+                if 0 <= idx < len(active):
+                    violations.append(active[idx])
+            return violations
+        except Exception as e:
+            logger.debug(f"LLM violation check failed: {e}")
+            return []
+
     def _format_violation_warning(self, violations) -> str:
         """Format constraint violations into a warning message."""
         lines = ["⚠️ POTENTIAL CONSTRAINT VIOLATIONS DETECTED:"]
@@ -181,6 +241,28 @@ class PostProcessor:
             lines.append(f"  - [{v.category}] {v.text}")
         return "\n".join(lines)
 
-
-# Need json import for constraint extraction
-import json
+    def _retry_with_violation_feedback(self, llm, context: str,
+                                        original_response: str,
+                                        violations, system_prompt: str) -> Tuple[Optional[str], str]:
+        """Retry LLM call with violation feedback injected."""
+        violation_list = "\n".join(f"- {v.text}" for v in violations)
+        retry_prompt = (
+            f"{context}\n\n"
+            f"=== IMPORTANT: YOUR PREVIOUS RESPONSE VIOLATED THESE RULES ===\n"
+            f"{violation_list}\n\n"
+            f"Please regenerate your response while strictly following ALL of the above rules."
+        )
+        try:
+            retried = llm.call(
+                system_prompt=system_prompt,
+                user_prompt=retry_prompt,
+                model=config.MAIN_LLM_MODEL,
+                temperature=config.TEMPERATURE_MAIN,
+            )
+            # Verify retry actually fixed it
+            still_violated = self._check_violations_llm(retried)
+            if len(still_violated) < len(violations):
+                return retried, "retry_improved"
+            return retried, "retry_attempted"
+        except Exception:
+            return None, "retry_failed"

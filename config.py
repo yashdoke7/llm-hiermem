@@ -68,6 +68,7 @@ EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # Sentence-transformers model
 # === Post-Processor Settings ===
 ENABLE_CONSTRAINT_EXTRACTION = True
 ENABLE_VIOLATION_CHECK = True
+ENABLE_VIOLATION_RETRY = True        # Retry LLM call when constraint violation detected
 ENABLE_AUTO_SUMMARIZE = True
 
 # === LLM Call Settings ===

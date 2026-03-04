@@ -5,12 +5,21 @@ No memory management. Just appends all turns to the context until
 the window is full, then truncates from the beginning.
 """
 
+import re
 from typing import List, Tuple
 from dataclasses import dataclass
 
 from llm.client import LLMClient
 from llm.token_counter import count_tokens
 import config
+
+
+def _strip_hallucinated_continuation(text: str) -> str:
+    """Remove fake User:/Assistant: exchanges the LLM hallucinates."""
+    match = re.search(r'\n\s*User\s*:', text)
+    if match:
+        return text[:match.start()].rstrip()
+    return text
 
 
 @dataclass
@@ -49,6 +58,9 @@ class RawLLMBaseline:
             model=self.model,
             temperature=config.TEMPERATURE_MAIN,
         )
+
+        # Strip hallucinated multi-turn continuations
+        response = _strip_hallucinated_continuation(response)
 
         self.conversation_history.append({"role": "assistant", "content": response})
 
