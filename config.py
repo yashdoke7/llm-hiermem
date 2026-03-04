@@ -50,6 +50,12 @@ ZONE_2_BUDGET = 4000           # Relevant context zone
 ZONE_3_BUDGET = 500            # Peripheral awareness zone
 ZONE_4_BUDGET = 1000           # Current prompt zone (flexible)
 
+# === Adaptive Passthrough ===
+# When conversation history fits within this token threshold, use full history
+# (like raw LLM) instead of curated context. Avoids information loss on short
+# conversations. Memory archiving still runs in the background.
+PASSTHROUGH_THRESHOLD = int(TOTAL_CONTEXT_BUDGET * 0.70)  # 4200 tokens
+
 # === Curator Settings ===
 MAX_SEGMENTS_TO_FETCH = 4      # Curator can select at most this many segments
 MAX_SEMANTIC_QUERIES = 3       # Max vector search queries per turn

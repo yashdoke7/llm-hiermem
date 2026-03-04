@@ -13,6 +13,7 @@ from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
 from llm.client import LLMClient
+from llm.token_counter import count_tokens
 from core.constraint_store import ConstraintStore
 from core.archive import HierarchicalArchive
 from core.curator import ContextCurator, CuratorDecision
@@ -104,58 +105,86 @@ class HierMemPipeline:
     def process_turn(self, user_message: str,
                      system_prompt: str = "You are a helpful assistant.") -> TurnResult:
         """
-        Process one conversation turn through the full pipeline.
-        
-        Args:
-            user_message: The user's input
-            system_prompt: Optional system prompt for the main LLM
-            
-        Returns:
-            TurnResult with the response and metadata
+        Process one conversation turn.
+
+        Uses adaptive passthrough: if full history fits within
+        PASSTHROUGH_THRESHOLD, send everything to the LLM directly
+        (avoiding information loss from curation on short conversations).
+        Once history exceeds the threshold, switch to the full HierMem
+        pipeline with curated context assembly.
+
+        Post-processing (constraint extraction, archiving) always runs
+        so memory is ready when the pipeline activates.
         """
         self.turn_count += 1
         turn_num = self.turn_count
 
-        # Step 1: Curator selects context
-        curator_decision = self.curator.select_context(
-            user_prompt=user_message,
-            l0_directory_text=self.archive.get_l0_directory_text(),
-            constraints_text=self.constraint_store.get_display_text(),
-            total_turns=self.turn_count
-        )
+        # Check if we should use passthrough mode
+        history_tokens = self._estimate_history_tokens(user_message)
+        use_passthrough = history_tokens < config.PASSTHROUGH_THRESHOLD
 
-        # Step 2: Retrieve based on curator's decision
-        relevant_chunks, peripheral_summaries = self.retrieval_router.retrieve(
-            decision=curator_decision
-        )
+        if use_passthrough:
+            # --- Passthrough: send full history like raw_llm ---
+            context = self._build_full_history(user_message)
+            assembled = AssembledContext(
+                full_text=context,
+                total_tokens_est=count_tokens(context),
+                zone_breakdown={"passthrough": count_tokens(context)},
+                sources_used=["passthrough:full_history"],
+            )
+            curator_decision = None
 
-        # Step 3: Get recent turns (always included)
-        recent_chunks = self._get_recent_turn_chunks()
+            response = self.main_llm.call(
+                system_prompt=system_prompt,
+                user_prompt=context,
+                model=config.MAIN_LLM_MODEL,
+                temperature=config.TEMPERATURE_MAIN,
+            )
+        else:
+            # --- Full HierMem pipeline ---
+            # Step 1: Curator selects context
+            curator_decision = self.curator.select_context(
+                user_prompt=user_message,
+                l0_directory_text=self.archive.get_l0_directory_text(),
+                constraints_text=self.constraint_store.get_display_text(),
+                total_turns=self.turn_count
+            )
 
-        # Step 4: Assemble context
-        assembled = self.assembler.assemble(
-            constraints_text=self.constraint_store.get_display_text(),
-            relevant_chunks=relevant_chunks,
-            peripheral_summaries=peripheral_summaries,
-            current_prompt=user_message,
-            recent_turns=recent_chunks,
-            system_prompt=system_prompt
-        )
+            # Step 2: Retrieve based on curator's decision
+            relevant_chunks, peripheral_summaries = self.retrieval_router.retrieve(
+                decision=curator_decision
+            )
 
-        # Step 5: Call Main LLM
-        response = self.main_llm.call(
-            system_prompt=system_prompt,
-            user_prompt=assembled.full_text,
-            model=config.MAIN_LLM_MODEL,
-            temperature=config.TEMPERATURE_MAIN,
-        )
+            # Step 3: Get recent turns (always included)
+            recent_chunks = self._get_recent_turn_chunks()
 
-        # Step 6: Post-process (constraint check, extract constraints, summarize, archive)
+            # Step 4: Assemble context
+            assembled = self.assembler.assemble(
+                constraints_text=self.constraint_store.get_display_text(),
+                relevant_chunks=relevant_chunks,
+                peripheral_summaries=peripheral_summaries,
+                current_prompt=user_message,
+                recent_turns=recent_chunks,
+                system_prompt=system_prompt
+            )
+
+            # Step 5: Call Main LLM
+            response = self.main_llm.call(
+                system_prompt=system_prompt,
+                user_prompt=assembled.full_text,
+                model=config.MAIN_LLM_MODEL,
+                temperature=config.TEMPERATURE_MAIN,
+            )
+
+        # Step 6: Post-process (always runs — keeps memory updated)
         final_response, warnings = self.post_processor.process(
             turn_number=turn_num,
             user_msg=user_message,
             assistant_msg=response
         )
+
+        if use_passthrough:
+            warnings.append(f"passthrough_mode (history {history_tokens} < {config.PASSTHROUGH_THRESHOLD} threshold)")
 
         result = TurnResult(
             turn_number=turn_num,
@@ -168,6 +197,26 @@ class HierMemPipeline:
         )
         self.history.append(result)
         return result
+
+    def _estimate_history_tokens(self, current_message: str) -> int:
+        """Estimate total tokens of conversation history including current message."""
+        total = count_tokens(current_message)
+        for r in self.history:
+            total += count_tokens(r.user_message) + count_tokens(r.assistant_response)
+        return total
+
+    def _build_full_history(self, current_message: str) -> str:
+        """Build full conversation history as plain text (passthrough mode)."""
+        lines = []
+        # Include constraints at top if any exist
+        constraints = self.constraint_store.get_display_text()
+        if constraints and constraints != "No active constraints.":
+            lines.append(f"=== ACTIVE RULES & CONSTRAINTS ===\n{constraints}")
+        for r in self.history:
+            lines.append(f"User: {r.user_message}")
+            lines.append(f"Assistant: {r.assistant_response}")
+        lines.append(f"User: {current_message}")
+        return "\n\n".join(lines)
 
     def _get_recent_turn_chunks(self) -> List[ContextChunk]:
         """Get the last N turns as ContextChunks."""
