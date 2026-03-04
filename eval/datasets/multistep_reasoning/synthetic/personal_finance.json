@@ -1,0 +1,1478 @@
+[
+  {
+    "conversation_id": "multistep_personal_finance_00006",
+    "domain": "personal_finance",
+    "chain_type": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+    "num_turns": 20,
+    "filler_between": 10,
+    "checkpoints": [
+      {
+        "turn": 15,
+        "test": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+        "answer": true,
+        "keywords": [
+          "$85,000",
+          "$4,200",
+          "$15,000",
+          "22%",
+          "4%",
+          "401k"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I make $85,000 per year before taxes.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Good income.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "My monthly expenses are about $4,200.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I have $15,000 in credit card debt at 22% APR.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "That's costly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My employer matches 401k up to 4%.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Free money.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Create a monthly budget plan that tackles my debt while not missing the 401k match.",
+        "type": "test"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_personal_finance_00016",
+    "domain": "personal_finance",
+    "chain_type": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+    "num_turns": 15,
+    "filler_between": 5,
+    "checkpoints": [
+      {
+        "turn": 10,
+        "test": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+        "answer": true,
+        "keywords": [
+          "$85,000",
+          "$4,200",
+          "$15,000",
+          "22%",
+          "4%",
+          "401k"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I make $85,000 per year before taxes.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Good income.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "My monthly expenses are about $4,200.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I have $15,000 in credit card debt at 22% APR.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "That's costly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My employer matches 401k up to 4%.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Free money.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "Create a monthly budget plan that tackles my debt while not missing the 401k match.",
+        "type": "test"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_personal_finance_00026",
+    "domain": "personal_finance",
+    "chain_type": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+        "answer": true,
+        "keywords": [
+          "$85,000",
+          "$4,200",
+          "$15,000",
+          "22%",
+          "4%",
+          "401k"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I make $85,000 per year before taxes.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Good income.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "My monthly expenses are about $4,200.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I have $15,000 in credit card debt at 22% APR.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "That's costly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My employer matches 401k up to 4%.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Free money.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Create a monthly budget plan that tackles my debt while not missing the 401k match.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_personal_finance_00036",
+    "domain": "personal_finance",
+    "chain_type": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does plan incorporate salary, expenses, debt rate, and 401k match?",
+        "answer": true,
+        "keywords": [
+          "$85,000",
+          "$4,200",
+          "$15,000",
+          "22%",
+          "4%",
+          "401k"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I make $85,000 per year before taxes.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Good income.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "My monthly expenses are about $4,200.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I have $15,000 in credit card debt at 22% APR.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "That's costly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My employer matches 401k up to 4%.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Free money.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Create a monthly budget plan that tackles my debt while not missing the 401k match.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do ETFs work?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Trade like stocks, track an index...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Interest on interest over time...",
+        "type": "filler"
+      }
+    ]
+  }
+]

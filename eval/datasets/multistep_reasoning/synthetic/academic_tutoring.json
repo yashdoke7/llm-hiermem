@@ -1,0 +1,1418 @@
+[
+  {
+    "conversation_id": "multistep_academic_tutoring_00009",
+    "domain": "academic_tutoring",
+    "chain_type": "Does solution correctly apply both chain rule and power rule?",
+    "num_turns": 30,
+    "filler_between": 20,
+    "checkpoints": [
+      {
+        "turn": 24,
+        "test": "Does solution correctly apply both chain rule and power rule?",
+        "answer": true,
+        "keywords": [
+          "chain rule",
+          "power rule",
+          "5",
+          "3x",
+          "derivative",
+          "30x"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "We learned that derivatives measure instantaneous rate of change.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Correct.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The power rule says d/dx[x^n] = nx^(n-1).",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Yes, fundamental rule.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The chain rule is for composite functions: d/dx[f(g(x))] = f'(g(x))\u00b7g'(x).",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Exactly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Using what we've covered, find the derivative of (3x\u00b2 + 1)\u2075.",
+        "type": "test"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_academic_tutoring_00019",
+    "domain": "academic_tutoring",
+    "chain_type": "Does solution correctly apply both chain rule and power rule?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 19,
+        "test": "Does solution correctly apply both chain rule and power rule?",
+        "answer": true,
+        "keywords": [
+          "chain rule",
+          "power rule",
+          "5",
+          "3x",
+          "derivative",
+          "30x"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "We learned that derivatives measure instantaneous rate of change.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Correct.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The power rule says d/dx[x^n] = nx^(n-1).",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Yes, fundamental rule.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The chain rule is for composite functions: d/dx[f(g(x))] = f'(g(x))\u00b7g'(x).",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Exactly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Using what we've covered, find the derivative of (3x\u00b2 + 1)\u2075.",
+        "type": "test"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_academic_tutoring_00029",
+    "domain": "academic_tutoring",
+    "chain_type": "Does solution correctly apply both chain rule and power rule?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 19,
+        "test": "Does solution correctly apply both chain rule and power rule?",
+        "answer": true,
+        "keywords": [
+          "chain rule",
+          "power rule",
+          "5",
+          "3x",
+          "derivative",
+          "30x"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "We learned that derivatives measure instantaneous rate of change.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Correct.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The power rule says d/dx[x^n] = nx^(n-1).",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Yes, fundamental rule.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The chain rule is for composite functions: d/dx[f(g(x))] = f'(g(x))\u00b7g'(x).",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Exactly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Using what we've covered, find the derivative of (3x\u00b2 + 1)\u2075.",
+        "type": "test"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_academic_tutoring_00039",
+    "domain": "academic_tutoring",
+    "chain_type": "Does solution correctly apply both chain rule and power rule?",
+    "num_turns": 30,
+    "filler_between": 20,
+    "checkpoints": [
+      {
+        "turn": 24,
+        "test": "Does solution correctly apply both chain rule and power rule?",
+        "answer": true,
+        "keywords": [
+          "chain rule",
+          "power rule",
+          "5",
+          "3x",
+          "derivative",
+          "30x"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "We learned that derivatives measure instantaneous rate of change.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Correct.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The power rule says d/dx[x^n] = nx^(n-1).",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Yes, fundamental rule.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The chain rule is for composite functions: d/dx[f(g(x))] = f'(g(x))\u00b7g'(x).",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Exactly.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What calculator can I use?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Check your syllabus; many exams are no-calc...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Using what we've covered, find the derivative of (3x\u00b2 + 1)\u2075.",
+        "type": "test"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How do I study for proofs?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Practice writing them; understand logic structure...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How important are exercises?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Very \u2014 they build problem-solving muscle...",
+        "type": "filler"
+      }
+    ]
+  }
+]

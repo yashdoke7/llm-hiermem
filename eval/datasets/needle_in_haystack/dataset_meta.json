@@ -1,0 +1,17 @@
+{
+  "generator": "generate_niah.py",
+  "num_conversations": 30,
+  "total_checkpoints": 136,
+  "domains": {
+    "software_engineering": 3,
+    "medical_consultation": 3,
+    "legal_advisory": 3,
+    "creative_writing": 3,
+    "data_analysis": 3,
+    "project_management": 3,
+    "personal_finance": 3,
+    "cooking_recipes": 3,
+    "customer_support": 3,
+    "academic_tutoring": 3
+  }
+}

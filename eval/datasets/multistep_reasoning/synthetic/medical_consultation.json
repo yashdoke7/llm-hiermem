@@ -1,0 +1,1236 @@
+[
+  {
+    "conversation_id": "multistep_medical_consultation_00001",
+    "domain": "medical_consultation",
+    "chain_type": "Does recommendation account for diabetes, sulfa allergy, and current meds?",
+    "num_turns": 30,
+    "filler_between": 20,
+    "checkpoints": [
+      {
+        "turn": 25,
+        "test": "Does recommendation account for diabetes, sulfa allergy, and current meds?",
+        "answer": true,
+        "keywords": [
+          "metformin",
+          "allerg",
+          "sulfa",
+          "A1C",
+          "7.8"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I'm a 55-year-old male.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "I have Type 2 diabetes managed with metformin.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I'm allergic to sulfa drugs.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Important \u2014 noted the allergy.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My last A1C was 7.8, slightly above target.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "I see.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What additional medication might help lower my A1C? Consider my allergies.",
+        "type": "test"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_medical_consultation_00011",
+    "domain": "medical_consultation",
+    "chain_type": "Does assessment incorporate family history, cholesterol, and exercise?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 19,
+        "test": "Does assessment incorporate family history, cholesterol, and exercise?",
+        "answer": true,
+        "keywords": [
+          "heart",
+          "cholesterol",
+          "LDL",
+          "165",
+          "family history",
+          "exercise"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "My father had a heart attack at age 52.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Family history noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "My cholesterol is 245 total, LDL is 165.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Those are elevated.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I exercise 3 times per week, mostly jogging.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Good to know.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Given everything you know about me, what's my cardiovascular risk and what should I do?",
+        "type": "test"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_medical_consultation_00021",
+    "domain": "medical_consultation",
+    "chain_type": "Does recommendation account for diabetes, sulfa allergy, and current meds?",
+    "num_turns": 15,
+    "filler_between": 5,
+    "checkpoints": [
+      {
+        "turn": 10,
+        "test": "Does recommendation account for diabetes, sulfa allergy, and current meds?",
+        "answer": true,
+        "keywords": [
+          "metformin",
+          "allerg",
+          "sulfa",
+          "A1C",
+          "7.8"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I'm a 55-year-old male.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "I have Type 2 diabetes managed with metformin.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I'm allergic to sulfa drugs.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Important \u2014 noted the allergy.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My last A1C was 7.8, slightly above target.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "I see.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What additional medication might help lower my A1C? Consider my allergies.",
+        "type": "test"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_medical_consultation_00031",
+    "domain": "medical_consultation",
+    "chain_type": "Does assessment incorporate family history, cholesterol, and exercise?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 19,
+        "test": "Does assessment incorporate family history, cholesterol, and exercise?",
+        "answer": true,
+        "keywords": [
+          "heart",
+          "cholesterol",
+          "LDL",
+          "165",
+          "family history",
+          "exercise"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "My father had a heart attack at age 52.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Family history noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "My cholesterol is 245 total, LDL is 165.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Those are elevated.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "I exercise 3 times per week, mostly jogging.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Good to know.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Given everything you know about me, what's my cardiovascular risk and what should I do?",
+        "type": "test"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How does stress affect health?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Stress hormones can affect many body systems...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "Is daily exercise safe?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Moderate daily exercise is fine...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "About 8 glasses, more if exercising...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Should I take supplements?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need them...",
+        "type": "filler"
+      }
+    ]
+  }
+]

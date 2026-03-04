@@ -1,0 +1,17 @@
+{
+  "generator": "generate_multistep.py",
+  "num_conversations": 40,
+  "total_checkpoints": 40,
+  "domains": {
+    "software_engineering": 4,
+    "medical_consultation": 4,
+    "legal_advisory": 4,
+    "data_analysis": 4,
+    "project_management": 4,
+    "cooking_recipes": 4,
+    "personal_finance": 4,
+    "creative_writing": 4,
+    "customer_support": 4,
+    "academic_tutoring": 4
+  }
+}

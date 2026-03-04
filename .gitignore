@@ -43,3 +43,8 @@ build/
 
 docs/HierMem_Blueprint.md
 docs/HierMem_Blueprint.docx
+
+# Real chat exports (private data — never push)
+eval/datasets/*/real_exports/
+
+results/smoke_test.json

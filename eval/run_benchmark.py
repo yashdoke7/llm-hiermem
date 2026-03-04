@@ -30,16 +30,27 @@ SYSTEMS = {
 
 
 def load_benchmark(benchmark_name: str) -> List[Dict]:
-    """Load a benchmark dataset."""
+    """Load a benchmark dataset.
+    
+    Recursively discovers all *.json files under the benchmark directory,
+    skipping metadata files (dataset_meta.json).  This supports the
+    per-domain file layout (synthetic/, llm_generated/, real_exports/).
+    """
     datasets_dir = Path(__file__).parent / "datasets"
     
     benchmark_dir = datasets_dir / benchmark_name
     if benchmark_dir.is_dir():
-        files = list(benchmark_dir.glob("*.json"))
+        files = sorted(benchmark_dir.rglob("*.json"))
+        # Skip metadata files
+        files = [f for f in files if f.name != "dataset_meta.json"]
         if files:
             all_data = []
             for f in files:
-                all_data.extend(json.loads(f.read_text()))
+                data = json.loads(f.read_text())
+                if isinstance(data, list):
+                    all_data.extend(data)
+                elif isinstance(data, dict):
+                    all_data.append(data)
             return all_data
     
     direct = datasets_dir / f"{benchmark_name}.json"

@@ -1,0 +1,1834 @@
+[
+  {
+    "conversation_id": "multistep_cooking_recipes_00005",
+    "domain": "cooking_recipes",
+    "chain_type": "Does menu accommodate dietary restrictions and guest count?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 20,
+        "test": "Does menu accommodate dietary restrictions and guest count?",
+        "answer": true,
+        "keywords": [
+          "8 people",
+          "gluten-free",
+          "vegetarian",
+          "450",
+          "menu"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I'm cooking for 8 people at a dinner party.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted \u2014 big group.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Two guests are gluten-free.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "I'll keep that in mind.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "One guest is vegetarian.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "No problem.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My oven maxes out at 450\u00b0F.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Good to know.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "Plan a three-course dinner menu that works for everyone.",
+        "type": "test"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_cooking_recipes_00015",
+    "domain": "cooking_recipes",
+    "chain_type": "Does menu accommodate dietary restrictions and guest count?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does menu accommodate dietary restrictions and guest count?",
+        "answer": true,
+        "keywords": [
+          "8 people",
+          "gluten-free",
+          "vegetarian",
+          "450",
+          "menu"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I'm cooking for 8 people at a dinner party.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted \u2014 big group.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Two guests are gluten-free.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "I'll keep that in mind.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "One guest is vegetarian.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "No problem.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My oven maxes out at 450\u00b0F.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Good to know.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Plan a three-course dinner menu that works for everyone.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_cooking_recipes_00025",
+    "domain": "cooking_recipes",
+    "chain_type": "Does menu accommodate dietary restrictions and guest count?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does menu accommodate dietary restrictions and guest count?",
+        "answer": true,
+        "keywords": [
+          "8 people",
+          "gluten-free",
+          "vegetarian",
+          "450",
+          "menu"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I'm cooking for 8 people at a dinner party.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted \u2014 big group.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Two guests are gluten-free.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "I'll keep that in mind.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "One guest is vegetarian.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "No problem.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My oven maxes out at 450\u00b0F.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Good to know.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Plan a three-course dinner menu that works for everyone.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_cooking_recipes_00035",
+    "domain": "cooking_recipes",
+    "chain_type": "Does menu accommodate dietary restrictions and guest count?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does menu accommodate dietary restrictions and guest count?",
+        "answer": true,
+        "keywords": [
+          "8 people",
+          "gluten-free",
+          "vegetarian",
+          "450",
+          "menu"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "I'm cooking for 8 people at a dinner party.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted \u2014 big group.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Two guests are gluten-free.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "I'll keep that in mind.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "One guest is vegetarian.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "No problem.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "My oven maxes out at 450\u00b0F.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Good to know.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How do I deglaze a pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Add liquid to hot pan to dissolve browned bits...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Plan a three-course dinner menu that works for everyone.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Damp paper towel in bag in fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's the Maillard reaction?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Chemical reaction between amino acids and sugars...",
+        "type": "filler"
+      }
+    ]
+  }
+]

@@ -1,0 +1,1234 @@
+[
+  {
+    "conversation_id": "multistep_creative_writing_00007",
+    "domain": "creative_writing",
+    "chain_type": "Does scene include all established characters, setting, and plot elements?",
+    "num_turns": 30,
+    "filler_between": 20,
+    "checkpoints": [
+      {
+        "turn": 25,
+        "test": "Does scene include all established characters, setting, and plot elements?",
+        "answer": true,
+        "keywords": [
+          "Louis",
+          "Colette",
+          "painting",
+          "speakeasy",
+          "1920s"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The story is set in 1920s Paris.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Atmospheric setting.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The protagonist is a jazz pianist named Louis.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Great character.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The mystery involves a stolen painting from the Louvre.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Classic heist.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "The femme fatale is named Colette, she runs a speakeasy.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Intriguing.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Write the scene where Louis confronts Colette about the painting at her speakeasy.",
+        "type": "test"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_creative_writing_00017",
+    "domain": "creative_writing",
+    "chain_type": "Does scene include all established characters, setting, and plot elements?",
+    "num_turns": 15,
+    "filler_between": 5,
+    "checkpoints": [
+      {
+        "turn": 10,
+        "test": "Does scene include all established characters, setting, and plot elements?",
+        "answer": true,
+        "keywords": [
+          "Louis",
+          "Colette",
+          "painting",
+          "speakeasy",
+          "1920s"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The story is set in 1920s Paris.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Atmospheric setting.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The protagonist is a jazz pianist named Louis.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Great character.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The mystery involves a stolen painting from the Louvre.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Classic heist.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "The femme fatale is named Colette, she runs a speakeasy.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Intriguing.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "Write the scene where Louis confronts Colette about the painting at her speakeasy.",
+        "type": "test"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_creative_writing_00027",
+    "domain": "creative_writing",
+    "chain_type": "Does scene include all established characters, setting, and plot elements?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 20,
+        "test": "Does scene include all established characters, setting, and plot elements?",
+        "answer": true,
+        "keywords": [
+          "Louis",
+          "Colette",
+          "painting",
+          "speakeasy",
+          "1920s"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The story is set in 1920s Paris.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Atmospheric setting.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The protagonist is a jazz pianist named Louis.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Great character.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The mystery involves a stolen painting from the Louvre.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Classic heist.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "The femme fatale is named Colette, she runs a speakeasy.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Intriguing.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "Write the scene where Louis confronts Colette about the painting at her speakeasy.",
+        "type": "test"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_creative_writing_00037",
+    "domain": "creative_writing",
+    "chain_type": "Does scene include all established characters, setting, and plot elements?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 20,
+        "test": "Does scene include all established characters, setting, and plot elements?",
+        "answer": true,
+        "keywords": [
+          "Louis",
+          "Colette",
+          "painting",
+          "speakeasy",
+          "1920s"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The story is set in 1920s Paris.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Atmospheric setting.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The protagonist is a jazz pianist named Louis.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Great character.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The mystery involves a stolen painting from the Louvre.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Classic heist.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "The femme fatale is named Colette, she runs a speakeasy.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Intriguing.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "Write the scene where Louis confronts Colette about the painting at her speakeasy.",
+        "type": "test"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Use sensory details purposefully...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What makes good dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Subtext and distinct character voices...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I create tension?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Withhold information, raise stakes...",
+        "type": "filler"
+      }
+    ]
+  }
+]

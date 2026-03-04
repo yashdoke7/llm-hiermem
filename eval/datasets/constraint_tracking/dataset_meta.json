@@ -1,0 +1,61 @@
+{
+  "generator": "generate_realistic_convos.py",
+  "num_conversations": 50,
+  "turns_per_convo": 50,
+  "total_checkpoints": 300,
+  "data_sources": [
+    "synthetic"
+  ],
+  "domains": {
+    "software_engineering": {
+      "name": "Software Engineering",
+      "conversations": 5,
+      "constraints_available": 4
+    },
+    "medical_consultation": {
+      "name": "Medical Consultation",
+      "conversations": 5,
+      "constraints_available": 3
+    },
+    "legal_advisory": {
+      "name": "Legal Advisory",
+      "conversations": 5,
+      "constraints_available": 2
+    },
+    "academic_tutoring": {
+      "name": "Academic Tutoring",
+      "conversations": 5,
+      "constraints_available": 3
+    },
+    "customer_support": {
+      "name": "Customer Support",
+      "conversations": 5,
+      "constraints_available": 2
+    },
+    "creative_writing": {
+      "name": "Creative Writing",
+      "conversations": 5,
+      "constraints_available": 3
+    },
+    "data_analysis": {
+      "name": "Data Analysis",
+      "conversations": 5,
+      "constraints_available": 2
+    },
+    "project_management": {
+      "name": "Project Management",
+      "conversations": 5,
+      "constraints_available": 2
+    },
+    "cooking_recipes": {
+      "name": "Cooking & Recipes",
+      "conversations": 5,
+      "constraints_available": 2
+    },
+    "personal_finance": {
+      "name": "Personal Finance",
+      "conversations": 5,
+      "constraints_available": 2
+    }
+  }
+}

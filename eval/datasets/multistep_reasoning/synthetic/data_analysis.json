@@ -1,0 +1,1840 @@
+[
+  {
+    "conversation_id": "multistep_data_analysis_00003",
+    "domain": "data_analysis",
+    "chain_type": "Does analysis reference sample size, both rates, and duration?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does analysis reference sample size, both rates, and duration?",
+        "answer": true,
+        "keywords": [
+          "25,000",
+          "3.2%",
+          "3.8%",
+          "14 day",
+          "significant",
+          "sample"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "We have 25,000 users in the test.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Good sample size.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The control conversion rate is 3.2%.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Baseline noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The variant shows 3.8% conversion.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "That's an 18.75% relative lift.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "The test has been running for 14 days.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Two weeks of data.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Should we call this test and ship the variant? What's your analysis?",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_data_analysis_00013",
+    "domain": "data_analysis",
+    "chain_type": "Does recommendation use all the specific numbers from our discussion?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does recommendation use all the specific numbers from our discussion?",
+        "answer": true,
+        "keywords": [
+          "$2.4M",
+          "$180K",
+          "23%",
+          "$45",
+          "$12",
+          "organic",
+          "paid"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "Revenue last quarter was $2.4M.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "We spent $180K on paid ads.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Ad budget noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "Organic traffic grew 23% quarter-over-quarter.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Strong organic growth.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Customer acquisition cost is $45 for paid, $12 for organic.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Big difference.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Should we shift more budget from paid to organic? Make the case with our numbers.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_data_analysis_00023",
+    "domain": "data_analysis",
+    "chain_type": "Does analysis reference sample size, both rates, and duration?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does analysis reference sample size, both rates, and duration?",
+        "answer": true,
+        "keywords": [
+          "25,000",
+          "3.2%",
+          "3.8%",
+          "14 day",
+          "significant",
+          "sample"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "We have 25,000 users in the test.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Good sample size.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The control conversion rate is 3.2%.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Baseline noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The variant shows 3.8% conversion.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "That's an 18.75% relative lift.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "The test has been running for 14 days.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Two weeks of data.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Should we call this test and ship the variant? What's your analysis?",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_data_analysis_00033",
+    "domain": "data_analysis",
+    "chain_type": "Does recommendation use all the specific numbers from our discussion?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 20,
+        "test": "Does recommendation use all the specific numbers from our discussion?",
+        "answer": true,
+        "keywords": [
+          "$2.4M",
+          "$180K",
+          "23%",
+          "$45",
+          "$12",
+          "organic",
+          "paid"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "Revenue last quarter was $2.4M.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "We spent $180K on paid ads.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Ad budget noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "Organic traffic grew 23% quarter-over-quarter.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Strong organic growth.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Customer acquisition cost is $45 for paid, $12 for organic.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Big difference.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "Should we shift more budget from paid to organic? Make the case with our numbers.",
+        "type": "test"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's overfitting?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Model learns noise; use cross-validation to prevent...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What visualization works best for trends?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Line charts for time series...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I handle missing data?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Depends on pattern \u2014 imputation or flagging...",
+        "type": "filler"
+      }
+    ]
+  }
+]

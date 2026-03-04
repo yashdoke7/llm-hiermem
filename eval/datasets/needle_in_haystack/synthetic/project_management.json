@@ -1,0 +1,1727 @@
+[
+  {
+    "conversation_id": "niah_project_management_00005",
+    "domain": "project_management",
+    "needle_turn": 2,
+    "needle_text": "Sarah from the backend team is on parental leave until October.",
+    "recall_question": "When does Sarah return from leave?",
+    "expected_answer": "October",
+    "num_turns": 50,
+    "checkpoints": [
+      {
+        "turn": 7,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'October'?",
+        "answer": true,
+        "keywords": [
+          "October"
+        ]
+      },
+      {
+        "turn": 12,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'October'?",
+        "answer": true,
+        "keywords": [
+          "October"
+        ]
+      },
+      {
+        "turn": 17,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'October'?",
+        "answer": true,
+        "keywords": [
+          "October"
+        ]
+      },
+      {
+        "turn": 22,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'October'?",
+        "answer": true,
+        "keywords": [
+          "October"
+        ]
+      },
+      {
+        "turn": 32,
+        "distance_from_needle": 30,
+        "test": "Does response contain 'October'?",
+        "answer": true,
+        "keywords": [
+          "October"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Oh by the way \u2014 Sarah from the backend team is on parental leave until October.",
+        "type": "needle"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "When does Sarah return from leave?",
+        "type": "recall"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "When does Sarah return from leave?",
+        "type": "recall"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "When does Sarah return from leave?",
+        "type": "recall"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "When does Sarah return from leave?",
+        "type": "recall"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "When does Sarah return from leave?",
+        "type": "recall"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_project_management_00015",
+    "domain": "project_management",
+    "needle_turn": 8,
+    "needle_text": "The budget cap is $180,000 including all contractor costs.",
+    "recall_question": "What's our total budget for this project?",
+    "expected_answer": "$180,000",
+    "num_turns": 50,
+    "checkpoints": [
+      {
+        "turn": 13,
+        "distance_from_needle": 5,
+        "test": "Does response contain '$180,000'?",
+        "answer": true,
+        "keywords": [
+          "$180,000"
+        ]
+      },
+      {
+        "turn": 18,
+        "distance_from_needle": 10,
+        "test": "Does response contain '$180,000'?",
+        "answer": true,
+        "keywords": [
+          "$180,000"
+        ]
+      },
+      {
+        "turn": 23,
+        "distance_from_needle": 15,
+        "test": "Does response contain '$180,000'?",
+        "answer": true,
+        "keywords": [
+          "$180,000"
+        ]
+      },
+      {
+        "turn": 28,
+        "distance_from_needle": 20,
+        "test": "Does response contain '$180,000'?",
+        "answer": true,
+        "keywords": [
+          "$180,000"
+        ]
+      },
+      {
+        "turn": 38,
+        "distance_from_needle": 30,
+        "test": "Does response contain '$180,000'?",
+        "answer": true,
+        "keywords": [
+          "$180,000"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Oh by the way \u2014 The budget cap is $180,000 including all contractor costs.",
+        "type": "needle"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's our total budget for this project?",
+        "type": "recall"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's our total budget for this project?",
+        "type": "recall"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's our total budget for this project?",
+        "type": "recall"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's our total budget for this project?",
+        "type": "recall"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's our total budget for this project?",
+        "type": "recall"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_project_management_00025",
+    "domain": "project_management",
+    "needle_turn": 8,
+    "needle_text": "The client's primary contact is James Liu, VP of Engineering at Nextera.",
+    "recall_question": "Who is our primary contact at the client?",
+    "expected_answer": "James Liu",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 13,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'James Liu'?",
+        "answer": true,
+        "keywords": [
+          "James Liu"
+        ]
+      },
+      {
+        "turn": 18,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'James Liu'?",
+        "answer": true,
+        "keywords": [
+          "James Liu"
+        ]
+      },
+      {
+        "turn": 23,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'James Liu'?",
+        "answer": true,
+        "keywords": [
+          "James Liu"
+        ]
+      },
+      {
+        "turn": 28,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'James Liu'?",
+        "answer": true,
+        "keywords": [
+          "James Liu"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Oh by the way \u2014 The client's primary contact is James Liu, VP of Engineering at Nextera.",
+        "type": "needle"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "Who is our primary contact at the client?",
+        "type": "recall"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "Who is our primary contact at the client?",
+        "type": "recall"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "Who is our primary contact at the client?",
+        "type": "recall"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How long should sprints be?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "2 weeks is standard; 1 week for fast-moving early-stage products...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do I handle scope creep?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Document the change request, estimate impact, get stakeholder sign-off...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "When should I say no to a feature request?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "When it doesn't align with current sprint goals or product vision...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "Who is our primary contact at the client?",
+        "type": "recall"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's a good standup format?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "What I did, what I'll do, blockers \u2014 keep it under 15 minutes...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's velocity and how do I measure it?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Story points completed per sprint; track over 3-4 sprints for a baseline...",
+        "type": "filler"
+      }
+    ]
+  }
+]

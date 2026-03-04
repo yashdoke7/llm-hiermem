@@ -1,0 +1,1229 @@
+[
+  {
+    "conversation_id": "niah_medical_consultation_00001",
+    "domain": "medical_consultation",
+    "needle_turn": 5,
+    "needle_text": "My blood type is B negative, which is fairly rare.",
+    "recall_question": "What blood type did I mention?",
+    "expected_answer": "B negative",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 10,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      },
+      {
+        "turn": 15,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      },
+      {
+        "turn": 20,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      },
+      {
+        "turn": 25,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Oh by the way \u2014 My blood type is B negative, which is fairly rare.",
+        "type": "needle"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How much sleep do I actually need?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Most adults need 7-9 hours for optimal health...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_medical_consultation_00011",
+    "domain": "medical_consultation",
+    "needle_turn": 8,
+    "needle_text": "My last blood pressure reading was 145/92, which was elevated.",
+    "recall_question": "What was my recent blood pressure reading?",
+    "expected_answer": "145/92",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 13,
+        "distance_from_needle": 5,
+        "test": "Does response contain '145/92'?",
+        "answer": true,
+        "keywords": [
+          "145/92"
+        ]
+      },
+      {
+        "turn": 18,
+        "distance_from_needle": 10,
+        "test": "Does response contain '145/92'?",
+        "answer": true,
+        "keywords": [
+          "145/92"
+        ]
+      },
+      {
+        "turn": 23,
+        "distance_from_needle": 15,
+        "test": "Does response contain '145/92'?",
+        "answer": true,
+        "keywords": [
+          "145/92"
+        ]
+      },
+      {
+        "turn": 28,
+        "distance_from_needle": 20,
+        "test": "Does response contain '145/92'?",
+        "answer": true,
+        "keywords": [
+          "145/92"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Oh by the way \u2014 My last blood pressure reading was 145/92, which was elevated.",
+        "type": "needle"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What was my recent blood pressure reading?",
+        "type": "recall"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What was my recent blood pressure reading?",
+        "type": "recall"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What was my recent blood pressure reading?",
+        "type": "recall"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What was my recent blood pressure reading?",
+        "type": "recall"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How much sleep do I actually need?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Most adults need 7-9 hours for optimal health...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_medical_consultation_00021",
+    "domain": "medical_consultation",
+    "needle_turn": 7,
+    "needle_text": "My blood type is B negative, which is fairly rare.",
+    "recall_question": "What blood type did I mention?",
+    "expected_answer": "B negative",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 12,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      },
+      {
+        "turn": 17,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      },
+      {
+        "turn": 22,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      },
+      {
+        "turn": 27,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'B negative'?",
+        "answer": true,
+        "keywords": [
+          "B negative"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "How much sleep do I actually need?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Most adults need 7-9 hours for optimal health...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "Oh by the way \u2014 My blood type is B negative, which is fairly rare.",
+        "type": "needle"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How much sleep do I actually need?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Most adults need 7-9 hours for optimal health...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "Should I take a daily multivitamin?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "If your diet is balanced you may not need one...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How much water should I drink daily?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "About 8 glasses, more if you exercise regularly...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How much sleep do I actually need?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Most adults need 7-9 hours for optimal health...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's the deal with intermittent fasting?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Some studies show metabolic benefits, but check with your doctor...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Is it safe to exercise every day?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Moderate exercise daily is fine; vary intensity...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How often should I get blood work done?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Annual panels are standard; more often with chronic conditions...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What blood type did I mention?",
+        "type": "recall"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What are signs of pre-diabetes I should watch for?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Increased thirst, frequent urination, fatigue...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How much sleep do I actually need?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Most adults need 7-9 hours for optimal health...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How does stress affect blood sugar?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Stress hormones like cortisol can raise blood sugar...",
+        "type": "filler"
+      }
+    ]
+  }
+]

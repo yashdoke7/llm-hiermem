@@ -1,0 +1,1470 @@
+[
+  {
+    "conversation_id": "multistep_software_engineering_46372",
+    "domain": "software_engineering",
+    "chain_type": "Does the nginx config route to port 5000?",
+    "num_turns": 25,
+    "filler_between": 15,
+    "checkpoints": [
+      {
+        "turn": 19,
+        "test": "Does the nginx config route to port 5000?",
+        "answer": true,
+        "keywords": [
+          "nginx",
+          "5000",
+          "proxy_pass"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The server runs on Ubuntu 22.04.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "We use nginx as the reverse proxy.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The app runs on port 5000 internally.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Internal port: 5000.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Write the nginx config to proxy requests to our app.",
+        "type": "test"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_software_engineering_00010",
+    "domain": "software_engineering",
+    "chain_type": "Does SQL create partitioned events table with correct columns?",
+    "num_turns": 20,
+    "filler_between": 10,
+    "checkpoints": [
+      {
+        "turn": 14,
+        "test": "Does SQL create partitioned events table with correct columns?",
+        "answer": true,
+        "keywords": [
+          "PostgreSQL",
+          "events",
+          "timestamp",
+          "partition",
+          "CREATE"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "Our database is PostgreSQL 15.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "The main table is 'events' with columns: id, name, timestamp, user_id.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "We need to partition by month on the timestamp column.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Understood.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "Write the SQL to create the partitioned events table.",
+        "type": "test"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_software_engineering_00020",
+    "domain": "software_engineering",
+    "chain_type": "Does implementation use FastAPI, JWT, RS256, 15min expiry?",
+    "num_turns": 40,
+    "filler_between": 30,
+    "checkpoints": [
+      {
+        "turn": 35,
+        "test": "Does implementation use FastAPI, JWT, RS256, 15min expiry?",
+        "answer": true,
+        "keywords": [
+          "FastAPI",
+          "JWT",
+          "RS256",
+          "15 min",
+          "7 day"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The project uses FastAPI.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Auth is handled via JWT tokens with RS256.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "Tokens expire after 15 minutes.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Token expiry: 15 min.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Refresh tokens last 7 days.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Refresh: 7 days.",
+        "type": "setup"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "Implement the token generation and validation endpoints.",
+        "type": "test"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "multistep_software_engineering_00030",
+    "domain": "software_engineering",
+    "chain_type": "Does the nginx config route to port 5000?",
+    "num_turns": 30,
+    "filler_between": 20,
+    "checkpoints": [
+      {
+        "turn": 24,
+        "test": "Does the nginx config route to port 5000?",
+        "answer": true,
+        "keywords": [
+          "nginx",
+          "5000",
+          "proxy_pass"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "The server runs on Ubuntu 22.04.",
+        "type": "setup"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Noted.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "We use nginx as the reverse proxy.",
+        "type": "setup"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "The app runs on port 5000 internally.",
+        "type": "setup"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Internal port: 5000.",
+        "type": "setup"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do database migrations work?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Tools like Alembic track schema changes...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Write the nginx config to proxy requests to our app.",
+        "type": "test"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "test_response"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "Should I use REST or GraphQL?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "REST for simplicity, GraphQL for complex queries...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How should I handle environment config?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Use env vars, never hardcode secrets...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the best way to structure a Flask app?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Use blueprints to organize routes...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What testing strategy do you recommend?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Unit tests for logic, integration for APIs...",
+        "type": "filler"
+      }
+    ]
+  }
+]

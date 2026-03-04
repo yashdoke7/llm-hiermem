@@ -1,0 +1,1358 @@
+[
+  {
+    "conversation_id": "niah_cooking_recipes_00007",
+    "domain": "cooking_recipes",
+    "needle_turn": 6,
+    "needle_text": "I use King Arthur all-purpose flour for everything.",
+    "recall_question": "What brand of flour do I prefer?",
+    "expected_answer": "King Arthur",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 11,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'King Arthur'?",
+        "answer": true,
+        "keywords": [
+          "King Arthur"
+        ]
+      },
+      {
+        "turn": 16,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'King Arthur'?",
+        "answer": true,
+        "keywords": [
+          "King Arthur"
+        ]
+      },
+      {
+        "turn": 21,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'King Arthur'?",
+        "answer": true,
+        "keywords": [
+          "King Arthur"
+        ]
+      },
+      {
+        "turn": 26,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'King Arthur'?",
+        "answer": true,
+        "keywords": [
+          "King Arthur"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Oh by the way \u2014 I use King Arthur all-purpose flour for everything.",
+        "type": "needle"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What brand of flour do I prefer?",
+        "type": "recall"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What brand of flour do I prefer?",
+        "type": "recall"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What brand of flour do I prefer?",
+        "type": "recall"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What brand of flour do I prefer?",
+        "type": "recall"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_cooking_recipes_00017",
+    "domain": "cooking_recipes",
+    "needle_turn": 4,
+    "needle_text": "My sourdough starter is 6 months old and I feed it every Friday.",
+    "recall_question": "How old is my sourdough starter?",
+    "expected_answer": "6 months",
+    "num_turns": 40,
+    "checkpoints": [
+      {
+        "turn": 9,
+        "distance_from_needle": 5,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 14,
+        "distance_from_needle": 10,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 19,
+        "distance_from_needle": 15,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 24,
+        "distance_from_needle": 20,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 34,
+        "distance_from_needle": 30,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Oh by the way \u2014 My sourdough starter is 6 months old and I feed it every Friday.",
+        "type": "needle"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_cooking_recipes_00027",
+    "domain": "cooking_recipes",
+    "needle_turn": 2,
+    "needle_text": "My sourdough starter is 6 months old and I feed it every Friday.",
+    "recall_question": "How old is my sourdough starter?",
+    "expected_answer": "6 months",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 7,
+        "distance_from_needle": 5,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 12,
+        "distance_from_needle": 10,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 17,
+        "distance_from_needle": 15,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      },
+      {
+        "turn": 22,
+        "distance_from_needle": 20,
+        "test": "Does response contain '6 months'?",
+        "answer": true,
+        "keywords": [
+          "6 months"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Oh by the way \u2014 My sourdough starter is 6 months old and I feed it every Friday.",
+        "type": "needle"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "Why does my bread come out dense?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Could be too much flour, old yeast, or insufficient kneading...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How old is my sourdough starter?",
+        "type": "recall"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I know when oil is hot enough?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "A small piece of bread should sizzle immediately when dropped in...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I properly season a cast iron pan?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Thin layer of oil, bake upside down at 450F for an hour...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the best way to store herbs?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Wrap in damp paper towel in a plastic bag in the fridge...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's the difference between baking soda and baking powder?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Baking soda needs acid; baking powder is self-contained...",
+        "type": "filler"
+      }
+    ]
+  }
+]

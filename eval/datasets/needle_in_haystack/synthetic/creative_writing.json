@@ -1,0 +1,1856 @@
+[
+  {
+    "conversation_id": "niah_creative_writing_00003",
+    "domain": "creative_writing",
+    "needle_turn": 6,
+    "needle_text": "The story is set in the fictional coastal town of Harrowcliff, Oregon.",
+    "recall_question": "What's the name of the town where the story takes place?",
+    "expected_answer": "Harrowcliff",
+    "num_turns": 50,
+    "checkpoints": [
+      {
+        "turn": 11,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'Harrowcliff'?",
+        "answer": true,
+        "keywords": [
+          "Harrowcliff"
+        ]
+      },
+      {
+        "turn": 16,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'Harrowcliff'?",
+        "answer": true,
+        "keywords": [
+          "Harrowcliff"
+        ]
+      },
+      {
+        "turn": 21,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'Harrowcliff'?",
+        "answer": true,
+        "keywords": [
+          "Harrowcliff"
+        ]
+      },
+      {
+        "turn": 26,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'Harrowcliff'?",
+        "answer": true,
+        "keywords": [
+          "Harrowcliff"
+        ]
+      },
+      {
+        "turn": 36,
+        "distance_from_needle": 30,
+        "test": "Does response contain 'Harrowcliff'?",
+        "answer": true,
+        "keywords": [
+          "Harrowcliff"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Oh by the way \u2014 The story is set in the fictional coastal town of Harrowcliff, Oregon.",
+        "type": "needle"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's the name of the town where the story takes place?",
+        "type": "recall"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's the name of the town where the story takes place?",
+        "type": "recall"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the name of the town where the story takes place?",
+        "type": "recall"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's the name of the town where the story takes place?",
+        "type": "recall"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What's the name of the town where the story takes place?",
+        "type": "recall"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_creative_writing_00013",
+    "domain": "creative_writing",
+    "needle_turn": 3,
+    "needle_text": "The villain's name is Dr. Edmund Voss, a former marine biologist.",
+    "recall_question": "What was the villain's name and former profession?",
+    "expected_answer": "Voss",
+    "num_turns": 50,
+    "checkpoints": [
+      {
+        "turn": 8,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 13,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 18,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 23,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 33,
+        "distance_from_needle": 30,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "Oh by the way \u2014 The villain's name is Dr. Edmund Voss, a former marine biologist.",
+        "type": "needle"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_creative_writing_00023",
+    "domain": "creative_writing",
+    "needle_turn": 6,
+    "needle_text": "The villain's name is Dr. Edmund Voss, a former marine biologist.",
+    "recall_question": "What was the villain's name and former profession?",
+    "expected_answer": "Voss",
+    "num_turns": 40,
+    "checkpoints": [
+      {
+        "turn": 11,
+        "distance_from_needle": 5,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 16,
+        "distance_from_needle": 10,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 21,
+        "distance_from_needle": 15,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 26,
+        "distance_from_needle": 20,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      },
+      {
+        "turn": 36,
+        "distance_from_needle": 30,
+        "test": "Does response contain 'Voss'?",
+        "answer": true,
+        "keywords": [
+          "Voss"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "Oh by the way \u2014 The villain's name is Dr. Edmund Voss, a former marine biologist.",
+        "type": "needle"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What makes a good plot twist?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "It should be surprising yet inevitable in hindsight...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "Should I outline or write by discovery?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "Both work; outlines help with structure, discovery adds surprise...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What was the villain's name and former profession?",
+        "type": "recall"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do I avoid purple prose?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Use sensory details purposefully, not decoratively...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "How do I create tension in dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Use subtext \u2014 what characters don't say matters more...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How do I write authentic-sounding dialogue?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Read it aloud; each character should sound distinct...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's the three-act structure?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Setup, confrontation, resolution \u2014 each with clear turning points...",
+        "type": "filler"
+      }
+    ]
+  }
+]

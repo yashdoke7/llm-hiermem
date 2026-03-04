@@ -1,0 +1,1607 @@
+[
+  {
+    "conversation_id": "niah_personal_finance_00006",
+    "domain": "personal_finance",
+    "needle_turn": 4,
+    "needle_text": "My total student loan balance is $34,500 at 5.5% interest.",
+    "recall_question": "What's my student loan balance and rate?",
+    "expected_answer": "$34,500",
+    "num_turns": 40,
+    "checkpoints": [
+      {
+        "turn": 9,
+        "distance_from_needle": 5,
+        "test": "Does response contain '$34,500'?",
+        "answer": true,
+        "keywords": [
+          "$34,500"
+        ]
+      },
+      {
+        "turn": 14,
+        "distance_from_needle": 10,
+        "test": "Does response contain '$34,500'?",
+        "answer": true,
+        "keywords": [
+          "$34,500"
+        ]
+      },
+      {
+        "turn": 19,
+        "distance_from_needle": 15,
+        "test": "Does response contain '$34,500'?",
+        "answer": true,
+        "keywords": [
+          "$34,500"
+        ]
+      },
+      {
+        "turn": 24,
+        "distance_from_needle": 20,
+        "test": "Does response contain '$34,500'?",
+        "answer": true,
+        "keywords": [
+          "$34,500"
+        ]
+      },
+      {
+        "turn": 34,
+        "distance_from_needle": 30,
+        "test": "Does response contain '$34,500'?",
+        "answer": true,
+        "keywords": [
+          "$34,500"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Oh by the way \u2014 My total student loan balance is $34,500 at 5.5% interest.",
+        "type": "needle"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's my student loan balance and rate?",
+        "type": "recall"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's my student loan balance and rate?",
+        "type": "recall"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's my student loan balance and rate?",
+        "type": "recall"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "What's my student loan balance and rate?",
+        "type": "recall"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's my student loan balance and rate?",
+        "type": "recall"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_personal_finance_00016",
+    "domain": "personal_finance",
+    "needle_turn": 5,
+    "needle_text": "I contribute $500/month to a Roth IRA at Fidelity.",
+    "recall_question": "How much do I put into my Roth IRA each month?",
+    "expected_answer": "$500",
+    "num_turns": 30,
+    "checkpoints": [
+      {
+        "turn": 10,
+        "distance_from_needle": 5,
+        "test": "Does response contain '$500'?",
+        "answer": true,
+        "keywords": [
+          "$500"
+        ]
+      },
+      {
+        "turn": 15,
+        "distance_from_needle": 10,
+        "test": "Does response contain '$500'?",
+        "answer": true,
+        "keywords": [
+          "$500"
+        ]
+      },
+      {
+        "turn": 20,
+        "distance_from_needle": 15,
+        "test": "Does response contain '$500'?",
+        "answer": true,
+        "keywords": [
+          "$500"
+        ]
+      },
+      {
+        "turn": 25,
+        "distance_from_needle": 20,
+        "test": "Does response contain '$500'?",
+        "answer": true,
+        "keywords": [
+          "$500"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Oh by the way \u2014 I contribute $500/month to a Roth IRA at Fidelity.",
+        "type": "needle"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "How much do I put into my Roth IRA each month?",
+        "type": "recall"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "How much do I put into my Roth IRA each month?",
+        "type": "recall"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "How much do I put into my Roth IRA each month?",
+        "type": "recall"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "How much do I put into my Roth IRA each month?",
+        "type": "recall"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      }
+    ]
+  },
+  {
+    "conversation_id": "niah_personal_finance_00026",
+    "domain": "personal_finance",
+    "needle_turn": 5,
+    "needle_text": "My employer matches 401k contributions up to 6% of salary.",
+    "recall_question": "What's my employer's 401k match?",
+    "expected_answer": "6%",
+    "num_turns": 50,
+    "checkpoints": [
+      {
+        "turn": 10,
+        "distance_from_needle": 5,
+        "test": "Does response contain '6%'?",
+        "answer": true,
+        "keywords": [
+          "6%"
+        ]
+      },
+      {
+        "turn": 15,
+        "distance_from_needle": 10,
+        "test": "Does response contain '6%'?",
+        "answer": true,
+        "keywords": [
+          "6%"
+        ]
+      },
+      {
+        "turn": 20,
+        "distance_from_needle": 15,
+        "test": "Does response contain '6%'?",
+        "answer": true,
+        "keywords": [
+          "6%"
+        ]
+      },
+      {
+        "turn": 25,
+        "distance_from_needle": 20,
+        "test": "Does response contain '6%'?",
+        "answer": true,
+        "keywords": [
+          "6%"
+        ]
+      },
+      {
+        "turn": 35,
+        "distance_from_needle": 30,
+        "test": "Does response contain '6%'?",
+        "answer": true,
+        "keywords": [
+          "6%"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 2,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 3,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 4,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 5,
+        "role": "user",
+        "text": "Oh by the way \u2014 My employer matches 401k contributions up to 6% of salary.",
+        "type": "needle"
+      },
+      {
+        "turn": 5,
+        "role": "assistant",
+        "text": "Got it, I've noted that down.",
+        "type": "ack"
+      },
+      {
+        "turn": 6,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 6,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 7,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 8,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 9,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 10,
+        "role": "user",
+        "text": "What's my employer's 401k match?",
+        "type": "recall"
+      },
+      {
+        "turn": 10,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 11,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 11,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 12,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 13,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 14,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 15,
+        "role": "user",
+        "text": "What's my employer's 401k match?",
+        "type": "recall"
+      },
+      {
+        "turn": 15,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 16,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 16,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 17,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 18,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 19,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 20,
+        "role": "user",
+        "text": "What's my employer's 401k match?",
+        "type": "recall"
+      },
+      {
+        "turn": 20,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 21,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 21,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 22,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 23,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 24,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 25,
+        "role": "user",
+        "text": "What's my employer's 401k match?",
+        "type": "recall"
+      },
+      {
+        "turn": 25,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 26,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 26,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 27,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 28,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 29,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 30,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 31,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 32,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 33,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 34,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 35,
+        "role": "user",
+        "text": "What's my employer's 401k match?",
+        "type": "recall"
+      },
+      {
+        "turn": 35,
+        "role": "assistant",
+        "text": "[RESPONSE_PLACEHOLDER]",
+        "type": "recall_response"
+      },
+      {
+        "turn": 36,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 36,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 37,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 38,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 39,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 40,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 41,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "user",
+        "text": "What's the 50/30/20 rule?",
+        "type": "filler"
+      },
+      {
+        "turn": 42,
+        "role": "assistant",
+        "text": "50% needs, 30% wants, 20% savings \u2014 a simple budgeting framework...",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 43,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "user",
+        "text": "How does inflation affect savings?",
+        "type": "filler"
+      },
+      {
+        "turn": 44,
+        "role": "assistant",
+        "text": "Money loses purchasing power over time; savings need to beat inflation...",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 45,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 46,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "user",
+        "text": "How do ETFs differ from mutual funds?",
+        "type": "filler"
+      },
+      {
+        "turn": 47,
+        "role": "assistant",
+        "text": "ETFs trade like stocks; mutual funds price once daily...",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 48,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "user",
+        "text": "Should I use a budget app?",
+        "type": "filler"
+      },
+      {
+        "turn": 49,
+        "role": "assistant",
+        "text": "Yes, tools like YNAB or Mint help track spending habits...",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "user",
+        "text": "What's compound interest?",
+        "type": "filler"
+      },
+      {
+        "turn": 50,
+        "role": "assistant",
+        "text": "Interest on interest \u2014 your returns generate their own returns over time...",
+        "type": "filler"
+      }
+    ]
+  }
+]
