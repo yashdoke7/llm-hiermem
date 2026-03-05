@@ -85,6 +85,9 @@ def _get_budget(provider: str) -> Optional[TokenBudget]:
             _budgets[provider] = TokenBudget(tpm_limit=12000, rpm_limit=30, min_gap=5.0)
         elif provider == "openai":
             _budgets[provider] = TokenBudget(tpm_limit=90000, rpm_limit=60, min_gap=1.0)
+        elif provider == "google":
+            # Gemini free tier: 15 RPM, 250k TPM → stay under 10 RPM for safety
+            _budgets[provider] = TokenBudget(tpm_limit=250000, rpm_limit=10, min_gap=7.0)
         else:
             _budgets[provider] = TokenBudget(tpm_limit=60000, rpm_limit=60, min_gap=1.0)
     return _budgets[provider]

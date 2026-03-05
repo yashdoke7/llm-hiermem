@@ -65,12 +65,18 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
     raise FileNotFoundError(f"Benchmark '{benchmark_name}' not found in {datasets_dir}")
 
 
-def run_system_on_conversation(system, system_name: str, conversation: Dict) -> Dict:
+def run_system_on_conversation(system, system_name: str, conversation: Dict,
+                               conv_index: int = 0, total_convos: int = 1) -> Dict:
     """Run a single system on a single conversation with detailed per-step logging."""
     turns = conversation.get("turns", [])
     checkpoints = conversation.get("checkpoints", [])
+    user_turns = [t for t in turns if t.get("role") == "user"]
+    total_user_turns = len(user_turns)
     turn_logs = []
     total_start = time.time()
+    conv_id = conversation.get("conversation_id", "unknown")
+    
+    print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({total_user_turns} turns)")
     
     for turn_data in turns:
         if turn_data.get("role") != "user":
@@ -86,13 +92,35 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict) -> 
             result = system.process_turn(user_msg)
             response = result.assistant_response if hasattr(result, 'assistant_response') else str(result)
             
+            turn_elapsed = round(time.time() - turn_start, 2)
+            total_elapsed = round(time.time() - total_start, 2)
+            
+            # Live progress line
+            mode = ""
+            if system_name == "hiermem" and hasattr(result, 'warnings'):
+                if any("passthrough" in w for w in result.warnings):
+                    mode = " [pass]"
+                elif hasattr(result, 'curator_decision') and result.curator_decision:
+                    mode = f" [{result.curator_decision.retrieval_strategy}]"
+            tokens = result.tokens_used if hasattr(result, 'tokens_used') else ""
+            tokens_str = f" {tokens}tok" if tokens else ""
+            
+            # Estimate remaining time
+            turns_done = len(turn_logs) + 1
+            avg_per_turn = total_elapsed / turns_done
+            turns_left = total_user_turns - turns_done
+            eta_mins = round(avg_per_turn * turns_left / 60, 1)
+            
+            print(f"    Turn {turn_num:2d}/{total_user_turns} | {turn_elapsed:5.1f}s{mode}{tokens_str} | "
+                  f"ETA: {eta_mins}min", flush=True)
+            
             # Build detailed turn log
             turn_log = {
                 "turn": turn_num,
                 "type": turn_type,
                 "user": user_msg,
                 "response": response,
-                "latency_seconds": round(time.time() - turn_start, 2),
+                "latency_seconds": turn_elapsed,
             }
             
             # HierMem-specific details
@@ -115,16 +143,21 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict) -> 
             
         except Exception as e:
             response = f"ERROR: {e}"
+            turn_elapsed = round(time.time() - turn_start, 2)
+            print(f"    Turn {turn_num:2d}/{total_user_turns} | ERROR: {e}", flush=True)
             turn_log = {
                 "turn": turn_num,
                 "type": turn_type,
                 "user": user_msg,
                 "response": response,
-                "latency_seconds": round(time.time() - turn_start, 2),
+                "latency_seconds": turn_elapsed,
                 "error": str(e),
             }
         
         turn_logs.append(turn_log)
+    
+    total_elapsed = round(time.time() - total_start, 2)
+    print(f"  ✓ {conv_id} done in {total_elapsed/60:.1f}min (avg {total_elapsed/max(len(turn_logs),1):.1f}s/turn)")
     
     total_elapsed = round(time.time() - total_start, 2)
     
@@ -160,20 +193,49 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict) -> 
 
 
 def run_benchmark(systems_to_run: List[str], benchmark_name: str,
-                  output_dir: Path = None, max_convos: int = None):
-    """Run specified systems on a benchmark."""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                  output_dir: Path = None, max_convos: int = None,
+                  convo_ids: List[str] = None, run_dir: Path = None,
+                  judge_provider: str = None, judge_model: str = None):
+    """Run specified systems on a benchmark.
+    
+    Args:
+        run_dir: If set, accumulate results into this directory across multiple runs.
+                 New results are merged with existing ones.
+    """
     main_model = config.MAIN_LLM_MODEL.split("/")[-1].replace(":", "-")
-    default_dir = config.RESULTS_PATH / "raw" / "benchmarks" / f"{benchmark_name}_{config.DEFAULT_PROVIDER}_{main_model}_{timestamp}"
-    output_dir = output_dir or default_dir
+    
+    if run_dir:
+        output_dir = run_dir
+    elif output_dir is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_dir = config.RESULTS_PATH / "raw" / "benchmarks" / f"{benchmark_name}_{config.DEFAULT_PROVIDER}_{main_model}_{timestamp}"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     conversations = load_benchmark(benchmark_name)
-    if max_convos:
-        conversations = conversations[:max_convos]
-    print(f"Loaded {len(conversations)} conversations from '{benchmark_name}'")
     
+    # Filter by specific conversation IDs
+    if convo_ids:
+        conversations = [c for c in conversations 
+                        if c.get("conversation_id", "") in convo_ids]
+        if not conversations:
+            print(f"No conversations found matching: {convo_ids}")
+            print("Use --list to see available conversation IDs")
+            return None, None
+    elif max_convos:
+        conversations = conversations[:max_convos]
+    
+    print(f"Loaded {len(conversations)} conversations from '{benchmark_name}'")
+    for c in conversations:
+        print(f"  - {c.get('conversation_id', '?')} ({len([t for t in c.get('turns',[]) if t.get('role')=='user'])} turns)")
+    
+    # Load existing results if accumulating
     all_results = {}
+    if run_dir:
+        results_file = output_dir / "results.json"
+        if results_file.exists():
+            all_results = json.loads(results_file.read_text(encoding="utf-8"))
+            existing_count = sum(len(v) for v in all_results.values())
+            print(f"Loaded {existing_count} existing results from {results_file}")
     
     for system_name in systems_to_run:
         if system_name not in SYSTEMS:
@@ -185,21 +247,36 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
         print(f"Models: main={config.MAIN_LLM_MODEL}, curator={config.CURATOR_MODEL}")
         print(f"{'='*60}")
         
-        system_results = []
+        # Get existing results for this system
+        system_results = list(all_results.get(system_name, []))
+        existing_ids = {r["conversation_id"] for r in system_results}
         
-        for conv in tqdm(conversations, desc=system_name):
+        # Skip conversations already done
+        convos_to_run = [c for c in conversations 
+                        if c.get("conversation_id", "") not in existing_ids]
+        
+        if not convos_to_run:
+            print(f"  All conversations already done for {system_name}, skipping")
+            continue
+        
+        if len(convos_to_run) < len(conversations):
+            print(f"  Skipping {len(conversations) - len(convos_to_run)} already-completed conversations")
+        
+        for i, conv in enumerate(convos_to_run):
             # Create fresh system instance for each conversation
             if system_name == "hiermem":
                 system = HierMemPipeline.create()
             else:
                 system = SYSTEMS[system_name]()
             
-            result = run_system_on_conversation(system, system_name, conv)
+            result = run_system_on_conversation(system, system_name, conv,
+                                                conv_index=i, total_convos=len(convos_to_run))
             system_results.append(result)
             
-            # Save after each conversation (in case of crash)
-            partial_file = output_dir / f"{system_name}_partial.json"
-            partial_file.write_text(json.dumps(system_results, indent=2))
+            # Save after each conversation (crash-safe)
+            all_results[system_name] = system_results
+            results_file = output_dir / "results.json"
+            results_file.write_text(json.dumps(all_results, indent=2))
         
         all_results[system_name] = system_results
         
@@ -215,7 +292,7 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     
     # Compute metrics (with LLM judge if available)
     print("\nInitializing LLM judge for evaluation...")
-    init_llm_judge()
+    init_llm_judge(provider=judge_provider, model=judge_model)
     metrics = compute_all_metrics(all_results)
     metrics_file = output_dir / "metrics.json"
     metrics_file.write_text(json.dumps(metrics, indent=2))
@@ -223,7 +300,7 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     
     # Save run config
     run_info = {
-        "timestamp": timestamp,
+        "timestamp": datetime.now().strftime("%Y%m%d_%H%M%S"),
         "benchmark": benchmark_name,
         "systems": systems_to_run,
         "num_conversations": len(conversations),
@@ -242,10 +319,6 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     }
     (output_dir / "run_info.json").write_text(json.dumps(run_info, indent=2))
     
-    # Clean up partial files
-    for f in output_dir.glob("*_partial.json"):
-        f.unlink()
-    
     return all_results, metrics
 
 
@@ -259,9 +332,29 @@ if __name__ == "__main__":
                         help="Output directory")
     parser.add_argument("--max-convos", type=int, default=None,
                         help="Limit number of conversations (for quick testing)")
+    parser.add_argument("--convo", nargs="+", default=None,
+                        help="Run specific conversation IDs (e.g. --convo chatgpt_cooking_recipes_01)")
+    parser.add_argument("--run-dir", type=str, default=None,
+                        help="Accumulate results into this directory across multiple runs")
+    parser.add_argument("--list", action="store_true",
+                        help="List available conversations and exit")
     parser.add_argument("--rescore", type=str, default=None,
                         help="Re-score existing results directory (skip running, just re-evaluate)")
+    parser.add_argument("--judge-provider", type=str, default=None,
+                        help="Provider for LLM judge (e.g. google, openai). Default: same as benchmark provider")
+    parser.add_argument("--judge-model", type=str, default=None,
+                        help="Model for LLM judge (e.g. gemini-2.5-flash, gpt-4o-mini). Default: summarizer model")
     args = parser.parse_args()
+
+    if args.list:
+        conversations = load_benchmark(args.benchmark)
+        print(f"Available conversations in '{args.benchmark}' ({len(conversations)} total):\n")
+        for i, c in enumerate(conversations):
+            cid = c.get("conversation_id", "unknown")
+            user_turns = len([t for t in c.get("turns", []) if t.get("role") == "user"])
+            checkpoints = len(c.get("checkpoints", []))
+            print(f"  {i:2d}. {cid} ({user_turns} turns, {checkpoints} checkpoints)")
+        exit(0)
 
     if args.rescore:
         # Re-score mode: load existing results and recompute metrics
@@ -272,35 +365,73 @@ if __name__ == "__main__":
             exit(1)
         all_results = json.loads(results_file.read_text(encoding="utf-8"))
         print(f"Re-scoring results from {rescore_dir}")
+        
+        judge_provider = args.judge_provider
+        judge_model = args.judge_model
+        if judge_provider:
+            print(f"Using LLM judge: provider={judge_provider}, model={judge_model or 'default'}")
         print("Initializing LLM judge...")
-        init_llm_judge()
+        init_llm_judge(provider=judge_provider, model=judge_model)
 
         # Debug: show checkpoint evaluation details
-        from eval.metrics import evaluate_checkpoint, _get_results, _find_response_at_turn, _deduplicate_checkpoints, _get_constraint_text
+        from eval.metrics import (evaluate_checkpoint, score_checkpoint,
+            _get_results, _find_response_at_turn, _deduplicate_checkpoints,
+            _get_constraint_text, _score_keyword_group)
         for sys_name, convos in all_results.items():
             print(f"\n--- {sys_name} ---")
             for ci, conv in enumerate(convos):
+                cid = conv.get("conversation_id", f"conv_{ci}")
                 checkpoints = _deduplicate_checkpoints(conv.get("checkpoints", []))
                 results = _get_results(conv)
                 constraint_text = _get_constraint_text(conv)
-                print(f"  Convo {ci}: {len(checkpoints)} checkpoints, {len(results)} turns, constraint_text={constraint_text[:80]}...")
+                print(f"  {cid}: {len(checkpoints)} checkpoints")
                 for cp in checkpoints:
-                    response = _find_response_at_turn(results, cp.get("turn", 0))
+                    turn = cp.get("turn", 0)
+                    keywords = cp.get("keywords", [])
+                    kw_groups = cp.get("keyword_groups")
+                    response = _find_response_at_turn(results, turn)
                     if response and not response.startswith("ERROR:"):
+                        # Gradient score
+                        sc = score_checkpoint(response, keywords, kw_groups)
+                        group_strs = []
+                        if kw_groups:
+                            for g in kw_groups:
+                                gs = _score_keyword_group(response, g)
+                                group_strs.append(f"{gs:.0f}:{g[:3]}")
+                        
                         passed = evaluate_checkpoint(
                             response, constraint_text,
                             cp.get("constraint_tested", ""),
-                            cp.get("keywords", [])
+                            keywords,
+                            keyword_groups=kw_groups
                         )
-                        print(f"    Turn {cp['turn']}: {'PASS' if passed else 'FAIL'} (keywords={cp.get('keywords',[])})")
-                        print(f"      Response preview: {response[:120]}...")
+                        print(f"    Turn {turn}: score={sc:.0f} ({'PASS' if passed else 'FAIL'}) "
+                              f"groups=[{', '.join(group_strs)}]")
 
         metrics = compute_all_metrics(all_results)
         metrics_file = rescore_dir / "metrics_rescored.json"
         metrics_file.write_text(json.dumps(metrics, indent=2))
         print(f"\nRe-scored metrics saved to {metrics_file}")
-        print(json.dumps(metrics, indent=2))
+        
+        # Print summary
+        for sys_name, m in metrics.items():
+            if sys_name == "pairwise_comparison":
+                pc = m
+                print(f"\n  Pairwise: {pc['system_a']} wins={pc['wins_a']} | "
+                      f"{pc['system_b']} wins={pc['wins_b']} | ties={pc['ties']}")
+                for c in pc.get("comparisons", []):
+                    print(f"    Turn {c['turn']}: A={c['score_a']} B={c['score_b']} → {c['winner']}"
+                          f" | {c.get('reasoning','')}")
+                continue
+            pts = m.get("per_turn_scores", {})
+            print(f"\n  {sys_name}: accuracy={m['task_accuracy']*100:.0f}% "
+                  f"avg_score={pts.get('avg_score', '?')}")
+            for d in pts.get("detail", []):
+                print(f"    Turn {d['turn']}: score={d['score']:.0f} ({d['mode']})")
     else:
         systems = list(SYSTEMS.keys()) if "all" in args.systems else args.systems
         output_dir = Path(args.output) if args.output else None
-        run_benchmark(systems, args.benchmark, output_dir, args.max_convos)
+        run_dir = Path(args.run_dir) if args.run_dir else None
+        run_benchmark(systems, args.benchmark, output_dir, args.max_convos,
+                      convo_ids=args.convo, run_dir=run_dir,
+                      judge_provider=args.judge_provider, judge_model=args.judge_model)

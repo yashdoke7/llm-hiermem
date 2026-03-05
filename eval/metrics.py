@@ -28,25 +28,47 @@ logger = logging.getLogger(__name__)
 _llm_client = None
 _judge_available = False
 _judge_model = None
+_judge_cache = {}  # Cache judge results: (response_hash, constraint_hash) -> bool
 
 
 def init_llm_judge(provider: str = None, model: str = None):
-    """Initialize LLM judge for evaluation. Call before compute_all_metrics."""
-    global _llm_client, _judge_available, _judge_model
+    """Initialize LLM judge for evaluation. Call before compute_all_metrics.
+    
+    For stronger evaluation, use a separate provider/model:
+      init_llm_judge(provider="google", model="gemini-3.1-flash-lite")
+      init_llm_judge(provider="openai", model="gpt-4o-mini")
+    
+    If no provider specified and default is ollama, skip judge (keyword-only).
+    """
+    global _llm_client, _judge_available, _judge_model, _judge_cache
+    _judge_cache = {}  # Clear cache on re-init
     try:
         import config as cfg
         from llm.client import LLMClient
-        _llm_client = LLMClient(provider=provider or cfg.DEFAULT_PROVIDER)
+        judge_provider = provider or cfg.DEFAULT_PROVIDER
+        
+        # Skip LLM judge if no explicit provider and default is ollama
+        # (ollama judge is too weak and may not be running during rescore)
+        if provider is None and judge_provider == "ollama":
+            logger.info("No judge provider specified, using keyword-only evaluation")
+            _judge_available = False
+            return
+        
+        _llm_client = LLMClient(provider=judge_provider)
         _judge_model = model or cfg.SUMMARIZER_MODEL
         _judge_available = True
-        logger.info(f"LLM judge initialized: {_judge_model}")
+        logger.info(f"LLM judge initialized: provider={judge_provider}, model={_judge_model}")
     except Exception as e:
         logger.warning(f"LLM judge unavailable, using keyword fallback: {e}")
         _judge_available = False
 
 
 def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
-    """Compute all metrics for all systems."""
+    """Compute all metrics for all systems.
+    
+    Uses gradient scoring (0-100) instead of binary pass/fail,
+    plus optional pairwise LLM comparison between systems.
+    """
     metrics = {}
     for system_name, conversations in all_results.items():
         metrics[system_name] = {
@@ -54,8 +76,17 @@ def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
             "task_accuracy": compute_task_accuracy(conversations),
             "degradation_curve": compute_degradation_curve(conversations),
             "per_turn_accuracy": compute_per_turn_accuracy(conversations),
+            "per_turn_scores": compute_per_turn_scores(conversations),
             "total_turns_processed": sum(c.get("turns_processed", 0) for c in conversations),
         }
+    
+    # Add pairwise comparison if we have exactly 2 systems and judge available
+    system_names = list(all_results.keys())
+    if len(system_names) >= 2 and _judge_available:
+        metrics["pairwise_comparison"] = compute_pairwise_comparison(
+            all_results, system_names[0], system_names[1]
+        )
+    
     return metrics
 
 
@@ -93,11 +124,14 @@ def _get_constraint_text(conv: Dict) -> str:
 
 
 def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
-    """Deduplicate checkpoints — keep one per turn with merged keywords.
+    """Deduplicate checkpoints — keep one per turn, evaluate each keyword group separately.
     
     The post-processor creates multiple checkpoint entries per turn (one per
-    keyword group). For evaluation we want ONE check per checkpoint turn,
-    not multiple keyword-group checks that inflate the denominator.
+    keyword group, e.g. metric keywords + substitution keywords).
+    
+    We merge into one entry per turn but keep keyword groups separate so each
+    constraint can be evaluated independently. A turn passes only if ALL
+    keyword groups pass.
     """
     seen = set()
     deduped = []
@@ -105,12 +139,18 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
         turn = cp.get("turn", 0)
         if turn not in seen:
             seen.add(turn)
-            all_keywords = []
+            keyword_groups = []
             for other in checkpoints:
                 if other.get("turn") == turn:
-                    all_keywords.extend(other.get("keywords", []))
+                    kws = other.get("keywords", [])
+                    if kws:
+                        keyword_groups.append(kws)
             merged = dict(cp)
-            merged["keywords"] = list(set(all_keywords))
+            merged["keyword_groups"] = keyword_groups
+            # Keep flat keywords for backward compat (union of all groups)
+            merged["keywords"] = list(set(
+                kw for group in keyword_groups for kw in group
+            ))
             deduped.append(merged)
     return deduped
 
@@ -132,7 +172,8 @@ def compute_cvr(conversations: List[Dict]) -> float:
                 passed = evaluate_checkpoint(
                     response, constraint_text,
                     cp.get("constraint_tested", ""),
-                    cp.get("keywords", [])
+                    cp.get("keywords", []),
+                    keyword_groups=cp.get("keyword_groups")
                 )
                 if not passed:
                     violations += 1
@@ -159,7 +200,8 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
                 if evaluate_checkpoint(
                     response, constraint_text,
                     cp.get("constraint_tested", ""),
-                    cp.get("keywords", [])
+                    cp.get("keywords", []),
+                    keyword_groups=cp.get("keyword_groups")
                 ):
                     correct += 1
 
@@ -192,7 +234,8 @@ def compute_degradation_curve(conversations: List[Dict],
                         if evaluate_checkpoint(
                             response, constraint_text,
                             cp.get("constraint_tested", ""),
-                            cp.get("keywords", [])
+                            cp.get("keywords", []),
+                            keyword_groups=cp.get("keyword_groups")
                         ):
                             correct += 1
 
@@ -225,21 +268,27 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
             passed = evaluate_checkpoint(
                 response, constraint_text,
                 cp.get("constraint_tested", ""),
-                cp.get("keywords", [])
+                cp.get("keywords", []),
+                keyword_groups=cp.get("keyword_groups")
             )
 
             # Detect mode from turn_logs
             mode = "unknown"
             for r in results:
                 if r.get("turn") == turn:
-                    warnings = r.get("pipeline_details", {}).get("warnings", [])
-                    sources = r.get("pipeline_details", {}).get("sources_used", [])
+                    pd = r.get("pipeline_details")
+                    if pd is None:
+                        # Non-HierMem system (raw_llm, rag, etc.)
+                        mode = "full_history"
+                        break
+                    warnings = pd.get("warnings", [])
+                    sources = pd.get("sources_used", [])
                     if any("passthrough" in str(w) for w in warnings):
                         mode = "passthrough"
                     elif any("passthrough" in str(s) for s in sources):
                         mode = "passthrough"
                     else:
-                        strategy = r.get("pipeline_details", {}).get("curator_strategy")
+                        strategy = pd.get("curator_strategy")
                         mode = f"curator:{strategy}" if strategy else "curator"
                     break
 
@@ -274,30 +323,33 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
 
 def evaluate_checkpoint(response: str, constraint_text: str,
                         checkpoint_constraint: str,
-                        keywords: List[str] = None) -> bool:
+                        keywords: List[str] = None,
+                        keyword_groups: List[List[str]] = None) -> bool:
     """
     Evaluate whether a response passes a checkpoint test.
     
     Strategy:
-      1. If LLM judge is available → use it as TIE-BREAKER with keyword eval
-      2. Fallback → enhanced keyword matching (positive + negative)
-    
-    Using both methods and requiring agreement reduces false positives/negatives
-    from either method alone.
+      1. If keyword_groups provided, evaluate each group separately (ALL must pass)
+      2. If LLM judge is available → use it as additional signal (OR with keywords)
+      3. Fallback → enhanced keyword matching
     """
     if response.startswith("ERROR:"):
         return False
 
-    # Always run keyword evaluation
-    keyword_result = _keyword_evaluate(response, keywords)
+    # Evaluate keyword groups separately if available
+    if keyword_groups and len(keyword_groups) > 1:
+        keyword_result = all(
+            _keyword_evaluate(response, group) for group in keyword_groups
+        )
+    else:
+        keyword_result = _keyword_evaluate(response, keywords)
 
     # Try LLM-as-judge if available
     if _judge_available and _llm_client:
         try:
             llm_result = _llm_judge_evaluate(response, constraint_text, checkpoint_constraint)
             logger.debug(f"Judge: keyword={keyword_result}, llm={llm_result}")
-            # Pass if EITHER method says pass (generous — avoids false negatives
-            # from weak judge model or incomplete keyword lists)
+            # Pass if EITHER method says pass
             return keyword_result or llm_result
         except Exception as e:
             logger.debug(f"LLM judge failed, using keywords only: {e}")
@@ -307,18 +359,29 @@ def evaluate_checkpoint(response: str, constraint_text: str,
 
 def _llm_judge_evaluate(response: str, constraint_text: str,
                          checkpoint_constraint: str) -> bool:
-    """Use LLM to judge if response follows constraints."""
+    """Use LLM to judge if response follows constraints.
+    
+    Results are cached to avoid redundant API calls when the same
+    response+constraint pair is evaluated multiple times (CVR, accuracy, etc.).
+    """
+    # Check cache first
+    cache_key = (hash(response[:2000]), hash(constraint_text))
+    if cache_key in _judge_cache:
+        return _judge_cache[cache_key]
+    
     constraints_clean = _parse_individual_constraints(constraint_text)
 
     prompt = (
-        f"You are evaluating whether an AI assistant's response follows specific rules.\n\n"
-        f"RULES the assistant must follow:\n{constraints_clean}\n\n"
-        f"ASSISTANT'S RESPONSE:\n{response[:1000]}\n\n"
-        f"For EACH rule, does the response follow it? Consider:\n"
-        f"- If measurements are required in metric, are ALL measurements metric? "
-        f"(cups, tablespoons, ounces, pounds, fahrenheit = violations)\n"
-        f"- If substitutions are required, does the response suggest cheaper alternatives?\n"
-        f"- If disclaimers are required, are they present?\n\n"
+        f"You are evaluating whether an AI assistant's response follows user-specified rules.\n\n"
+        f"RULES the user asked the assistant to follow:\n{constraints_clean}\n\n"
+        f"ASSISTANT'S RESPONSE:\n{response[:2000]}\n\n"
+        f"Does the response follow the rules? Consider:\n"
+        f"- Metric measurements (g, ml, kg) as primary = PASS, even with minor imperial (tbsp, tsp)\n"
+        f"- Budget-friendly alternatives or cheaper options mentioned = PASS for substitution rule\n"
+        f"- Relevant disclaimers included = PASS for disclaimer rule\n"
+        f"- If metric is primary and imperial appears in parentheses as conversion, that's correct\n"
+        f"- Be fair: if the response shows awareness of the constraint and mostly follows it, PASS\n"
+        f"- Only FAIL if the constraint is clearly ignored or violated in a major way\n\n"
         f"Output ONLY one word: PASS or FAIL"
     )
 
@@ -327,10 +390,16 @@ def _llm_judge_evaluate(response: str, constraint_text: str,
         user_prompt=prompt,
         model=_judge_model,
         temperature=0.0,
-        max_tokens=10
+        max_tokens=256
     )
 
-    return "PASS" in result.strip().upper()
+    if not result:
+        logger.warning("LLM judge returned empty response, defaulting to FAIL")
+        _judge_cache[cache_key] = False
+        return False
+    passed = "PASS" in result.strip().upper()
+    _judge_cache[cache_key] = passed
+    return passed
 
 
 def _parse_individual_constraints(constraint_text: str) -> str:
@@ -348,7 +417,13 @@ def _parse_individual_constraints(constraint_text: str) -> str:
 
 
 def _keyword_evaluate(response: str, keywords: List[str] = None) -> bool:
-    """Enhanced keyword matching with positive AND negative checks."""
+    """Enhanced keyword matching with positive AND negative checks.
+    
+    For metric checks: uses a ratio-based approach that accounts for
+    parenthetical conversions. "400g (about 1 pound)" counts as metric
+    because the primary unit is metric. "1/2 pound (225g)" counts as imperial
+    because the primary unit is imperial.
+    """
     response_lower = response.lower()
 
     if not keywords:
@@ -359,26 +434,105 @@ def _keyword_evaluate(response: str, keywords: List[str] = None) -> bool:
     is_metric_check = any(kw.lower() in metric_keywords for kw in keywords)
 
     if is_metric_check:
-        # Negative check: detect imperial measurement violations
-        imperial_patterns = [
-            r'\b\d+\s*cups?\b', r'\b\d+\s*tablespoons?\b', r'\b\d+\s*teaspoons?\b',
-            r'\b\d+\s*ounces?\b', r'\b\d+\s*pounds?\b', r'\bfahrenheit\b',
-            r'\b\d+\s*oz\b', r'\b\d+\s*lbs?\b', r'\b\d+\s*tbsp\b', r'\b\d+\s*tsp\b',
-        ]
-        has_imperial = any(re.search(p, response_lower) for p in imperial_patterns)
-        if has_imperial:
-            return False
-
-        # Positive check: look for metric patterns (e.g. "500g", "250 ml")
-        has_metric = bool(re.search(
-            r'\d+\s*(?:g|grams?|ml|milliliters?|liters?|kg|kilograms?|°?c(?:elsius)?)\b',
-            response_lower
-        ))
-        if has_metric:
-            return True
+        return _evaluate_metric_compliance(response_lower, keywords)
 
     # General positive check: at least one keyword present
     return any(kw.lower() in response_lower for kw in keywords)
+
+
+def _evaluate_metric_compliance(response_lower: str, keywords: List[str]) -> bool:
+    """Evaluate whether a response primarily uses metric measurements.
+    
+    Handles parenthetical conversions:
+      "400g (about 1 pound)"  → counted as 1 metric (imperial is just a conversion)
+      "1/2 pound (225g)"      → counted as 1 imperial (metric is just a conversion)
+      "1 tablespoon olive oil" → counted as 1 imperial (standalone)
+      "200g chicken"           → counted as 1 metric (standalone)
+    
+    Pass threshold: >50% of primary measurements are metric.
+    Small units (tablespoon, teaspoon) used standalone are penalized less
+    since they have no natural metric equivalent in casual cooking.
+    """
+    # Pattern: metric value followed by parenthetical imperial conversion
+    # e.g., "400g (about 1 pound)", "200ml (about 3/4 cup)"
+    metric_primary_patterns = [
+        r'\d+\s*(?:g|grams?)\s*\([^)]*(?:pound|lb|oz|ounce|cup)[^)]*\)',
+        r'\d+\s*(?:ml|milliliters?)\s*\([^)]*(?:cup|fl\s*oz|ounce)[^)]*\)',
+        r'\d+\s*(?:kg|kilograms?)\s*\([^)]*(?:pound|lb)[^)]*\)',
+        r'\d+\s*°?c(?:elsius)?\s*\([^)]*(?:fahrenheit|°?f)[^)]*\)',
+    ]
+    
+    # Pattern: imperial value followed by parenthetical metric conversion
+    # e.g., "1/2 pound (225g)", "1/4 cup (60ml)"
+    imperial_primary_patterns = [
+        r'[\d/]+\s*(?:pounds?|lbs?)\s*\([^)]*(?:g|gram|kg)[^)]*\)',
+        r'[\d/]+\s*(?:cups?)\s*\([^)]*(?:ml|g|gram|liter)[^)]*\)',
+        r'[\d/]+\s*(?:ounces?|oz)\s*\([^)]*(?:g|gram|ml)[^)]*\)',
+        r'[\d/]+\s*(?:°?f|fahrenheit)\s*\([^)]*(?:°?c|celsius)[^)]*\)',
+    ]
+    
+    # Count metric-primary conversions (metric first, imperial in parens)
+    metric_from_conversions = sum(
+        len(re.findall(p, response_lower)) for p in metric_primary_patterns
+    )
+    # Count imperial-primary conversions (imperial first, metric in parens)
+    imperial_from_conversions = sum(
+        len(re.findall(p, response_lower)) for p in imperial_primary_patterns
+    )
+    
+    # Now count standalone measurements (not part of conversion pairs)
+    # First, strip out all parenthetical content to avoid double-counting
+    response_no_parens = re.sub(r'\([^)]*\)', '', response_lower)
+    
+    standalone_metric_patterns = [
+        r'\d+\s*(?:g|grams?)\b',
+        r'\d+\s*(?:ml|milliliters?)\b',
+        r'\d+\s*(?:l|liters?)\b',
+        r'\d+\s*(?:kg|kilograms?)\b',
+        r'\d+\s*°?c(?:elsius)?\b',
+    ]
+    standalone_metric = sum(
+        len(re.findall(p, response_no_parens)) for p in standalone_metric_patterns
+    )
+    # Subtract conversion pairs already counted
+    standalone_metric = max(0, standalone_metric - metric_from_conversions)
+    
+    # Imperial standalone — separate "major" (cups, pounds) from "minor" (tbsp, tsp)
+    major_imperial_patterns = [
+        r'\b\d+\s*cups?\b', r'\b\d+/\d+\s*cups?\b',
+        r'\b\d+\s*ounces?\b', r'\b\d+\s*pounds?\b',
+        r'\b\d+\s*oz\b', r'\b\d+\s*lbs?\b', r'\bfahrenheit\b',
+    ]
+    minor_imperial_patterns = [
+        r'\b\d+\s*tablespoons?\b', r'\b\d+\s*teaspoons?\b',
+        r'\b\d+\s*tbsp\b', r'\b\d+\s*tsp\b',
+    ]
+    major_imperial = sum(
+        len(re.findall(p, response_no_parens)) for p in major_imperial_patterns
+    )
+    major_imperial = max(0, major_imperial - imperial_from_conversions)
+    minor_imperial = sum(
+        len(re.findall(p, response_no_parens)) for p in minor_imperial_patterns
+    )
+    
+    # Total metric = conversions with metric primary + standalone metric
+    total_metric = metric_from_conversions + standalone_metric
+    # Total imperial = conversions with imperial primary + major imperial + minor (weighted 0.5)
+    # Minor imperial (tbsp/tsp) penalized less — no natural metric equivalent in casual cooking
+    total_imperial = imperial_from_conversions + major_imperial + (minor_imperial * 0.5)
+    
+    total = total_metric + total_imperial
+    if total == 0:
+        return any(kw.lower() in response_lower for kw in keywords)
+    
+    metric_ratio = total_metric / total
+    logger.debug(
+        f"Metric eval: metric={total_metric} (conv={metric_from_conversions}, "
+        f"standalone={standalone_metric}), imperial={total_imperial} "
+        f"(conv={imperial_from_conversions}, major={major_imperial}, "
+        f"minor={minor_imperial}), ratio={metric_ratio:.2f}"
+    )
+    return metric_ratio > 0.5
 
 
 def _extract_test_keywords(test: str) -> List[str]:
@@ -393,3 +547,312 @@ def _extract_test_keywords(test: str) -> List[str]:
                   "response", "code", "use", "contain", "mention", "have"}
     words = [w.strip("?.,!") for w in test.split() if w.lower() not in stop_words and len(w) > 2]
     return words[:3]
+
+
+# ─── Gradient Scoring (0–100) ───────────────────────────────────────────────
+
+
+def score_checkpoint(response: str, keywords: List[str] = None,
+                     keyword_groups: List[List[str]] = None) -> float:
+    """Score how well a response follows constraints on a 0–100 scale.
+    
+    Unlike binary evaluate_checkpoint, this returns a gradient:
+      100 = perfectly follows all constraint groups
+        0 = completely ignores all constraints
+    
+    Each keyword group is scored independently, then averaged.
+    """
+    if not response or response.startswith("ERROR:"):
+        return 0.0
+    
+    if keyword_groups and len(keyword_groups) > 1:
+        group_scores = [_score_keyword_group(response, g) for g in keyword_groups]
+        return round(sum(group_scores) / len(group_scores), 1)
+    elif keywords:
+        return round(_score_keyword_group(response, keywords), 1)
+    return 100.0
+
+
+def _score_keyword_group(response: str, keywords: List[str]) -> float:
+    """Score a single keyword group on 0–100 scale."""
+    response_lower = response.lower()
+    
+    if not keywords:
+        return 100.0
+    
+    metric_keywords = {"gram", "ml", "liter", "celsius", "kg", "metric"}
+    is_metric_check = any(kw.lower() in metric_keywords for kw in keywords)
+    
+    if is_metric_check:
+        return _score_metric_compliance(response_lower)
+    
+    # General keywords: score = % of keywords found
+    found = sum(1 for kw in keywords if kw.lower() in response_lower)
+    return round(found / len(keywords) * 100, 1)
+
+
+def _score_metric_compliance(response_lower: str) -> float:
+    """Score metric compliance on 0–100 scale.
+    
+    Uses same logic as _evaluate_metric_compliance but returns ratio * 100.
+    """
+    # Detect conversion patterns
+    metric_conv = sum(len(re.findall(p, response_lower)) for p in [
+        r'\d+\s*(?:g|grams?|ml|kg)\s*\([^)]*(?:pound|lb|oz|cup|ounce)[^)]*\)',
+    ])
+    imperial_conv = sum(len(re.findall(p, response_lower)) for p in [
+        r'[\d/]+\s*(?:pounds?|lbs?|cups?|ounces?|oz)\s*\([^)]*(?:g|gram|kg|ml)[^)]*\)',
+    ])
+    
+    response_no_parens = re.sub(r'\([^)]*\)', '', response_lower)
+    
+    standalone_metric = sum(len(re.findall(p, response_no_parens)) for p in [
+        r'\d+\s*(?:g|grams?)\b', r'\d+\s*(?:ml|milliliters?)\b',
+        r'\d+\s*(?:l|liters?)\b', r'\d+\s*(?:kg|kilograms?)\b',
+        r'\d+\s*°?c(?:elsius)?\b',
+    ])
+    standalone_metric = max(0, standalone_metric - metric_conv)
+    
+    major_imperial = sum(len(re.findall(p, response_no_parens)) for p in [
+        r'\b\d+\s*cups?\b', r'\b\d+/\d+\s*cups?\b',
+        r'\b\d+\s*ounces?\b', r'\b\d+\s*pounds?\b',
+        r'\b\d+\s*oz\b', r'\b\d+\s*lbs?\b', r'\bfahrenheit\b',
+    ])
+    major_imperial = max(0, major_imperial - imperial_conv)
+    minor_imperial = sum(len(re.findall(p, response_no_parens)) for p in [
+        r'\b\d+\s*tablespoons?\b', r'\b\d+\s*teaspoons?\b',
+        r'\b\d+\s*tbsp\b', r'\b\d+\s*tsp\b',
+    ])
+    
+    total_metric = metric_conv + standalone_metric
+    total_imperial = imperial_conv + major_imperial + (minor_imperial * 0.5)
+    total = total_metric + total_imperial
+    
+    if total == 0:
+        return 50.0  # No measurements — neutral score
+    
+    return round(total_metric / total * 100, 1)
+
+
+def compute_per_turn_scores(conversations: List[Dict]) -> Dict[str, Any]:
+    """Compute gradient scores (0–100) at each checkpoint turn.
+    
+    Returns per-turn scores showing HOW WELL constraints are followed,
+    not just binary pass/fail.
+    """
+    detail = []
+    
+    for conv in conversations:
+        convo_id = conv.get("conversation_id", "?")
+        checkpoints = _deduplicate_checkpoints(conv.get("checkpoints", []))
+        results = _get_results(conv)
+        
+        for cp in checkpoints:
+            turn = cp.get("turn", 0)
+            response = _find_response_at_turn(results, turn)
+            if response is None or response.startswith("ERROR:"):
+                continue
+            
+            kw_groups = cp.get("keyword_groups")
+            keywords = cp.get("keywords", [])
+            
+            score = score_checkpoint(response, keywords, kw_groups)
+            
+            # Per-group scores for detail
+            group_scores = []
+            if kw_groups:
+                for g in kw_groups:
+                    group_scores.append({
+                        "keywords": g[:3],
+                        "score": _score_keyword_group(response, g),
+                    })
+            
+            # Mode detection
+            mode = "unknown"
+            for r in results:
+                if r.get("turn") == turn:
+                    pd = r.get("pipeline_details")
+                    if pd is None:
+                        mode = "full_history"
+                    elif any("passthrough" in str(w) for w in pd.get("warnings", [])):
+                        mode = "passthrough"
+                    elif any("passthrough" in str(s) for s in pd.get("sources_used", [])):
+                        mode = "passthrough"
+                    else:
+                        strategy = pd.get("curator_strategy")
+                        mode = f"curator:{strategy}" if strategy else "curator"
+                    break
+            
+            detail.append({
+                "turn": turn,
+                "convo": convo_id,
+                "score": score,
+                "group_scores": group_scores,
+                "mode": mode,
+            })
+    
+    # Summary: average score per turn
+    from collections import defaultdict
+    turn_scores = defaultdict(list)
+    for d in detail:
+        turn_scores[d["turn"]].append(d["score"])
+    summary = {str(t): round(sum(s)/len(s), 1) for t, s in sorted(turn_scores.items())}
+    avg_score = round(sum(d["score"] for d in detail) / max(len(detail), 1), 1)
+    
+    return {"detail": detail, "summary": summary, "avg_score": avg_score}
+
+
+# ─── Pairwise LLM Comparison ────────────────────────────────────────────────
+
+
+def compute_pairwise_comparison(all_results: Dict[str, List[Dict]],
+                                system_a: str, system_b: str) -> Dict:
+    """Compare two systems head-to-head using LLM judge.
+    
+    For each checkpoint turn that both systems have responses for,
+    asks the judge: "Which response better follows the stated constraints?"
+    
+    Returns wins/losses/ties and per-turn comparison details.
+    """
+    if not _judge_available:
+        return {"error": "LLM judge not available for pairwise comparison"}
+    
+    convos_a = {c["conversation_id"]: c for c in all_results.get(system_a, [])}
+    convos_b = {c["conversation_id"]: c for c in all_results.get(system_b, [])}
+    
+    comparisons = []
+    wins_a, wins_b, ties = 0, 0, 0
+    
+    for cid in convos_a:
+        if cid not in convos_b:
+            continue
+        
+        conv_a, conv_b = convos_a[cid], convos_b[cid]
+        checkpoints = _deduplicate_checkpoints(conv_a.get("checkpoints", []))
+        results_a = _get_results(conv_a)
+        results_b = _get_results(conv_b)
+        constraint_text = _get_constraint_text(conv_a)
+        
+        for cp in checkpoints:
+            turn = cp.get("turn", 0)
+            resp_a = _find_response_at_turn(results_a, turn)
+            resp_b = _find_response_at_turn(results_b, turn)
+            
+            if not resp_a or not resp_b:
+                continue
+            if resp_a.startswith("ERROR:") or resp_b.startswith("ERROR:"):
+                continue
+            
+            result = _pairwise_judge(resp_a, resp_b, constraint_text, system_a, system_b)
+            comparisons.append({
+                "convo": cid,
+                "turn": turn,
+                "winner": result["winner"],
+                "score_a": result["score_a"],
+                "score_b": result["score_b"],
+                "reasoning": result.get("reasoning", ""),
+            })
+            
+            if result["winner"] == system_a:
+                wins_a += 1
+            elif result["winner"] == system_b:
+                wins_b += 1
+            else:
+                ties += 1
+    
+    total = wins_a + wins_b + ties
+    return {
+        "system_a": system_a,
+        "system_b": system_b,
+        "wins_a": wins_a,
+        "wins_b": wins_b,
+        "ties": ties,
+        "total": total,
+        "win_rate_a": round(wins_a / max(total, 1) * 100, 1),
+        "win_rate_b": round(wins_b / max(total, 1) * 100, 1),
+        "comparisons": comparisons,
+    }
+
+
+def _pairwise_judge(resp_a: str, resp_b: str, constraint_text: str,
+                     name_a: str, name_b: str) -> Dict:
+    """Ask LLM judge to compare two responses head-to-head.
+    
+    Returns {"winner": name_a|name_b|"tie", "score_a": 1-5, "score_b": 1-5}
+    """
+    # Check cache
+    cache_key = (hash(resp_a[:1500]), hash(resp_b[:1500]), hash(constraint_text))
+    if cache_key in _judge_cache:
+        return _judge_cache[cache_key]
+    
+    prompt = (
+        f"Compare two AI assistant responses for how well they follow user rules.\n\n"
+        f"USER RULES:\n{constraint_text}\n\n"
+        f"RESPONSE A:\n{resp_a[:1500]}\n\n"
+        f"RESPONSE B:\n{resp_b[:1500]}\n\n"
+        f"Rate each response 1-5 for constraint compliance:\n"
+        f"  5 = Perfectly follows all rules\n"
+        f"  4 = Mostly follows rules, minor lapses\n"
+        f"  3 = Partially follows rules\n"
+        f"  2 = Mostly ignores rules\n"
+        f"  1 = Completely ignores rules\n\n"
+        f"Consider:\n"
+        f"- Metric measurements (g, ml, kg) primary with imperial in parentheses = following the metric rule\n"
+        f"- Imperial primary (cups, pounds) with metric in parentheses = NOT following\n"
+        f"- Budget alternatives, cheaper options, substitutions = following the substitution rule\n"
+        f"- Minor units (tablespoons, teaspoons) alone don't violate the metric rule\n\n"
+        f"Output EXACTLY in this format (3 lines):\n"
+        f"A: <score>\n"
+        f"B: <score>\n"
+        f"REASON: <one sentence explaining the difference>"
+    )
+    
+    try:
+        result = _llm_client.call(
+            system_prompt="You are an impartial evaluator comparing AI responses. Be fair and specific.",
+            user_prompt=prompt,
+            model=_judge_model,
+            temperature=0.0,
+            max_tokens=256,
+        )
+        
+        if not result:
+            out = {"winner": "tie", "score_a": 3, "score_b": 3}
+            _judge_cache[cache_key] = out
+            return out
+        
+        # Parse "A: X\nB: Y\nREASON: ..."
+        lines = result.strip().split("\n")
+        score_a, score_b = 3, 3
+        reasoning = ""
+        for line in lines:
+            line = line.strip()
+            if line.startswith("A:"):
+                try:
+                    score_a = int(re.search(r'\d', line).group())
+                except (AttributeError, ValueError):
+                    pass
+            elif line.startswith("B:"):
+                try:
+                    score_b = int(re.search(r'\d', line).group())
+                except (AttributeError, ValueError):
+                    pass
+            elif line.startswith("REASON:"):
+                reasoning = line[7:].strip()
+        
+        if score_a > score_b:
+            winner = name_a
+        elif score_b > score_a:
+            winner = name_b
+        else:
+            winner = "tie"
+        
+        out = {"winner": winner, "score_a": score_a, "score_b": score_b, "reasoning": reasoning}
+        _judge_cache[cache_key] = out
+        return out
+        
+    except Exception as e:
+        logger.warning(f"Pairwise judge failed: {e}")
+        out = {"winner": "tie", "score_a": 3, "score_b": 3, "reasoning": f"Judge error: {e}"}
+        _judge_cache[cache_key] = out
+        return out

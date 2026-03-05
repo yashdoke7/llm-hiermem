@@ -1,6 +1,6 @@
 # Requirements for HierMem
 # Core
-chromadb>=0.4.22
+chromadb>=0.4.22,<0.6.0
 sentence-transformers>=2.2.2
 litellm>=1.0.0
 pydantic>=2.0.0
