@@ -117,7 +117,6 @@ class LLMClient:
     def __init__(self, provider: str = None):
         self.provider = provider or config.DEFAULT_PROVIDER
         self._call_count = 0
-        self._budget = _get_budget(self.provider, model or "")
 
     def call(self, system_prompt: str, user_prompt: str,
              model: str = None, temperature: float = 0.3,
@@ -125,16 +124,19 @@ class LLMClient:
         """Make an LLM API call with proactive rate limiting and retry."""
         model = model or config.MAIN_LLM_MODEL
 
+        # Use per-model budget (e.g. 70b has tighter TPM than 8b)
+        budget = _get_budget(self.provider, model)
+
         # Estimate tokens for this request
-        # Use actual max_tokens/3 as output estimate (responses rarely max out)
+        # Cap output estimate at 1500 — responses rarely max out the full budget
         est_prompt_tokens = (len(system_prompt) + len(user_prompt)) // 4
-        est_output_tokens = min(max_tokens, 1500)  # cap estimate at 1500 to avoid over-throttling
+        est_output_tokens = min(max_tokens, 1500)
         est_total = est_prompt_tokens + est_output_tokens
 
         for attempt in range(config.MAX_RETRIES):
             # Proactive wait based on sliding window
-            if self._budget:
-                self._budget.wait_if_needed(est_total)
+            if budget:
+                budget.wait_if_needed(est_total)
 
             try:
                 try:
@@ -146,8 +148,8 @@ class LLMClient:
                 
                 # Record actual usage (estimate: prompt + response)
                 actual_tokens = est_prompt_tokens + len(resp or "") // 4
-                if self._budget:
-                    self._budget.record(actual_tokens)
+                if budget:
+                    budget.record(actual_tokens)
                 self._call_count += 1
                 return resp
 
@@ -168,9 +170,8 @@ class LLMClient:
                     print(f"  [Rate limited] Waiting {wait:.0f}s before retry "
                           f"{attempt+1}/{config.MAX_RETRIES}...")
                     time.sleep(wait)
-                    # Record estimated tokens so the budget knows the window is hot
-                    if self._budget:
-                        self._budget.record(est_total // 2)
+                    if budget:
+                        budget.record(est_total // 2)
                     continue
                 raise
 
@@ -187,6 +188,11 @@ class LLMClient:
         # Set timeout to 20min to cover curator + main LLM in HYBRID mode.
         timeout = 1200 if "ollama" in model_str else 120
         
+        extra_kwargs = {}
+        if "ollama" in model_str:
+            # Ensure context window is large enough for long conversations
+            extra_kwargs["num_ctx"] = config.OLLAMA_CONTEXT_SIZE
+        
         response = litellm.completion(
             model=model_str,
             messages=[
@@ -196,6 +202,7 @@ class LLMClient:
             temperature=temperature,
             max_tokens=max_tokens,
             timeout=timeout,
+            **extra_kwargs,
         )
         return response.choices[0].message.content
 
