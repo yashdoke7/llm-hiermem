@@ -7,6 +7,7 @@ Includes sliding-window rate limiter (modeled on llm-reasoning-pipeline).
 """
 
 import time
+import re
 import json
 from typing import Optional, List, Tuple
 
@@ -156,21 +157,28 @@ class LLMClient:
             except Exception as e:
                 err_str = str(e).lower()
                 is_rate_limit = ("rate_limit" in err_str or "rate limit" in err_str 
-                                 or "429" in err_str)
-                is_daily_limit = ("tokens per day" in err_str or "tpd" in err_str)
-                
+                                 or "429" in err_str or "ratelimiterror" in err_str)
+                is_overloaded = ("503" in err_str or "service unavailable" in err_str
+                                 or "overloaded" in err_str or "high demand" in err_str)
+                is_daily_limit = ("tokens per day" in err_str or "tpd" in err_str
+                                  or "daily" in err_str and "quota" in err_str)
+
                 if is_daily_limit:
                     raise RuntimeError(
                         "Groq daily token quota exhausted. Wait until reset or "
                         "upgrade at console.groq.com/settings/billing"
                     ) from e
-                
-                if is_rate_limit:
-                    wait = min(20 * (2 ** attempt), 65)
-                    print(f"  [Rate limited] Waiting {wait:.0f}s before retry "
+
+                if is_rate_limit or is_overloaded:
+                    # Extract retry-after hint from error if present (e.g. Gemini "retry in 36s")
+                    retry_match = re.search(r'retry[^\d]*(\d+)', err_str)
+                    suggested = int(retry_match.group(1)) + 5 if retry_match else None
+                    wait = suggested or min(30 * (2 ** attempt), 120)
+                    label = "Overloaded" if is_overloaded else "Rate limited"
+                    print(f"  [{label}] Waiting {wait:.0f}s before retry "
                           f"{attempt+1}/{config.MAX_RETRIES}...")
                     time.sleep(wait)
-                    if budget:
+                    if budget and is_rate_limit:
                         budget.record(est_total // 2)
                     continue
                 raise
