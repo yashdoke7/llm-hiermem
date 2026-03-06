@@ -1,0 +1,45 @@
+{
+  "benchmark": "constraint_tracking",
+  "model": "qwen2.5:14b",
+  "provider": "ollama",
+  "curator_model": "ollama/qwen2.5:3b",
+  "published_at": "2026-03-05",
+  "run_dir": "results\\raw\\benchmarks\\qwen14b_run",
+  "num_conversations": 1,
+  "systems": {
+    "hiermem": {
+      "judge_score_avg": 8.0,
+      "judge_score_by_turn": {
+        "8": 8.0,
+        "15": 10.0,
+        "25": 6.0
+      },
+      "keyword_score_avg": 40.9,
+      "task_accuracy": 33.3,
+      "cvr": 66.7,
+      "total_turns": 30
+    },
+    "raw_llm": {
+      "judge_score_avg": 2.67,
+      "judge_score_by_turn": {
+        "8": 6.0,
+        "15": 1.0,
+        "25": 1.0
+      },
+      "keyword_score_avg": 4.2,
+      "task_accuracy": 0.0,
+      "cvr": 100.0,
+      "total_turns": 30
+    }
+  },
+  "pairwise": {
+    "system_a": "hiermem",
+    "system_b": "raw_llm",
+    "wins_a": 3,
+    "wins_b": 0,
+    "ties": 0,
+    "total": 3,
+    "win_rate_a": 100.0,
+    "win_rate_b": 0.0
+  }
+}
