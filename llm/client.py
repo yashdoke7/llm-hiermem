@@ -113,7 +113,7 @@ class LLMClient:
 
     def call(self, system_prompt: str, user_prompt: str,
              model: str = None, temperature: float = 0.3,
-             max_tokens: int = 2000) -> str:
+             max_tokens: int = 4096) -> str:
         """Make an LLM API call with proactive rate limiting and retry."""
         model = model or config.MAIN_LLM_MODEL
 
@@ -135,7 +135,7 @@ class LLMClient:
                                               temperature, max_tokens)
                 
                 # Record actual usage (estimate: prompt + response)
-                actual_tokens = est_prompt_tokens + len(resp) // 4
+                actual_tokens = est_prompt_tokens + len(resp or "") // 4
                 if self._budget:
                     self._budget.record(actual_tokens)
                 self._call_count += 1

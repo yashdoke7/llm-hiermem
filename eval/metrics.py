@@ -2,20 +2,25 @@
 Metrics — Compute all evaluation metrics.
 
 Evaluation approach:
-  - Primary: LLM-as-judge (uses curator/summarizer model to score responses)
-  - Fallback: Enhanced keyword matching (positive + negative keywords)
-  
+  - Primary: LLM-as-judge absolute scoring (MT-Bench / G-Eval style)
+      Each response is rated 1-10 independently against the stated constraints.
+      Average score per system is the headline metric.
+  - Secondary: Pairwise LLM comparison (head-to-head winner)
+  - Fallback: Enhanced keyword matching when no judge is available
+
 This follows standard LLM evaluation practice (MT-Bench, AlpacaEval):
 a stronger or equal model judges whether constraints are followed.
 
 Primary metrics:
-  1. Degradation Curve — accuracy at conversation checkpoints
-  2. Constraint Violation Rate (CVR) — % responses violating stated constraints
-  3. Task Accuracy — overall correctness
+  1. Judge score (1-10) — absolute quality per response, averaged across turns
+  2. Degradation Curve — accuracy at conversation checkpoints
+  3. Constraint Violation Rate (CVR) — % responses violating stated constraints
+  4. Task Accuracy — overall correctness
 
 Secondary metrics:
-  4. Latency per turn
-  5. Token usage per turn
+  5. Pairwise win rate — head-to-head comparison between systems
+  6. Latency per turn
+  7. Token usage per turn
 """
 
 import re
@@ -66,12 +71,13 @@ def init_llm_judge(provider: str = None, model: str = None):
 def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
     """Compute all metrics for all systems.
     
-    Uses gradient scoring (0-100) instead of binary pass/fail,
-    plus optional pairwise LLM comparison between systems.
+    Primary metric: absolute judge scores (1-10 per response, MT-Bench style).
+    Secondary: pairwise comparison, gradient keyword scores, binary accuracy.
     """
     metrics = {}
     for system_name, conversations in all_results.items():
         metrics[system_name] = {
+            "judge_scores": compute_judge_scores(conversations),   # PRIMARY: 1-10 absolute
             "constraint_violation_rate": compute_cvr(conversations),
             "task_accuracy": compute_task_accuracy(conversations),
             "degradation_curve": compute_degradation_curve(conversations),
@@ -700,6 +706,140 @@ def compute_per_turn_scores(conversations: List[Dict]) -> Dict[str, Any]:
     avg_score = round(sum(d["score"] for d in detail) / max(len(detail), 1), 1)
     
     return {"detail": detail, "summary": summary, "avg_score": avg_score}
+
+
+# ─── Absolute Judge Scoring (1–10, MT-Bench style) ──────────────────────────
+
+
+def compute_judge_scores(conversations: List[Dict]) -> Dict[str, Any]:
+    """Rate each checkpoint response independently on a 1-10 scale.
+    
+    This is the primary metric — follows MT-Bench / G-Eval methodology:
+      10 = Perfectly follows all stated constraints
+       7 = Mostly follows, minor gaps
+       5 = Partially follows (some constraints respected, others not)
+       3 = Mostly ignores constraints
+       1 = Completely ignores constraints
+    
+    Falls back to scaled keyword score (0-100 → 1-10) when judge unavailable.
+    
+    Returns:
+      avg_score: float (1-10) — headline metric
+      detail: [{turn, convo, judge_score, mode}]
+      summary: {turn: avg_score}
+    """
+    detail = []
+
+    for conv in conversations:
+        convo_id = conv.get("conversation_id", "?")
+        checkpoints = _deduplicate_checkpoints(conv.get("checkpoints", []))
+        results = _get_results(conv)
+        constraint_text = _get_constraint_text(conv)
+
+        for cp in checkpoints:
+            turn = cp.get("turn", 0)
+            response = _find_response_at_turn(results, turn)
+            if response is None or response.startswith("ERROR:"):
+                continue
+
+            if _judge_available and _llm_client:
+                score = _absolute_judge(response, constraint_text,
+                                        cp.get("constraint_tested", ""))
+            else:
+                # Fallback: scale keyword score from 0-100 to 1-10
+                kw_score = score_checkpoint(response, cp.get("keywords", []),
+                                            cp.get("keyword_groups"))
+                score = round(1.0 + (kw_score / 100.0) * 9.0, 1)
+
+            # Mode detection
+            mode = "unknown"
+            for r in results:
+                if r.get("turn") == turn:
+                    pd = r.get("pipeline_details")
+                    if pd is None:
+                        mode = "full_history"
+                    elif any("passthrough" in str(w) for w in pd.get("warnings", [])):
+                        mode = "passthrough"
+                    elif any("passthrough" in str(s) for s in pd.get("sources_used", [])):
+                        mode = "passthrough"
+                    else:
+                        strategy = pd.get("curator_strategy")
+                        mode = f"curator:{strategy}" if strategy else "curator"
+                    break
+
+            detail.append({
+                "turn": turn,
+                "convo": convo_id,
+                "judge_score": score,
+                "mode": mode,
+            })
+
+    from collections import defaultdict
+    turn_scores = defaultdict(list)
+    for d in detail:
+        turn_scores[d["turn"]].append(d["judge_score"])
+    summary = {str(t): round(sum(s) / len(s), 2) for t, s in sorted(turn_scores.items())}
+    avg_score = round(sum(d["judge_score"] for d in detail) / max(len(detail), 1), 2)
+
+    return {"avg_score": avg_score, "detail": detail, "summary": summary}
+
+
+def _absolute_judge(response: str, constraint_text: str,
+                    checkpoint_constraint: str = "") -> float:
+    """Rate a single response on a 1-10 scale for constraint compliance.
+    
+    Caches results to avoid duplicate API calls.
+    Returns a float 1.0–10.0.
+    """
+    cache_key = ("abs", hash(response[:2000]), hash(constraint_text))
+    if cache_key in _judge_cache:
+        return _judge_cache[cache_key]
+
+    constraints_clean = _parse_individual_constraints(constraint_text)
+
+    prompt = (
+        f"You are evaluating how well an AI assistant follows user-specified rules.\n\n"
+        f"RULES the user asked the assistant to follow:\n{constraints_clean}\n\n"
+        f"ASSISTANT'S RESPONSE:\n{response[:2000]}\n\n"
+        f"Rate the response on a scale of 1 to 10 for how well it follows ALL of the rules:\n"
+        f"  10 = Perfectly follows every rule stated\n"
+        f"   8 = Follows most rules, one minor lapse\n"
+        f"   6 = Follows some rules but misses others\n"
+        f"   4 = Mostly ignores the rules with occasional correct elements\n"
+        f"   2 = Almost completely ignores the rules\n"
+        f"   1 = Completely ignores all rules\n\n"
+        f"Notes:\n"
+        f"- Metric measurements (g, ml, kg) as primary with imperial in parentheses = following metric rule\n"
+        f"- Imperial measurements (cups, pounds) as primary = NOT following metric rule\n"
+        f"- Minor units (tablespoon, teaspoon) alone do not violate the metric rule\n"
+        f"- Budget alternatives or cheaper substitutions mentioned = following the substitution rule\n\n"
+        f"Output ONLY a single integer between 1 and 10."
+    )
+
+    try:
+        result = _llm_client.call(
+            system_prompt="You are an impartial evaluator. Output only a single integer 1-10.",
+            user_prompt=prompt,
+            model=_judge_model,
+            temperature=0.0,
+            max_tokens=128,
+        )
+
+        if not result:
+            logger.warning("Absolute judge returned empty response, defaulting to 5")
+            _judge_cache[cache_key] = 5.0
+            return 5.0
+
+        # Extract first integer from response
+        match = re.search(r'\b(10|[1-9])\b', result.strip())
+        score = float(match.group(1)) if match else 5.0
+        _judge_cache[cache_key] = score
+        return score
+
+    except Exception as e:
+        logger.warning(f"Absolute judge failed: {e}")
+        _judge_cache[cache_key] = 5.0
+        return 5.0
 
 
 # ─── Pairwise LLM Comparison ────────────────────────────────────────────────

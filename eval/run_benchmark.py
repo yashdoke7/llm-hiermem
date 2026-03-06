@@ -102,7 +102,8 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                     mode = " [pass]"
                 elif hasattr(result, 'curator_decision') and result.curator_decision:
                     mode = f" [{result.curator_decision.retrieval_strategy}]"
-            tokens = result.tokens_used if hasattr(result, 'tokens_used') else ""
+            tokens = result.tokens_used if hasattr(result, 'tokens_used') else \
+                     result.context_tokens if hasattr(result, 'context_tokens') else ""
             tokens_str = f" {tokens}tok" if tokens else ""
             
             # Estimate remaining time
@@ -298,6 +299,20 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     metrics_file.write_text(json.dumps(metrics, indent=2))
     print(f"Metrics saved to {metrics_file}")
     
+    # Quick metrics summary
+    print("\n" + "="*50)
+    for sys_name, m in metrics.items():
+        if sys_name == "pairwise_comparison":
+            continue
+        js = m.get("judge_scores", {})
+        print(f"  {sys_name}: judge={js.get('avg_score','?')}/10  "
+              f"accuracy={m['task_accuracy']*100:.0f}%")
+    if "pairwise_comparison" in metrics:
+        pc = metrics["pairwise_comparison"]
+        print(f"  Pairwise: {pc['system_a']}={pc['wins_a']}W "
+              f"{pc['system_b']}={pc['wins_b']}W ties={pc['ties']}")
+    print("="*50)
+    
     # Save run config
     run_info = {
         "timestamp": datetime.now().strftime("%Y%m%d_%H%M%S"),
@@ -376,7 +391,7 @@ if __name__ == "__main__":
         # Debug: show checkpoint evaluation details
         from eval.metrics import (evaluate_checkpoint, score_checkpoint,
             _get_results, _find_response_at_turn, _deduplicate_checkpoints,
-            _get_constraint_text, _score_keyword_group)
+            _get_constraint_text, _score_keyword_group, _absolute_judge)
         for sys_name, convos in all_results.items():
             print(f"\n--- {sys_name} ---")
             for ci, conv in enumerate(convos):
@@ -413,21 +428,43 @@ if __name__ == "__main__":
         metrics_file.write_text(json.dumps(metrics, indent=2))
         print(f"\nRe-scored metrics saved to {metrics_file}")
         
-        # Print summary
+        # Print summary — judge score (1-10) is the headline metric
+        print("\n" + "="*60)
+        print("RESULTS SUMMARY")
+        print("="*60)
         for sys_name, m in metrics.items():
             if sys_name == "pairwise_comparison":
-                pc = m
-                print(f"\n  Pairwise: {pc['system_a']} wins={pc['wins_a']} | "
-                      f"{pc['system_b']} wins={pc['wins_b']} | ties={pc['ties']}")
-                for c in pc.get("comparisons", []):
-                    print(f"    Turn {c['turn']}: A={c['score_a']} B={c['score_b']} → {c['winner']}"
-                          f" | {c.get('reasoning','')}")
                 continue
+            js = m.get("judge_scores", {})
             pts = m.get("per_turn_scores", {})
-            print(f"\n  {sys_name}: accuracy={m['task_accuracy']*100:.0f}% "
-                  f"avg_score={pts.get('avg_score', '?')}")
-            for d in pts.get("detail", []):
-                print(f"    Turn {d['turn']}: score={d['score']:.0f} ({d['mode']})")
+            print(f"\n  {sys_name}:")
+            if js.get("avg_score") is not None:
+                print(f"    Judge score (1-10): {js['avg_score']:.2f}  ← PRIMARY METRIC")
+            print(f"    Keyword score:      {pts.get('avg_score', '?')}/100")
+            print(f"    Accuracy (binary):  {m['task_accuracy']*100:.0f}%")
+            print(f"    CVR:                {m['constraint_violation_rate']*100:.0f}%")
+            for d in js.get("detail", []):
+                # Match kw score by both turn AND convo to avoid cross-convo collision
+                kw_score = next(
+                    (dd["score"] for dd in pts.get("detail", [])
+                     if dd["turn"] == d["turn"] and dd["convo"] == d["convo"]),
+                    "?"
+                )
+                print(f"      [{d['convo']}] Turn {d['turn']:2d}: "
+                      f"judge={d['judge_score']:.1f}/10  kw={kw_score}/100  ({d['mode']})")
+        
+        if "pairwise_comparison" in metrics:
+            pc = metrics["pairwise_comparison"]
+            print(f"\n  Pairwise ({pc['system_a']} vs {pc['system_b']}):")
+            print(f"    {pc['system_a']} wins: {pc['wins_a']}/{pc['total']} "
+                  f"({pc['win_rate_a']:.0f}%)")
+            print(f"    {pc['system_b']} wins: {pc['wins_b']}/{pc['total']} "
+                  f"({pc['win_rate_b']:.0f}%)")
+            print(f"    ties: {pc['ties']}")
+            for c in pc.get("comparisons", []):
+                print(f"      Turn {c['turn']:2d}: A={c['score_a']} B={c['score_b']} "
+                      f"→ {c['winner']} | {c.get('reasoning', '')}")
+        print("="*60)
     else:
         systems = list(SYSTEMS.keys()) if "all" in args.systems else args.systems
         output_dir = Path(args.output) if args.output else None
