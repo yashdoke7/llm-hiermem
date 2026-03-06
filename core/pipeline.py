@@ -75,12 +75,13 @@ class HierMemPipeline:
         """Factory method to create a fully initialized pipeline."""
         from memory.vector_store import VectorStore
         
-        provider = provider or config.DEFAULT_PROVIDER
+        provider = provider or config.MAIN_PROVIDER
         
-        # Initialize LLM clients
-        main_llm = LLMClient(provider=provider)
-        curator_llm = LLMClient(provider=provider)
-        summarizer_llm = LLMClient(provider=provider)
+        # Initialize LLM clients — each role can use a different provider
+        # e.g. main on Groq, curator/summarizer on local ollama
+        main_llm = LLMClient(provider=config.MAIN_PROVIDER)
+        curator_llm = LLMClient(provider=config.CURATOR_PROVIDER)
+        summarizer_llm = LLMClient(provider=config.SUMMARIZER_PROVIDER)
         
         # Initialize stores
         vector_store = VectorStore()

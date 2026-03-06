@@ -76,21 +76,29 @@ class TokenBudget:
 _budgets = {}
 
 
-def _get_budget(provider: str) -> Optional[TokenBudget]:
-    """Get or create a shared TokenBudget for the provider."""
+def _get_budget(provider: str, model: str = "") -> Optional[TokenBudget]:
+    """Get or create a shared TokenBudget for the provider+model combination."""
     if provider == "ollama":
         return None  # No rate limiting for local
-    if provider not in _budgets:
+    
+    budget_key = f"{provider}:{model}" if model else provider
+    if budget_key not in _budgets:
         if provider == "groq":
-            _budgets[provider] = TokenBudget(tpm_limit=12000, rpm_limit=30, min_gap=5.0)
+            # Per-model limits (free tier) — https://console.groq.com/docs/rate-limits
+            if "70b" in model or "versatile" in model:
+                _budgets[budget_key] = TokenBudget(tpm_limit=6000, rpm_limit=30, min_gap=3.0)
+            elif "qwq" in model or "32b" in model:
+                _budgets[budget_key] = TokenBudget(tpm_limit=6000, rpm_limit=30, min_gap=3.0)
+            else:  # 8b-instant and others
+                _budgets[budget_key] = TokenBudget(tpm_limit=20000, rpm_limit=30, min_gap=2.0)
         elif provider == "openai":
-            _budgets[provider] = TokenBudget(tpm_limit=90000, rpm_limit=60, min_gap=1.0)
+            _budgets[budget_key] = TokenBudget(tpm_limit=90000, rpm_limit=60, min_gap=1.0)
         elif provider == "google":
             # Gemini free tier: 15 RPM, 250k TPM → stay under 10 RPM for safety
-            _budgets[provider] = TokenBudget(tpm_limit=250000, rpm_limit=10, min_gap=7.0)
+            _budgets[budget_key] = TokenBudget(tpm_limit=250000, rpm_limit=10, min_gap=7.0)
         else:
-            _budgets[provider] = TokenBudget(tpm_limit=60000, rpm_limit=60, min_gap=1.0)
-    return _budgets[provider]
+            _budgets[budget_key] = TokenBudget(tpm_limit=60000, rpm_limit=60, min_gap=1.0)
+    return _budgets[budget_key]
 
 
 class LLMClient:
@@ -109,7 +117,7 @@ class LLMClient:
     def __init__(self, provider: str = None):
         self.provider = provider or config.DEFAULT_PROVIDER
         self._call_count = 0
-        self._budget = _get_budget(self.provider)
+        self._budget = _get_budget(self.provider, model or "")
 
     def call(self, system_prompt: str, user_prompt: str,
              model: str = None, temperature: float = 0.3,
@@ -118,8 +126,10 @@ class LLMClient:
         model = model or config.MAIN_LLM_MODEL
 
         # Estimate tokens for this request
+        # Use actual max_tokens/3 as output estimate (responses rarely max out)
         est_prompt_tokens = (len(system_prompt) + len(user_prompt)) // 4
-        est_total = est_prompt_tokens + max_tokens
+        est_output_tokens = min(max_tokens, 1500)  # cap estimate at 1500 to avoid over-throttling
+        est_total = est_prompt_tokens + est_output_tokens
 
         for attempt in range(config.MAX_RETRIES):
             # Proactive wait based on sliding window
@@ -173,6 +183,10 @@ class LLMClient:
         
         model_str = self._litellm_model_string(model)
         
+        # Large local models (32b+) on CPU can take 10-15min per turn.
+        # Set timeout to 20min to cover curator + main LLM in HYBRID mode.
+        timeout = 1200 if "ollama" in model_str else 120
+        
         response = litellm.completion(
             model=model_str,
             messages=[
@@ -181,6 +195,7 @@ class LLMClient:
             ],
             temperature=temperature,
             max_tokens=max_tokens,
+            timeout=timeout,
         )
         return response.choices[0].message.content
 

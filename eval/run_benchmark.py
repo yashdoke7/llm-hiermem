@@ -244,7 +244,12 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
             continue
         
         print(f"\n{'='*60}")
-        print(f"Running: {system_name} | Provider: {config.DEFAULT_PROVIDER}")
+        main_prov = config.MAIN_PROVIDER
+        cur_prov = config.CURATOR_PROVIDER
+        if main_prov == cur_prov:
+            print(f"Running: {system_name} | Provider: {main_prov}")
+        else:
+            print(f"Running: {system_name} | main={main_prov}, curator={cur_prov}")
         print(f"Models: main={config.MAIN_LLM_MODEL}, curator={config.CURATOR_MODEL}")
         print(f"{'='*60}")
         

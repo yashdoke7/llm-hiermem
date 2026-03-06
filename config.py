@@ -19,6 +19,13 @@ PROMPTS_PATH = PROJECT_ROOT / "llm" / "prompts"
 # === LLM Provider Settings ===
 DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "ollama")
 
+# Per-role providers — set these to use different providers for different roles.
+# If not set, falls back to DEFAULT_PROVIDER.
+# Example: main on Groq (fast/strong), curator/summarizer on local ollama (free/unlimited)
+MAIN_PROVIDER = os.getenv("MAIN_PROVIDER", DEFAULT_PROVIDER)
+CURATOR_PROVIDER = os.getenv("CURATOR_PROVIDER", DEFAULT_PROVIDER)
+SUMMARIZER_PROVIDER = os.getenv("SUMMARIZER_PROVIDER", CURATOR_PROVIDER)
+
 # Model assignments per role
 # For Ollama: use "ollama/model_name" format
 # For Groq: "llama-3.1-70b-versatile", "llama-3.1-8b-instant"
@@ -54,7 +61,7 @@ ZONE_4_BUDGET = 1000           # Current prompt zone (flexible)
 # When conversation history fits within this token threshold, use full history
 # (like raw LLM) instead of curated context. Avoids information loss on short
 # conversations. Memory archiving still runs in the background.
-PASSTHROUGH_THRESHOLD = int(TOTAL_CONTEXT_BUDGET * 0.70)  # 4200 tokens
+PASSTHROUGH_THRESHOLD = int(TOTAL_CONTEXT_BUDGET * 0.90)  # 5400 tokens — defer curation longer on slow hardware
 
 # === Curator Settings ===
 MAX_SEGMENTS_TO_FETCH = 4      # Curator can select at most this many segments
