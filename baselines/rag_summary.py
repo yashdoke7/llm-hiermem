@@ -34,6 +34,7 @@ class RAGSummaryBaseline:
         self.llm = LLMClient(provider=provider or config.DEFAULT_PROVIDER)
         self.model = model or config.MAIN_LLM_MODEL
         self.vector_store = VectorStore(collection_name="rag_summary_baseline")
+        self.vector_store.clear()  # fresh store per conversation
         self.top_k = top_k
         self.max_context_tokens = max_context_tokens
         self.max_summary_tokens = max_summary_tokens
