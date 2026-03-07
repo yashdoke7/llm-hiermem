@@ -409,16 +409,11 @@ def _llm_judge_evaluate(response: str, constraint_text: str,
 
 
 def _parse_individual_constraints(constraint_text: str) -> str:
-    """Parse the raw constraint setup message into clean numbered rules."""
-    rules = []
-    text = constraint_text.lower()
-    for pattern in [
-        r"(?:always|never|please always|make sure to|don't forget to)\s+[^,.!?]+",
-    ]:
-        matches = re.findall(pattern, text)
-        rules.extend(matches)
-    if rules:
-        return "\n".join(f"{i+1}. {r.strip()}" for i, r in enumerate(rules))
+    """Return constraint text as-is — the raw user message is already readable.
+    
+    Previous regex parsing was mangling constraints (e.g. matching 'never' inside
+    'whenever') and confusing the judge. The original user message is clearest.
+    """
     return constraint_text
 
 
@@ -791,16 +786,19 @@ def _absolute_judge(response: str, constraint_text: str,
     Caches results to avoid duplicate API calls.
     Returns a float 1.0–10.0.
     """
-    cache_key = ("abs", hash(response[:2000]), hash(constraint_text))
+    cache_key = ("abs", hash(response[:4000]), hash(constraint_text))
     if cache_key in _judge_cache:
         return _judge_cache[cache_key]
 
     constraints_clean = _parse_individual_constraints(constraint_text)
 
+    # Truncate to 4000 chars so the full response (including later try/except) is visible
+    response_text = response[:4000]
+
     prompt = (
         f"You are evaluating how well an AI assistant follows user-specified rules.\n\n"
         f"RULES the user asked the assistant to follow:\n{constraints_clean}\n\n"
-        f"ASSISTANT'S RESPONSE:\n{response[:2000]}\n\n"
+        f"ASSISTANT'S RESPONSE:\n{response_text}\n\n"
         f"Rate the response on a scale of 1 to 10 for how well it follows ALL of the rules:\n"
         f"  10 = Perfectly follows every rule stated\n"
         f"   8 = Follows most rules, one minor lapse\n"
@@ -813,16 +811,17 @@ def _absolute_judge(response: str, constraint_text: str,
         f"- Imperial measurements (cups, pounds) as primary = NOT following metric rule\n"
         f"- Minor units (tablespoon, teaspoon) alone do not violate the metric rule\n"
         f"- Budget alternatives or cheaper substitutions mentioned = following the substitution rule\n\n"
-        f"Output ONLY a single integer between 1 and 10."
+        f"Output your score as: SCORE: <number>\n"
+        f"Then optionally one sentence of reasoning."
     )
 
     try:
         result = _llm_client.call(
-            system_prompt="You are an impartial evaluator. Output only a single integer 1-10.",
+            system_prompt="You are an impartial evaluator. Always output your score as: SCORE: <number from 1 to 10>",
             user_prompt=prompt,
             model=_judge_model,
             temperature=0.0,
-            max_tokens=128,
+            max_tokens=256,
         )
 
         if not result:
@@ -830,9 +829,14 @@ def _absolute_judge(response: str, constraint_text: str,
             _judge_cache[cache_key] = 5.0
             return 5.0
 
-        # Extract first integer from response
-        match = re.search(r'\b(10|[1-9])\b', result.strip())
-        score = float(match.group(1)) if match else 5.0
+        # Try to extract "SCORE: N" first (most reliable)
+        score_match = re.search(r'SCORE:\s*(10|[1-9])', result, re.IGNORECASE)
+        if score_match:
+            score = float(score_match.group(1))
+        else:
+            # Fallback: find the LAST standalone integer in response (avoids numbered lists)
+            all_matches = re.findall(r'(?<!\d)(10|[1-9])(?!\d)', result.strip())
+            score = float(all_matches[-1]) if all_matches else 5.0
         _judge_cache[cache_key] = score
         return score
 
@@ -921,15 +925,15 @@ def _pairwise_judge(resp_a: str, resp_b: str, constraint_text: str,
     Returns {"winner": name_a|name_b|"tie", "score_a": 1-5, "score_b": 1-5}
     """
     # Check cache
-    cache_key = (hash(resp_a[:1500]), hash(resp_b[:1500]), hash(constraint_text))
+    cache_key = (hash(resp_a[:3000]), hash(resp_b[:3000]), hash(constraint_text))
     if cache_key in _judge_cache:
         return _judge_cache[cache_key]
     
     prompt = (
         f"Compare two AI assistant responses for how well they follow user rules.\n\n"
         f"USER RULES:\n{constraint_text}\n\n"
-        f"RESPONSE A:\n{resp_a[:1500]}\n\n"
-        f"RESPONSE B:\n{resp_b[:1500]}\n\n"
+        f"RESPONSE A:\n{resp_a[:3000]}\n\n"
+        f"RESPONSE B:\n{resp_b[:3000]}\n\n"
         f"Rate each response 1-5 for constraint compliance:\n"
         f"  5 = Perfectly follows all rules\n"
         f"  4 = Mostly follows rules, minor lapses\n"

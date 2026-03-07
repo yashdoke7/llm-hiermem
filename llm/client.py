@@ -156,10 +156,14 @@ class LLMClient:
 
             except Exception as e:
                 err_str = str(e).lower()
+                # Check both string content AND exception class name for reliability
+                exc_type = type(e).__name__.lower()
                 is_rate_limit = ("rate_limit" in err_str or "rate limit" in err_str 
-                                 or "429" in err_str or "ratelimiterror" in err_str)
+                                 or "429" in err_str or "ratelimiterror" in err_str
+                                 or "ratelimit" in exc_type)
                 is_overloaded = ("503" in err_str or "service unavailable" in err_str
-                                 or "overloaded" in err_str or "high demand" in err_str)
+                                 or "overloaded" in err_str or "high demand" in err_str
+                                 or "serviceunavailable" in exc_type or "unavailable" in exc_type)
                 is_daily_limit = ("tokens per day" in err_str or "tpd" in err_str
                                   or "daily" in err_str and "quota" in err_str)
 
@@ -173,7 +177,12 @@ class LLMClient:
                     # Extract retry-after hint from error if present (e.g. Gemini "retry in 36s")
                     retry_match = re.search(r'retry[^\d]*(\d+)', err_str)
                     suggested = int(retry_match.group(1)) + 5 if retry_match else None
-                    wait = suggested or min(30 * (2 ** attempt), 120)
+                    if suggested:
+                        wait = suggested
+                    elif is_overloaded:
+                        wait = min(15 * (2 ** attempt), 60)  # 15→30→60s for transient overload
+                    else:
+                        wait = min(30 * (2 ** attempt), 120)  # 30→60→120s for rate limits
                     label = "Overloaded" if is_overloaded else "Rate limited"
                     print(f"  [{label}] Waiting {wait:.0f}s before retry "
                           f"{attempt+1}/{config.MAX_RETRIES}...")
