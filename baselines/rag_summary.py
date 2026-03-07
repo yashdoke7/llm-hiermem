@@ -21,6 +21,7 @@ class RAGSummaryTurnResult:
     assistant_response: str
     context_tokens: int
     summary_tokens: int
+    pipeline_details: dict = None
 
 
 class RAGSummaryBaseline:
@@ -52,14 +53,29 @@ class RAGSummaryBaseline:
                 query_text=user_message, n_results=self.top_k
             )
 
-        # Build context with summary + retrieved + current
+        # Build context with summary + retrieved + current, respecting token budget
+        current_req_tokens = count_tokens(f"\n=== CURRENT REQUEST ===\n{user_message}")
+        budget = self.max_context_tokens - current_req_tokens - 50
+
         context_parts = []
         if self.rolling_summary:
-            context_parts.append(f"=== CONVERSATION SUMMARY ===\n{self.rolling_summary}")
+            summary_block = f"=== CONVERSATION SUMMARY ===\n{self.rolling_summary}"
+            summary_tok = count_tokens(summary_block + "\n---\n")
+            if budget - summary_tok >= 0:
+                context_parts.append(summary_block)
+                budget -= summary_tok
         if retrieved:
-            context_parts.append("=== RELEVANT PAST CONTEXT ===")
+            header = "=== RELEVANT PAST CONTEXT ==="
+            budget -= count_tokens(header + "\n---\n")
+            context_parts.append(header)
             for r in retrieved:
-                context_parts.append(r.get("text", ""))
+                chunk = r.get("text", "")
+                chunk_tok = count_tokens(chunk + "\n---\n")
+                if budget - chunk_tok >= 0:
+                    context_parts.append(chunk)
+                    budget -= chunk_tok
+                else:
+                    break
         context_parts.append(f"\n=== CURRENT REQUEST ===\n{user_message}")
         context = "\n---\n".join(context_parts)
 
@@ -84,7 +100,13 @@ class RAGSummaryBaseline:
             user_message=user_message,
             assistant_response=response,
             context_tokens=count_tokens(context),
-            summary_tokens=count_tokens(self.rolling_summary)
+            summary_tokens=count_tokens(self.rolling_summary),
+            pipeline_details={
+                "vector_queries": len(retrieved),
+                "sources_used": [f"semantic:turn_{r.get('metadata',{}).get('turn','?')}" for r in retrieved],
+                "context_tokens_used": count_tokens(context),
+                "summary_tokens": count_tokens(self.rolling_summary),
+            }
         )
 
     def _update_summary(self, user_msg: str, assistant_msg: str):

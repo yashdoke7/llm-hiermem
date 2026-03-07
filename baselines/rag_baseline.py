@@ -21,6 +21,7 @@ class RAGTurnResult:
     assistant_response: str
     context_tokens: int
     chunks_retrieved: int
+    pipeline_details: dict = None
 
 
 class RAGBaseline:
@@ -49,12 +50,23 @@ class RAGBaseline:
                 query_text=user_message, n_results=self.top_k
             )
 
-        # Build context
+        # Build context, respecting token budget
+        current_req_tokens = count_tokens(f"\n=== CURRENT REQUEST ===\n{user_message}")
+        budget = self.max_context_tokens - current_req_tokens - 50  # 50 for header/separators
+
         context_parts = []
         if retrieved:
-            context_parts.append("=== RELEVANT PAST CONTEXT ===")
+            header = "=== RELEVANT PAST CONTEXT ==="
+            budget -= count_tokens(header + "\n---\n")
+            context_parts.append(header)
             for r in retrieved:
-                context_parts.append(r.get("text", ""))
+                chunk = r.get("text", "")
+                chunk_tok = count_tokens(chunk + "\n---\n")
+                if budget - chunk_tok >= 0:
+                    context_parts.append(chunk)
+                    budget -= chunk_tok
+                else:
+                    break  # budget exhausted, skip remaining chunks
         context_parts.append(f"\n=== CURRENT REQUEST ===\n{user_message}")
         context = "\n---\n".join(context_parts)
 
@@ -76,7 +88,12 @@ class RAGBaseline:
             user_message=user_message,
             assistant_response=response,
             context_tokens=count_tokens(context),
-            chunks_retrieved=len(retrieved)
+            chunks_retrieved=len(retrieved),
+            pipeline_details={
+                "vector_queries": len(retrieved),  # top-k similarity queries fired
+                "sources_used": [f"semantic:turn_{r.get('metadata',{}).get('turn','?')}" for r in retrieved],
+                "context_tokens_used": count_tokens(context),
+            }
         )
 
     def reset(self):
