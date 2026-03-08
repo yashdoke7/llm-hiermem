@@ -43,6 +43,7 @@ build/
 
 docs/HierMem_Blueprint.md
 docs/HierMem_Blueprint.docx
+docs/paper_draft_outline.md
 
 # Real chat exports (private data — never push)
 eval/datasets/*/real_exports/
