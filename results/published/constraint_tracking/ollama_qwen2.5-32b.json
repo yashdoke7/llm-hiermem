@@ -1,0 +1,55 @@
+{
+  "benchmark": "constraint_tracking",
+  "model": "qwen2.5:32b",
+  "provider": "ollama",
+  "curator_model": "ollama/qwen2.5:3b",
+  "published_at": "2026-03-08",
+  "run_dir": "results\\raw\\benchmarks\\qwen32b_run",
+  "num_conversations": 1,
+  "systems": {
+    "hiermem": {
+      "judge_score_avg": 7.0,
+      "keyword_score_avg": 55.0,
+      "task_accuracy": 100.0,
+      "cvr": 0.0,
+      "total_turns": 30,
+      "by_conversation": {
+        "chatgpt_software_engineering_01": {
+          "judge_score_avg": 7.0,
+          "judge_score_by_turn": {
+            "8": 7.0,
+            "15": 8.0,
+            "25": 6.0
+          }
+        }
+      }
+    },
+    "raw_llm": {
+      "judge_score_avg": 6.0,
+      "keyword_score_avg": 50.6,
+      "task_accuracy": 100.0,
+      "cvr": 0.0,
+      "total_turns": 30,
+      "by_conversation": {
+        "chatgpt_software_engineering_01": {
+          "judge_score_avg": 6.0,
+          "judge_score_by_turn": {
+            "8": 6.0,
+            "15": 5.0,
+            "25": 7.0
+          }
+        }
+      }
+    }
+  },
+  "pairwise": {
+    "system_a": "hiermem",
+    "system_b": "raw_llm",
+    "wins_a": 3,
+    "wins_b": 0,
+    "ties": 0,
+    "total": 3,
+    "win_rate_a": 100.0,
+    "win_rate_b": 0.0
+  }
+}

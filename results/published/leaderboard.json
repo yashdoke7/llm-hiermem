@@ -1,15 +1,28 @@
 [
   {
+    "model": "qwen2.5:32b",
+    "provider": "ollama",
+    "benchmark": "constraint_tracking",
+    "published_at": "2026-03-08",
+    "hiermem_judge": 7.0,
+    "raw_llm_judge": 6.0,
+    "hiermem_accuracy": 100.0,
+    "raw_llm_accuracy": 100.0,
+    "pairwise_hiermem_wins": 3,
+    "pairwise_total": 3,
+    "num_conversations": 1
+  },
+  {
     "model": "qwen2.5:14b",
     "provider": "ollama",
     "benchmark": "constraint_tracking",
-    "published_at": "2026-03-05",
-    "hiermem_judge": 8.0,
-    "raw_llm_judge": 2.67,
-    "hiermem_accuracy": 33.3,
-    "raw_llm_accuracy": 0.0,
-    "pairwise_hiermem_wins": 3,
-    "pairwise_total": 3,
+    "published_at": "2026-03-08",
+    "hiermem_judge": 6.67,
+    "raw_llm_judge": 4.5,
+    "hiermem_accuracy": 83.3,
+    "raw_llm_accuracy": 50.0,
+    "pairwise_hiermem_wins": 4,
+    "pairwise_total": 6,
     "num_conversations": 1
   }
 ]
