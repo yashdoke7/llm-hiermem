@@ -19,21 +19,26 @@ class TokenBudget:
     
     Tracks actual token usage in a 60s window and waits proactively
     when approaching limits, rather than reacting to 429 errors.
+    Supports optional RPD (requests per day) hard stop.
     """
 
     def __init__(self, tpm_limit: int = 12000, rpm_limit: int = 30,
-                 min_gap: float = 5.0):
+                 min_gap: float = 5.0, rpd_limit: int = None):
         self.tpm_limit = tpm_limit
         self.rpm_limit = rpm_limit
         self.min_gap = min_gap
+        self.rpd_limit = rpd_limit  # hard daily cap (e.g. Gemini free: 20)
         self._requests: List[float] = []
         self._tokens: List[Tuple[float, int]] = []
         self._last_request: float = 0.0
+        self._daily_requests: List[float] = []  # tracks 24h window for RPD
 
     def _clean(self, window: float = 60.0):
         now = time.time()
         self._requests = [t for t in self._requests if now - t < window]
         self._tokens = [(t, n) for t, n in self._tokens if now - t < window]
+        if self.rpd_limit:
+            self._daily_requests = [t for t in self._daily_requests if now - t < 86400]
 
     def wait_if_needed(self, estimated_tokens: int = 500):
         """Block until it's safe to make another request."""
@@ -44,6 +49,15 @@ class TokenBudget:
             time.sleep(self.min_gap - since_last)
 
         self._clean()
+
+        # Check RPD: hard stop with clear message
+        if self.rpd_limit and len(self._daily_requests) >= self.rpd_limit:
+            oldest = self._daily_requests[0]
+            sleep = 86400 - (time.time() - oldest) + 10
+            hours = sleep / 3600
+            print(f"\n  [Rate limit] RPD LIMIT REACHED ({len(self._daily_requests)}/{self.rpd_limit} daily requests)")
+            print(f"  Resume in {hours:.1f} hours (run same command again tomorrow)")
+            raise RuntimeError(f"Daily request limit ({self.rpd_limit} RPD) reached. Resume tomorrow.")
 
         # Check RPM: trigger at 60% to be safe
         rpm_threshold = int(self.rpm_limit * 0.6)
@@ -71,6 +85,8 @@ class TokenBudget:
         self._last_request = now
         self._requests.append(now)
         self._tokens.append((now, tokens))
+        if self.rpd_limit:
+            self._daily_requests.append(now)
 
 
 # Shared rate limiters per provider (so all LLMClient instances share the budget)
@@ -95,8 +111,14 @@ def _get_budget(provider: str, model: str = "") -> Optional[TokenBudget]:
         elif provider == "openai":
             _budgets[budget_key] = TokenBudget(tpm_limit=90000, rpm_limit=60, min_gap=1.0)
         elif provider == "google":
-            # Gemini free tier: 15 RPM, 250k TPM → stay under 10 RPM for safety
-            _budgets[budget_key] = TokenBudget(tpm_limit=250000, rpm_limit=10, min_gap=7.0)
+            # Gemini free tier rates vary by model:
+            # gemini-2.5-flash-preview: 5 RPM, 20 RPD, 250k TPM
+            # gemini-1.5-flash / flash-lite: 15 RPM, 250k TPM (no RPD cap published)
+            if "2.5" in model:
+                _budgets[budget_key] = TokenBudget(tpm_limit=250000, rpm_limit=5, min_gap=13.0, rpd_limit=20)
+            else:
+                # gemini-3.1-flash-lite-preview (judge) — 15 RPM, stay under 10 for safety
+                _budgets[budget_key] = TokenBudget(tpm_limit=250000, rpm_limit=10, min_gap=7.0)
         else:
             _budgets[budget_key] = TokenBudget(tpm_limit=60000, rpm_limit=60, min_gap=1.0)
     return _budgets[budget_key]

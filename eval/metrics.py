@@ -218,9 +218,20 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
 
 def compute_degradation_curve(conversations: List[Dict],
                                checkpoints_at: List[int] = None) -> Dict[int, float]:
-    """Compute accuracy at different turn distances."""
+    """Compute accuracy at different turn distances.
+    
+    If checkpoints_at is None, derives thresholds from the actual checkpoint
+    turns present in the data (e.g. [8, 15, 25] for our benchmark).
+    """
     if checkpoints_at is None:
-        checkpoints_at = [1, 10, 20, 30, 40, 50]
+        # Derive from actual checkpoint turns in data instead of hardcoded list
+        all_turns = set()
+        for conv in conversations:
+            for cp in conv.get("checkpoints", []):
+                t = cp.get("turn", 0)
+                if t > 0:
+                    all_turns.add(t)
+        checkpoints_at = sorted(all_turns) if all_turns else [8, 15, 25]
 
     curve = {}
     for turn_threshold in checkpoints_at:

@@ -66,25 +66,63 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
 
 
 def run_system_on_conversation(system, system_name: str, conversation: Dict,
-                               conv_index: int = 0, total_convos: int = 1) -> Dict:
-    """Run a single system on a single conversation with detailed per-step logging."""
+                               conv_index: int = 0, total_convos: int = 1,
+                               partial_dir: Path = None) -> Dict:
+    """Run a single system on a single conversation with detailed per-step logging.
+    
+    partial_dir: if set, saves a checkpoint after every turn so runs interrupted
+    by rate limits or crashes can be resumed. On resume, saved responses are
+    replayed into system state and the run continues from the next turn.
+    """
     turns = conversation.get("turns", [])
     checkpoints = conversation.get("checkpoints", [])
     user_turns = [t for t in turns if t.get("role") == "user"]
     total_user_turns = len(user_turns)
-    turn_logs = []
-    total_start = time.time()
     conv_id = conversation.get("conversation_id", "unknown")
-    
-    print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({total_user_turns} turns)")
-    
+
+    # --- Resume: load partial progress and replay into system state ---
+    turn_logs = []
+    resume_from_turn = 0
+    partial_file = None
+    if partial_dir:
+        partial_dir.mkdir(parents=True, exist_ok=True)
+        partial_file = partial_dir / f"{system_name}_{conv_id}_partial.json"
+        if partial_file.exists():
+            saved = json.loads(partial_file.read_text(encoding="utf-8"))
+            saved_logs = saved.get("turn_logs", [])
+            if saved_logs:
+                resume_from_turn = saved_logs[-1]["turn"]
+                turn_logs = saved_logs
+                print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} — resuming from turn {resume_from_turn + 1}/{total_user_turns}")
+                # Replay saved responses into system history (raw_llm / rag)
+                for tl in saved_logs:
+                    u = tl.get("user", "")
+                    r = tl.get("response", "")
+                    if u and r and not r.startswith("ERROR:"):
+                        if hasattr(system, 'conversation_history'):
+                            system.conversation_history.append({"role": "user", "content": u})
+                            system.conversation_history.append({"role": "assistant", "content": r})
+                            system.turn_count = len(saved_logs)
+                        # HierMem full state replay not supported — would need curator re-runs
+                        # For HierMem, prefer not interrupting mid-run; partial saves still
+                        # preserve responses so data isn't lost completely.
+
+    if resume_from_turn == 0:
+        print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({total_user_turns} turns)")
+
+    total_start = time.time()
+
     for turn_data in turns:
         if turn_data.get("role") != "user":
             continue
-        
+
         user_msg = turn_data["text"]
         turn_num = turn_data.get("turn", 0)
         turn_type = turn_data.get("type", "unknown")
+
+        # Skip already-completed turns when resuming
+        if turn_num <= resume_from_turn:
+            continue
         
         turn_start = time.time()
         
@@ -156,9 +194,20 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
             }
         
         turn_logs.append(turn_log)
+
+        # Save partial progress after every turn so run can be resumed
+        if partial_file is not None:
+            partial_file.write_text(
+                json.dumps({"turn_logs": turn_logs}, ensure_ascii=False, indent=2),
+                encoding="utf-8"
+            )
     
     total_elapsed = round(time.time() - total_start, 2)
     print(f"  ✓ {conv_id} done in {total_elapsed/60:.1f}min (avg {total_elapsed/max(len(turn_logs),1):.1f}s/turn)")
+
+    # Clean up partial file on successful completion
+    if partial_file is not None and partial_file.exists():
+        partial_file.unlink()
     
     total_elapsed = round(time.time() - total_start, 2)
     
@@ -274,9 +323,12 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
                 system = HierMemPipeline.create()
             else:
                 system = SYSTEMS[system_name]()
-            
+
+            # partial_dir enables turn-level resume (useful for Groq rate limits)
+            partial_dir = output_dir / "partial"
             result = run_system_on_conversation(system, system_name, conv,
-                                                conv_index=i, total_convos=len(convos_to_run))
+                                                conv_index=i, total_convos=len(convos_to_run),
+                                                partial_dir=partial_dir)
             system_results.append(result)
             
             # Save after each conversation (crash-safe)
