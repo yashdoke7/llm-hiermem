@@ -40,6 +40,40 @@
           }
         }
       }
+    },
+    "rag": {
+      "judge_score_avg": 4.33,
+      "keyword_score_avg": 44.2,
+      "task_accuracy": 100.0,
+      "cvr": 0.0,
+      "total_turns": 30,
+      "by_conversation": {
+        "chatgpt_software_engineering_01": {
+          "judge_score_avg": 4.33,
+          "judge_score_by_turn": {
+            "8": 4.0,
+            "15": 3.0,
+            "25": 6.0
+          }
+        }
+      }
+    },
+    "rag_summary": {
+      "judge_score_avg": 5.33,
+      "keyword_score_avg": 49.1,
+      "task_accuracy": 100.0,
+      "cvr": 0.0,
+      "total_turns": 30,
+      "by_conversation": {
+        "chatgpt_software_engineering_01": {
+          "judge_score_avg": 5.33,
+          "judge_score_by_turn": {
+            "8": 5.0,
+            "15": 3.0,
+            "25": 8.0
+          }
+        }
+      }
     }
   },
   "pairwise": {
