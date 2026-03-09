@@ -37,10 +37,10 @@ class RawLLMBaseline:
     """
 
     def __init__(self, provider: str = None, model: str = None,
-                 max_context_tokens: int = 6000):
+                 max_context_tokens: int = None):
         self.llm = LLMClient(provider=provider or config.DEFAULT_PROVIDER)
         self.model = model or config.MAIN_LLM_MODEL
-        self.max_context_tokens = max_context_tokens
+        self.max_context_tokens = max_context_tokens or config.TOTAL_CONTEXT_BUDGET
         self.conversation_history: List[dict] = []
         self.turn_count = 0
 

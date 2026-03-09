@@ -30,13 +30,13 @@ class RAGBaseline:
     """
 
     def __init__(self, provider: str = None, model: str = None,
-                 top_k: int = 5, max_context_tokens: int = 6000):
+                 top_k: int = 5, max_context_tokens: int = None):
         self.llm = LLMClient(provider=provider or config.DEFAULT_PROVIDER)
         self.model = model or config.MAIN_LLM_MODEL
         self.vector_store = VectorStore(collection_name="rag_baseline")
         self.vector_store.clear()  # fresh store per conversation
         self.top_k = top_k
-        self.max_context_tokens = max_context_tokens
+        self.max_context_tokens = max_context_tokens or config.TOTAL_CONTEXT_BUDGET
         self.turn_count = 0
 
     def process_turn(self, user_message: str,

@@ -52,11 +52,16 @@ MAX_CONSTRAINT_TOKENS = 500    # Total token budget for constraint store
 MAX_CONSTRAINTS = 20           # Max active constraints
 
 # === Context Assembly Settings ===
-TOTAL_CONTEXT_BUDGET = 6000    # Max tokens in assembled context for main LLM
-ZONE_1_BUDGET = 500            # Constraints zone
-ZONE_2_BUDGET = 4000           # Relevant context zone
-ZONE_3_BUDGET = 500            # Peripheral awareness zone
-ZONE_4_BUDGET = 1000           # Current prompt zone (flexible)
+# TOTAL_CONTEXT_BUDGET: Max tokens in assembled context for main LLM.
+# Benchmark standard = 6000 (matches Groq free-tier 6000 TPM — ensures fair cross-model comparison).
+# Override for local/Gemini runs: TOTAL_CONTEXT_BUDGET=8000 in .env
+TOTAL_CONTEXT_BUDGET = int(os.getenv("TOTAL_CONTEXT_BUDGET", "6000"))
+# Zone budgets — Z1/Z3 are fixed (constraints don't need more space),
+# Z2 (relevant context) gets the remaining budget and scales up when budget grows.
+ZONE_1_BUDGET = 500                                                             # Constraints zone (fixed)
+ZONE_4_BUDGET = max(1000, TOTAL_CONTEXT_BUDGET // 6)                           # Current prompt zone (~17%)
+ZONE_3_BUDGET = 500                                                             # Peripheral zone (fixed)
+ZONE_2_BUDGET = TOTAL_CONTEXT_BUDGET - ZONE_1_BUDGET - ZONE_3_BUDGET - ZONE_4_BUDGET  # Relevant context (gets the rest)
 
 # === Adaptive Passthrough ===
 # When conversation history fits within this token threshold, use full history

@@ -30,15 +30,14 @@ class RAGSummaryBaseline:
     """
 
     def __init__(self, provider: str = None, model: str = None,
-                 top_k: int = 5, max_context_tokens: int = 6000,
+                 top_k: int = 5, max_context_tokens: int = None,
                  max_summary_tokens: int = 500):
         self.llm = LLMClient(provider=provider or config.DEFAULT_PROVIDER)
         self.model = model or config.MAIN_LLM_MODEL
         self.vector_store = VectorStore(collection_name="rag_summary_baseline")
         self.vector_store.clear()  # fresh store per conversation
         self.top_k = top_k
-        self.max_context_tokens = max_context_tokens
-        self.max_summary_tokens = max_summary_tokens
+        self.max_context_tokens = max_context_tokens or config.TOTAL_CONTEXT_BUDGET
         self.rolling_summary = ""
         self.turn_count = 0
 

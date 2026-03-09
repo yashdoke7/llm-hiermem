@@ -94,18 +94,36 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                 resume_from_turn = saved_logs[-1]["turn"]
                 turn_logs = saved_logs
                 print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} — resuming from turn {resume_from_turn + 1}/{total_user_turns}")
-                # Replay saved responses into system history (raw_llm / rag)
+                # Replay saved responses into system state
                 for tl in saved_logs:
                     u = tl.get("user", "")
                     r = tl.get("response", "")
                     if u and r and not r.startswith("ERROR:"):
                         if hasattr(system, 'conversation_history'):
+                            # raw_llm / rag — replay into flat conversation history
                             system.conversation_history.append({"role": "user", "content": u})
                             system.conversation_history.append({"role": "assistant", "content": r})
                             system.turn_count = len(saved_logs)
-                        # HierMem full state replay not supported — would need curator re-runs
-                        # For HierMem, prefer not interrupting mid-run; partial saves still
-                        # preserve responses so data isn't lost completely.
+                        elif hasattr(system, 'history') and hasattr(system, 'turn_count'):
+                            # HierMem — replay into self.history as minimal TurnResult objects
+                            # so passthrough mode builds full context and token estimates are correct.
+                            # constraint_store / archive won't be rebuilt, but passthrough will
+                            # include the full prior conversation (including constraint turn 1).
+                            from core.pipeline import TurnResult
+                            from core.assembler import AssembledContext
+                            system.history.append(TurnResult(
+                                turn_number=tl.get("turn", system.turn_count + 1),
+                                user_message=u,
+                                assistant_response=r,
+                                curator_decision=None,
+                                assembled_context=AssembledContext(
+                                    full_text="", total_tokens_est=0,
+                                    zone_breakdown={}, sources_used=[]
+                                ),
+                                warnings=["replayed_from_partial"],
+                                tokens_used=0,
+                            ))
+                            system.turn_count = len(saved_logs)
 
     if resume_from_turn == 0:
         print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({total_user_turns} turns)")
