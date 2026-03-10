@@ -41,6 +41,7 @@ Your output must be ONLY a valid JSON object (no markdown, no explanation):
     "segments_to_fetch": ["seg_001", "seg_003"],
     "semantic_queries": ["query1", "query2"],
     "peripheral_segments": ["seg_002"],
+    "fetch_full_turns": [],
     "reasoning": "brief explanation of choices"
 }
 
@@ -51,7 +52,10 @@ Rules:
 - Recent 2-3 turns are always auto-included — don't waste slots on them
 - For the first few turns of a conversation, segments_to_fetch may be empty
 - semantic_queries: write 1-3 short search queries to find relevant past content
-- peripheral_segments: segments that might be tangentially relevant (1-line summary only)"""
+- peripheral_segments: segments that might be tangentially relevant (1-line summary only)
+- fetch_full_turns: list turn numbers when you need the FULL raw content of a specific turn
+  (e.g. the actual code a user pasted, a file they shared). Use this for debugging scenarios
+  where a summary is not enough — e.g. [7, 12] to get the raw content of turns 7 and 12."""
 
 
 @dataclass
@@ -61,6 +65,7 @@ class CuratorDecision:
     segments_to_fetch: List[str]
     semantic_queries: List[str]
     peripheral_segments: List[str]
+    fetch_full_turns: List[int]  # Request L3 raw content for specific turn numbers
     reasoning: str
 
     @classmethod
@@ -71,6 +76,7 @@ class CuratorDecision:
             segments_to_fetch=[],
             semantic_queries=[],
             peripheral_segments=[],
+            fetch_full_turns=[],
             reasoning="No history to retrieve from."
         )
 
@@ -148,6 +154,7 @@ Return ONLY valid JSON."""
                 segments_to_fetch=data.get("segments_to_fetch", [])[:config.MAX_SEGMENTS_TO_FETCH],
                 semantic_queries=data.get("semantic_queries", [])[:config.MAX_SEMANTIC_QUERIES],
                 peripheral_segments=data.get("peripheral_segments", []),
+                fetch_full_turns=[int(t) for t in data.get("fetch_full_turns", []) if str(t).isdigit()],
                 reasoning=data.get("reasoning", "")
             )
         except (json.JSONDecodeError, KeyError, TypeError):
@@ -157,5 +164,6 @@ Return ONLY valid JSON."""
                 segments_to_fetch=[],
                 semantic_queries=[user_prompt[:200] if 'user_prompt' in dir() else ""],
                 peripheral_segments=[],
+                fetch_full_turns=[],
                 reasoning="Failed to parse curator response, falling back to semantic search."
             )

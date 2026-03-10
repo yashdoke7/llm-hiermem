@@ -225,12 +225,15 @@ class HierMemPipeline:
     def _build_full_history(self, current_message: str) -> str:
         """Build full conversation history as plain text (passthrough mode).
         
-        In passthrough mode, we send clean conversation history WITHOUT
-        zone markers or formatted constraints. The constraints are already
-        present naturally in the conversation (the user stated them).
-        Adding [RULE|P2] markers confuses small models.
+        Prepends any extracted constraints at the top so they remain prominent
+        even before the curator/HYBRID pipeline activates. This is defense-in-depth:
+        constraints in the conversation history are already present as raw text,
+        but surfacing them explicitly at the top mirrors Zone 1 behaviour.
         """
         lines = []
+        constraints_text = self.constraint_store.get_display_text()
+        if constraints_text.strip() and constraints_text != "No active constraints.":
+            lines.append(f"=== Active Rules ===\n{constraints_text}\n")
         for r in self.history:
             lines.append(f"User: {r.user_message}")
             lines.append(f"Assistant: {r.assistant_response}")
