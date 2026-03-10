@@ -171,6 +171,16 @@ class HierarchicalArchive:
             limit=n
         )
 
+    def get_full_turn_content(self, turn_number: int) -> Optional[str]:
+        """Fetch the full L3 raw content for a specific turn number."""
+        results = self.vector_store.get_by_metadata(
+            filters={"level": "L3", "turn": turn_number},
+            sort_by="turn",
+            descending=False,
+            limit=1
+        )
+        return results[0]["text"] if results else None
+
     def get_segment_ids(self) -> List[str]:
         """Get all segment IDs in order."""
         entries = sorted(self.l0_directory.values(), key=lambda e: e.turn_start)

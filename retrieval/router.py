@@ -74,6 +74,15 @@ class RetrievalRouter:
             if entry:
                 peripheral_summaries.append(entry.label)
 
+        # Fetch full L3 raw content for specifically requested turns
+        for turn_num in getattr(decision, 'fetch_full_turns', []):
+            content = self.archive.get_full_turn_content(turn_num)
+            if content and not self._is_duplicate(content, relevant_chunks):
+                # Insert at front so full content is prioritised in Zone 2
+                relevant_chunks.insert(0, ContextChunk.from_text(
+                    text=content, source=f"L3:turn_{turn_num}"
+                ))
+
         return relevant_chunks, peripheral_summaries
 
     def _is_duplicate(self, text: str, existing: List[ContextChunk],
