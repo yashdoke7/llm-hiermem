@@ -121,14 +121,10 @@ class PostProcessor:
 
     def _extract_constraints(self, user_msg: str, turn_number: int) -> List[dict]:
         """Use LLM to extract constraints from user message."""
-        # Quick regex pre-check: skip extraction if no constraint-like language
-        constraint_signals = [
-            r"\b(don'?t|never|always|must|should not|make sure|important|rules?|follow|remember)\b",
-            r"\b(prefer|use .+ instead|only use|not .+ but|please .+ all)\b",
-        ]
-        has_signal = any(re.search(p, user_msg, re.IGNORECASE) for p in constraint_signals)
-        if not has_signal:
-            return []
+        # Let the LLM extractor handle all cases — it returns [] for non-constraints.
+        # Regex pre-check was removed: it blocked casual constraints like
+        # "btw use rupees here" or "we switched from pandas to polars" that
+        # contain no explicit signal words but are still valid user preferences.
 
         prompt = CONSTRAINT_EXTRACTOR_PROMPT.format(user_msg=user_msg)
         
