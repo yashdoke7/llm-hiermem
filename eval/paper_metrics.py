@@ -283,7 +283,140 @@ def cvr_per_convo(system_results: list) -> dict:
     return out
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+def memory_efficiency(all_results: dict) -> Optional[dict]:
+    """Ratio of HierMem token usage to raw_llm token usage per turn.
+    
+    HierMem's key claim: same (or better) constraint adherence at lower context cost.
+    efficiency_ratio < 1.0 means HierMem used fewer tokens than raw_llm.
+    """
+    if "hiermem" not in all_results or "raw_llm" not in all_results:
+        return None
+    
+    # Collect per-turn token usage for both systems
+    hiermem_tokens = []
+    raw_llm_tokens = []
+    
+    hiermem_convos = {c.get("conversation_id"): c for c in all_results["hiermem"]}
+    raw_llm_convos = {c.get("conversation_id"): c for c in all_results["raw_llm"]}
+    
+    for cid in hiermem_convos:
+        if cid not in raw_llm_convos:
+            continue
+        for t in _get_turn_logs(hiermem_convos[cid]):
+            ctx = _context_tokens(t)
+            if ctx > 0:
+                hiermem_tokens.append(ctx)
+        for t in _get_turn_logs(raw_llm_convos[cid]):
+            ctx = _context_tokens(t)
+            if ctx > 0:
+                raw_llm_tokens.append(ctx)
+    
+    if not hiermem_tokens or not raw_llm_tokens:
+        return None
+    
+    avg_hiermem = mean(hiermem_tokens)
+    avg_raw = mean(raw_llm_tokens)
+    return {
+        "avg_tokens_hiermem": round(avg_hiermem),
+        "avg_tokens_raw_llm": round(avg_raw),
+        "efficiency_ratio": round(avg_hiermem / avg_raw, 3) if avg_raw > 0 else None,
+        "tokens_saved_pct": round((1 - avg_hiermem / avg_raw) * 100, 1) if avg_raw > 0 else None,
+    }
+
+
+def per_domain_accuracy(all_results: dict, metrics_rescored: dict) -> dict:
+    """Per-domain breakdown of judge score and CVR.
+    
+    Splits results by conversation domain (software_engineering, personal_finance, etc.)
+    so we can show whether HierMem advantage is domain-specific.
+    """
+    # Build domain map from conversation metadata in results
+    domain_map = {}  # cid -> domain
+    for system_results in all_results.values():
+        for conv in system_results:
+            cid = conv.get("conversation_id", "?")
+            # Try to infer domain from conversation_id
+            if "software_engineering" in cid or "_se" in cid:
+                domain_map[cid] = "software_engineering"
+            elif "personal_finance" in cid or "finance" in cid:
+                domain_map[cid] = "personal_finance"
+            elif "cooking" in cid or "recipe" in cid:
+                domain_map[cid] = "cooking"
+            else:
+                domain_map[cid] = "other"
+
+    output = {}
+    for system_name, system_results in all_results.items():
+        judge_detail = (metrics_rescored.get(system_name, {})
+                        .get("judge_scores", {}).get("detail", []))
+
+        # Group judge scores by domain
+        domain_scores = {}
+        for entry in judge_detail:
+            cid = entry.get("convo", "?")
+            domain = domain_map.get(cid, "other")
+            domain_scores.setdefault(domain, []).append(entry.get("judge_score", 0))
+
+        output[system_name] = {
+            domain: round(mean(scores), 2)
+            for domain, scores in domain_scores.items()
+            if scores
+        }
+    return output
+
+
+def degradation_by_position(all_results: dict, metrics_rescored: dict) -> dict:
+    """Constraint adherence score at each normalized position (20/40/60/80/100%).
+    
+    Normalizes checkpoint turns to position labels so plots are comparable
+    across datasets with different lengths (50-turn SE vs 30-turn Finance).
+    
+    The 5 checkpoints in each dataset represent 20/40/60/80/100% of user turns,
+    so position index 0=20%, 1=40%, 2=60%, 3=80%, 4=100%.
+    
+    Returns {system: {position_pct: avg_judge_score}}.
+    """
+    POSITIONS = ["20%", "40%", "60%", "80%", "100%"]
+    
+    output = {}
+    for system_name, system_results in all_results.items():
+        judge_detail = (metrics_rescored.get(system_name, {})
+                        .get("judge_scores", {}).get("detail", []))
+
+        # Build: cid -> sorted list of checkpoint turns in this conversation
+        cid_checkpoints = {}
+        for conv in system_results:
+            cid = conv.get("conversation_id", "?")
+            cp_turns = sorted(set(
+                cp.get("turn", 0) for cp in conv.get("checkpoints", [])
+                if cp.get("turn", 0) > 0
+            ))
+            if cp_turns:
+                cid_checkpoints[cid] = cp_turns
+
+        # Map each judge_detail entry to its position index
+        position_scores = {p: [] for p in POSITIONS}
+        for entry in judge_detail:
+            cid = entry.get("convo", "?")
+            turn = entry.get("turn", 0)
+            cp_turns = cid_checkpoints.get(cid, [])
+            if not cp_turns:
+                continue
+            try:
+                idx = cp_turns.index(turn)
+                if idx < len(POSITIONS):
+                    position_scores[POSITIONS[idx]].append(entry.get("judge_score", 0))
+            except ValueError:
+                pass
+
+        output[system_name] = {
+            pos: round(mean(scores), 2) if scores else None
+            for pos, scores in position_scores.items()
+        }
+    return output
+
+
+
 
 def analyze_all(results: dict, metrics_rescored: dict) -> dict:
     output = {}
@@ -304,11 +437,18 @@ def analyze_all(results: dict, metrics_rescored: dict) -> dict:
             "auto_correction_stats": auto_correction_stats(system_results, system_name),
             "mode_transition_turn": mode_transition_turn(system_results, system_name),
         }
+
+    # Cross-system metrics (not per-system)
+    output["_cross_system"] = {
+        "memory_efficiency": memory_efficiency(results),
+        "per_domain_accuracy": per_domain_accuracy(results, metrics_rescored),
+        "degradation_by_position": degradation_by_position(results, metrics_rescored),
+    }
     return output
 
 
 def print_report(data: dict):
-    systems = list(data.keys())
+    systems = [s for s in data.keys() if not s.startswith("_")]
     print("\n" + "=" * 70)
     print("  PAPER-GRADE METRICS REPORT")
     print("=" * 70)
@@ -327,8 +467,20 @@ def print_report(data: dict):
         arrow = "↓" if slope < -0.05 else ("↑" if slope > 0.05 else "→")
         print(f"  {s:<16} {e:>14} {m:>13} {l:>12}  {slope:>+.4f} {arrow}")
 
+    # Degradation by position (normalized, good for plotting)
+    cross = data.get("_cross_system", {})
+    dbp = cross.get("degradation_by_position", {})
+    if dbp:
+        print("\n  2. DEGRADATION CURVE BY POSITION (judge score at 20/40/60/80/100% of turns)")
+        print(f"  {'System':<16} {'20%':>8} {'40%':>8} {'60%':>8} {'80%':>8} {'100%':>8}")
+        print("  " + "-" * 57)
+        for s in systems:
+            row = dbp.get(s, {})
+            vals = [f"{row.get(p, 0) or 0:.2f}" if row.get(p) is not None else " N/A" for p in ["20%","40%","60%","80%","100%"]]
+            print(f"  {s:<16} {vals[0]:>8} {vals[1]:>8} {vals[2]:>8} {vals[3]:>8} {vals[4]:>8}")
+
     # First violation turn
-    print("\n  2. FIRST CONSTRAINT VIOLATION TURN")
+    print("\n  3. FIRST CONSTRAINT VIOLATION TURN")
     for s in systems:
         fvt = data[s]["first_violation_turn"]
         for cid, turn in fvt.items():
@@ -336,14 +488,28 @@ def print_report(data: dict):
             print(f"  {s:<16} [{cid}]  {val}")
 
     # CVR per convo
-    print("\n  3. CONSTRAINT VIOLATION RATE per conversation")
+    print("\n  4. CONSTRAINT VIOLATION RATE per conversation")
     for s in systems:
         cvr = data[s]["cvr_per_convo"]
         for cid, rate in cvr.items():
             print(f"  {s:<16} [{cid}]  CVR={rate*100:.1f}%")
 
-    # Context utilization
-    print("\n  4. CONTEXT BUDGET UTILIZATION (budget=6000 tokens)")
+    # Per-domain accuracy
+    pda = cross.get("per_domain_accuracy", {})
+    if pda:
+        domains = sorted(set(d for sys_d in pda.values() for d in sys_d))
+        if domains:
+            print("\n  5. PER-DOMAIN JUDGE SCORE")
+            header = f"  {'System':<16}" + "".join(f" {d[:12]:>13}" for d in domains)
+            print(header)
+            print("  " + "-" * (16 + 13 * len(domains)))
+            for s in systems:
+                row = pda.get(s, {})
+                vals = "".join(f" {row.get(d, 0) or 0:>13.2f}" if row.get(d) is not None else f" {'N/A':>13}" for d in domains)
+                print(f"  {s:<16}{vals}")
+
+    # Context utilization + memory efficiency
+    print("\n  6. CONTEXT BUDGET UTILIZATION (budget=6000 tokens)")
     print(f"  {'System':<16} {'Avg tokens':>12} {'Avg %':>8} {'Max %':>8}")
     print("  " + "-" * 48)
     for s in systems:
@@ -351,8 +517,19 @@ def print_report(data: dict):
         if cu:
             print(f"  {s:<16} {cu['avg_tokens']:>12} {cu['avg_utilization_pct']:>7.1f}% {cu['max_utilization_pct']:>7.1f}%")
 
+    me = cross.get("memory_efficiency")
+    if me:
+        ratio = me.get("efficiency_ratio")
+        saved = me.get("tokens_saved_pct")
+        print(f"\n  Memory efficiency (HierMem vs raw_llm):")
+        print(f"    HierMem avg tokens:  {me['avg_tokens_hiermem']:,}")
+        print(f"    raw_llm avg tokens:  {me['avg_tokens_raw_llm']:,}")
+        if ratio is not None:
+            direction = "fewer" if ratio < 1.0 else "more"
+            print(f"    Efficiency ratio:    {ratio:.3f}  ({abs(saved):.1f}% {direction} tokens)")
+
     # Response length consistency
-    print("\n  5. RESPONSE LENGTH CONSISTENCY")
+    print("\n  7. RESPONSE LENGTH CONSISTENCY")
     print(f"  {'System':<16} {'Avg chars':>12} {'Std dev':>10} {'CV (lower=better)':>20}")
     print("  " + "-" * 62)
     for s in systems:
@@ -361,7 +538,7 @@ def print_report(data: dict):
             print(f"  {s:<16} {rl['avg_chars']:>12} {rl['std_chars']:>10} {rl['cv']:>20.3f}")
 
     # Latency trend
-    print("\n  6. LATENCY TREND (seconds/turn)")
+    print("\n  8. LATENCY TREND (seconds/turn)")
     print(f"  {'System':<16} {'Early (≤T10)':>14} {'Mid (T11-20)':>13} {'Late (>T20)':>12}")
     print("  " + "-" * 58)
     for s in systems:
@@ -377,7 +554,7 @@ def print_report(data: dict):
         crr = hiermem_data["constraint_retrieval_rate"]
         mt = hiermem_data.get("mode_transition_turn")
         acs = hiermem_data.get("auto_correction_stats") or {}
-        print("\n  7. HIERMEM MECHANISM METRICS")
+        print("\n  9. HIERMEM MECHANISM METRICS")
         print(f"  Constraint zone active (% of HYBRID turns): {crr*100:.1f}%")
         print(f"  Mode transition turn (passthrough→HYBRID):  Turn {mt}")
         if acs:

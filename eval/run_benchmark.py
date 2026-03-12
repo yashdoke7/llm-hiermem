@@ -93,7 +93,9 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
             if saved_logs:
                 resume_from_turn = saved_logs[-1]["turn"]
                 turn_logs = saved_logs
-                print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} — resuming from turn {resume_from_turn + 1}/{total_user_turns}")
+                # Count how many user turns were actually saved (for display)
+                saved_user_turns = sum(1 for tl in saved_logs if not tl.get("response", "").startswith("ERROR:"))
+                print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} — resuming from user turn {saved_user_turns + 1}/{total_user_turns}")
                 # Replay saved responses into system state
                 for tl in saved_logs:
                     u = tl.get("user", "")
@@ -129,6 +131,7 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
         print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({total_user_turns} turns)")
 
     total_start = time.time()
+    user_turn_idx = sum(1 for tl in turn_logs if not tl.get("response", "").startswith("ERROR:"))  # display counter
 
     for turn_data in turns:
         if turn_data.get("role") != "user":
@@ -141,7 +144,8 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
         # Skip already-completed turns when resuming
         if turn_num <= resume_from_turn:
             continue
-        
+
+        user_turn_idx += 1
         turn_start = time.time()
         
         try:
@@ -168,7 +172,7 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
             turns_left = total_user_turns - turns_done
             eta_mins = round(avg_per_turn * turns_left / 60, 1)
             
-            print(f"    Turn {turn_num:2d}/{total_user_turns} | {turn_elapsed:5.1f}s{mode}{tokens_str} | "
+            print(f"    Turn {user_turn_idx:2d}/{total_user_turns} | {turn_elapsed:5.1f}s{mode}{tokens_str} | "
                   f"ETA: {eta_mins}min", flush=True)
             
             # Build detailed turn log
@@ -377,15 +381,15 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     # Quick metrics summary
     print("\n" + "="*50)
     for sys_name, m in metrics.items():
-        if sys_name == "pairwise_comparison":
+        if sys_name in ("pairwise_comparison", "pairwise_comparisons"):
             continue
         js = m.get("judge_scores", {})
         print(f"  {sys_name}: judge={js.get('avg_score','?')}/10  "
               f"accuracy={m['task_accuracy']*100:.0f}%")
-    if "pairwise_comparison" in metrics:
-        pc = metrics["pairwise_comparison"]
-        print(f"  Pairwise: {pc['system_a']}={pc['wins_a']}W "
-              f"{pc['system_b']}={pc['wins_b']}W ties={pc['ties']}")
+    if "pairwise_comparisons" in metrics:
+        for key, pc in metrics["pairwise_comparisons"].items():
+            print(f"  Pairwise {key}: {pc['system_a']}={pc['wins_a']}W "
+                  f"{pc['system_b']}={pc['wins_b']}W ties={pc['ties']}")
     print("="*50)
     
     # Save run config
@@ -465,8 +469,9 @@ if __name__ == "__main__":
 
         # Debug: show checkpoint evaluation details
         from eval.metrics import (evaluate_checkpoint, score_checkpoint,
-            _get_results, _find_response_at_turn, _deduplicate_checkpoints,
-            _get_constraint_text, _score_keyword_group, _absolute_judge)
+            _get_results, _find_response_at_turn, _find_user_msg_at_turn,
+            _deduplicate_checkpoints, _get_constraint_text,
+            _score_keyword_group, _absolute_judge)
         for sys_name, convos in all_results.items():
             print(f"\n--- {sys_name} ---")
             for ci, conv in enumerate(convos):
@@ -480,6 +485,7 @@ if __name__ == "__main__":
                     keywords = cp.get("keywords", [])
                     kw_groups = cp.get("keyword_groups")
                     response = _find_response_at_turn(results, turn)
+                    user_msg = _find_user_msg_at_turn(results, turn)
                     if response and not response.startswith("ERROR:"):
                         # Gradient score
                         sc = score_checkpoint(response, keywords, kw_groups)
@@ -493,10 +499,13 @@ if __name__ == "__main__":
                             response, constraint_text,
                             cp.get("constraint_tested", ""),
                             keywords,
-                            keyword_groups=kw_groups
+                            keyword_groups=kw_groups,
+                            user_message=user_msg,
+                            specific_test=cp.get("test", ""),
                         )
                         print(f"    Turn {turn}: score={sc:.0f} ({'PASS' if passed else 'FAIL'}) "
-                              f"groups=[{', '.join(group_strs)}]")
+                              f"groups=[{', '.join(group_strs)}]"
+                              + (f"  | Q: {user_msg[:60]}..." if user_msg else ""))
 
         metrics = compute_all_metrics(all_results)
         metrics_file = rescore_dir / "metrics_rescored.json"
@@ -508,7 +517,7 @@ if __name__ == "__main__":
         print("RESULTS SUMMARY")
         print("="*60)
         for sys_name, m in metrics.items():
-            if sys_name == "pairwise_comparison":
+            if sys_name in ("pairwise_comparison", "pairwise_comparisons"):
                 continue
             js = m.get("judge_scores", {})
             pts = m.get("per_turn_scores", {})
@@ -528,17 +537,17 @@ if __name__ == "__main__":
                 print(f"      [{d['convo']}] Turn {d['turn']:2d}: "
                       f"judge={d['judge_score']:.1f}/10  kw={kw_score}/100  ({d['mode']})")
         
-        if "pairwise_comparison" in metrics:
-            pc = metrics["pairwise_comparison"]
-            print(f"\n  Pairwise ({pc['system_a']} vs {pc['system_b']}):")
-            print(f"    {pc['system_a']} wins: {pc['wins_a']}/{pc['total']} "
-                  f"({pc['win_rate_a']:.0f}%)")
-            print(f"    {pc['system_b']} wins: {pc['wins_b']}/{pc['total']} "
-                  f"({pc['win_rate_b']:.0f}%)")
-            print(f"    ties: {pc['ties']}")
-            for c in pc.get("comparisons", []):
-                print(f"      Turn {c['turn']:2d}: A={c['score_a']} B={c['score_b']} "
-                      f"→ {c['winner']} | {c.get('reasoning', '')}")
+        if "pairwise_comparisons" in metrics:
+            for key, pc in metrics["pairwise_comparisons"].items():
+                print(f"\n  Pairwise ({pc['system_a']} vs {pc['system_b']}):")
+                print(f"    {pc['system_a']} wins: {pc['wins_a']}/{pc['total']} "
+                      f"({pc['win_rate_a']:.0f}%)")
+                print(f"    {pc['system_b']} wins: {pc['wins_b']}/{pc['total']} "
+                      f"({pc['win_rate_b']:.0f}%)")
+                print(f"    ties: {pc['ties']}")
+                for c in pc.get("comparisons", []):
+                    print(f"      Turn {c['turn']:2d}: A={c['score_a']} B={c['score_b']} "
+                          f"→ {c['winner']} | {c.get('reasoning', '')}")
         print("="*60)
     else:
         systems = list(SYSTEMS.keys()) if "all" in args.systems else args.systems
