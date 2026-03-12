@@ -86,12 +86,23 @@ def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
             "total_turns_processed": sum(c.get("turns_processed", 0) for c in conversations),
         }
     
-    # Add pairwise comparison if we have exactly 2 systems and judge available
+    # Add pairwise: hiermem vs each other system (or all pairs if no hiermem)
     system_names = list(all_results.keys())
     if len(system_names) >= 2 and _judge_available:
-        metrics["pairwise_comparison"] = compute_pairwise_comparison(
-            all_results, system_names[0], system_names[1]
-        )
+        if "hiermem" in system_names:
+            others = [s for s in system_names if s != "hiermem"]
+            metrics["pairwise_comparisons"] = {
+                f"hiermem_vs_{other}": compute_pairwise_comparison(
+                    all_results, "hiermem", other
+                )
+                for other in others
+            }
+        else:
+            metrics["pairwise_comparisons"] = {
+                f"{system_names[0]}_vs_{system_names[1]}": compute_pairwise_comparison(
+                    all_results, system_names[0], system_names[1]
+                )
+            }
     
     return metrics
 
@@ -118,6 +129,14 @@ def _find_response_at_turn(results: List[Dict], turn: int) -> str:
     return None
 
 
+def _find_user_msg_at_turn(results: List[Dict], turn: int) -> str:
+    """Find the user message at a given turn number."""
+    for r in results:
+        if r.get("turn") == turn:
+            return r.get("user", "")
+    return ""
+
+
 def _get_constraint_text(conv: Dict) -> str:
     """Extract the original constraint text from a conversation."""
     constraints = conv.get("constraints", [])
@@ -132,12 +151,12 @@ def _get_constraint_text(conv: Dict) -> str:
 def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
     """Deduplicate checkpoints — keep one per turn, evaluate each keyword group separately.
     
-    The post-processor creates multiple checkpoint entries per turn (one per
-    keyword group, e.g. metric keywords + substitution keywords).
+    The normalizer creates multiple checkpoint entries per turn (one per
+    constraint dimension, e.g. logging keywords + exit-code keywords).
     
-    We merge into one entry per turn but keep keyword groups separate so each
-    constraint can be evaluated independently. A turn passes only if ALL
-    keyword groups pass.
+    We merge into one entry per turn but keep keyword groups AND their
+    corresponding test questions separate so each dimension can be evaluated
+    independently by the judge. A turn passes only if ALL keyword groups pass.
     """
     seen = set()
     deduped = []
@@ -146,13 +165,16 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
         if turn not in seen:
             seen.add(turn)
             keyword_groups = []
+            test_per_group = []   # parallel list: test question for each keyword group
             for other in checkpoints:
                 if other.get("turn") == turn:
                     kws = other.get("keywords", [])
                     if kws:
                         keyword_groups.append(kws)
+                        test_per_group.append(other.get("test", ""))
             merged = dict(cp)
             merged["keyword_groups"] = keyword_groups
+            merged["test_per_group"] = test_per_group  # judge uses these per-dimension
             # Keep flat keywords for backward compat (union of all groups)
             merged["keywords"] = list(set(
                 kw for group in keyword_groups for kw in group
@@ -172,14 +194,17 @@ def compute_cvr(conversations: List[Dict]) -> float:
         constraint_text = _get_constraint_text(conv)
 
         for cp in checkpoints:
-            response = _find_response_at_turn(results, cp.get("turn", 0))
+            turn = cp.get("turn", 0)
+            response = _find_response_at_turn(results, turn)
             if response is not None and not response.startswith("ERROR:"):
                 total_checks += 1
                 passed = evaluate_checkpoint(
                     response, constraint_text,
                     cp.get("constraint_tested", ""),
                     cp.get("keywords", []),
-                    keyword_groups=cp.get("keyword_groups")
+                    keyword_groups=cp.get("keyword_groups"),
+                    user_message=_find_user_msg_at_turn(results, turn),
+                    specific_test=cp.get("test", ""),
                 )
                 if not passed:
                     violations += 1
@@ -200,14 +225,17 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
         constraint_text = _get_constraint_text(conv)
 
         for cp in checkpoints:
-            response = _find_response_at_turn(results, cp.get("turn", 0))
+            turn = cp.get("turn", 0)
+            response = _find_response_at_turn(results, turn)
             if response is not None and not response.startswith("ERROR:"):
                 total += 1
                 if evaluate_checkpoint(
                     response, constraint_text,
                     cp.get("constraint_tested", ""),
                     cp.get("keywords", []),
-                    keyword_groups=cp.get("keyword_groups")
+                    keyword_groups=cp.get("keyword_groups"),
+                    user_message=_find_user_msg_at_turn(results, turn),
+                    specific_test=cp.get("test", ""),
                 ):
                     correct += 1
 
@@ -245,14 +273,17 @@ def compute_degradation_curve(conversations: List[Dict],
 
             for cp in checkpoints:
                 if cp.get("turn", 0) <= turn_threshold:
-                    response = _find_response_at_turn(results, cp["turn"])
+                    turn = cp["turn"]
+                    response = _find_response_at_turn(results, turn)
                     if response is not None and not response.startswith("ERROR:"):
                         total += 1
                         if evaluate_checkpoint(
                             response, constraint_text,
                             cp.get("constraint_tested", ""),
                             cp.get("keywords", []),
-                            keyword_groups=cp.get("keyword_groups")
+                            keyword_groups=cp.get("keyword_groups"),
+                            user_message=_find_user_msg_at_turn(results, turn),
+                            specific_test=cp.get("test", ""),
                         ):
                             correct += 1
 
@@ -286,7 +317,9 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
                 response, constraint_text,
                 cp.get("constraint_tested", ""),
                 cp.get("keywords", []),
-                keyword_groups=cp.get("keyword_groups")
+                keyword_groups=cp.get("keyword_groups"),
+                user_message=_find_user_msg_at_turn(results, turn),
+                specific_test=cp.get("test", ""),
             )
 
             # Detect mode from turn_logs
@@ -341,7 +374,9 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
 def evaluate_checkpoint(response: str, constraint_text: str,
                         checkpoint_constraint: str,
                         keywords: List[str] = None,
-                        keyword_groups: List[List[str]] = None) -> bool:
+                        keyword_groups: List[List[str]] = None,
+                        user_message: str = "",
+                        specific_test: str = "") -> bool:
     """
     Evaluate whether a response passes a checkpoint test.
     
@@ -349,6 +384,9 @@ def evaluate_checkpoint(response: str, constraint_text: str,
       1. If keyword_groups provided, evaluate each group separately (ALL must pass)
       2. If LLM judge is available → use it as additional signal (OR with keywords)
       3. Fallback → enhanced keyword matching
+    
+    user_message: the user's question at this turn (gives judge context on what was asked)
+    specific_test: the specific dimension being checked (e.g. "Does response use logging?")
     """
     if response.startswith("ERROR:"):
         return False
@@ -364,9 +402,12 @@ def evaluate_checkpoint(response: str, constraint_text: str,
     # Try LLM-as-judge if available
     if _judge_available and _llm_client:
         try:
-            llm_result = _llm_judge_evaluate(response, constraint_text, checkpoint_constraint)
+            llm_result = _llm_judge_evaluate(response, constraint_text,
+                                             checkpoint_constraint,
+                                             user_message=user_message,
+                                             specific_test=specific_test)
             logger.debug(f"Judge: keyword={keyword_result}, llm={llm_result}")
-            # Pass if EITHER method says pass
+            # Pass if EITHER method says pass (keywords are reliable for code patterns)
             return keyword_result or llm_result
         except Exception as e:
             logger.debug(f"LLM judge failed, using keywords only: {e}")
@@ -375,28 +416,33 @@ def evaluate_checkpoint(response: str, constraint_text: str,
 
 
 def _llm_judge_evaluate(response: str, constraint_text: str,
-                         checkpoint_constraint: str) -> bool:
+                         checkpoint_constraint: str,
+                         user_message: str = "",
+                         specific_test: str = "") -> bool:
     """Use LLM to judge if response follows constraints.
     
     Results are cached to avoid redundant API calls when the same
     response+constraint pair is evaluated multiple times (CVR, accuracy, etc.).
+    
+    user_message: what the user asked — tells the judge if code was expected
+    specific_test: the specific dimension to evaluate (from checkpoint test field)
     """
-    # Check cache first
-    cache_key = (hash(response[:2000]), hash(constraint_text))
+    cache_key = (hash(response[:2000]), hash(constraint_text), hash(specific_test))
     if cache_key in _judge_cache:
         return _judge_cache[cache_key]
     
     constraints_clean = _parse_individual_constraints(constraint_text)
 
+    user_context = f"\nUSER'S QUESTION IN THIS TURN:\n{user_message[:500]}\n" if user_message else ""
+    test_instruction = (f"\nSpecifically check: {specific_test}" if specific_test else "")
+
     prompt = (
         f"You are evaluating whether an AI assistant's response follows user-specified rules.\n\n"
-        f"RULES the user asked the assistant to follow:\n{constraints_clean}\n\n"
-        f"ASSISTANT'S RESPONSE:\n{response[:2000]}\n\n"
-        f"Does the response follow the rules? Consider:\n"
-        f"- Metric measurements (g, ml, kg) as primary = PASS, even with minor imperial (tbsp, tsp)\n"
-        f"- Budget-friendly alternatives or cheaper options mentioned = PASS for substitution rule\n"
-        f"- Relevant disclaimers included = PASS for disclaimer rule\n"
-        f"- If metric is primary and imperial appears in parentheses as conversion, that's correct\n"
+        f"RULES the user asked the assistant to follow:\n{constraints_clean}\n"
+        f"{user_context}"
+        f"\nASSISTANT'S RESPONSE:\n{response[:2000]}\n\n"
+        f"Does the response follow the rules?{test_instruction}\n"
+        f"- If the user's question is conceptual/explanatory and no code was produced, that is PASS\n"
         f"- Be fair: if the response shows awareness of the constraint and mostly follows it, PASS\n"
         f"- Only FAIL if the constraint is clearly ignored or violated in a major way\n\n"
         f"Output ONLY one word: PASS or FAIL"
@@ -748,13 +794,31 @@ def compute_judge_scores(conversations: List[Dict]) -> Dict[str, Any]:
             if response is None or response.startswith("ERROR:"):
                 continue
 
+            user_msg = _find_user_msg_at_turn(results, turn)
+            test_per_group = cp.get("test_per_group", [])
+            kw_groups = cp.get("keyword_groups", [])
+
             if _judge_available and _llm_client:
-                score = _absolute_judge(response, constraint_text,
-                                        cp.get("constraint_tested", ""))
+                # Score each constraint dimension separately, then average.
+                # This gives the judge a focused question per dimension rather than
+                # asking it to evaluate all constraints in one shot.
+                if test_per_group and len(test_per_group) > 1:
+                    dim_scores = [
+                        _absolute_judge(response, constraint_text,
+                                        cp.get("constraint_tested", ""),
+                                        user_message=user_msg,
+                                        specific_test=t)
+                        for t in test_per_group
+                    ]
+                    score = round(sum(dim_scores) / len(dim_scores), 1)
+                else:
+                    score = _absolute_judge(response, constraint_text,
+                                            cp.get("constraint_tested", ""),
+                                            user_message=user_msg,
+                                            specific_test=cp.get("test", ""))
             else:
                 # Fallback: scale keyword score from 0-100 to 1-10
-                kw_score = score_checkpoint(response, cp.get("keywords", []),
-                                            cp.get("keyword_groups"))
+                kw_score = score_checkpoint(response, cp.get("keywords", []), kw_groups)
                 score = round(1.0 + (kw_score / 100.0) * 9.0, 1)
 
             # Mode detection
@@ -791,26 +855,32 @@ def compute_judge_scores(conversations: List[Dict]) -> Dict[str, Any]:
 
 
 def _absolute_judge(response: str, constraint_text: str,
-                    checkpoint_constraint: str = "") -> float:
+                    checkpoint_constraint: str = "",
+                    user_message: str = "",
+                    specific_test: str = "") -> float:
     """Rate a single response on a 1-10 scale for constraint compliance.
     
     Caches results to avoid duplicate API calls.
     Returns a float 1.0–10.0.
+    
+    user_message: what the user asked this turn — judge uses this to know if code was expected
+    specific_test: the specific dimension being evaluated (from checkpoint test field)
     """
-    cache_key = ("abs", hash(response[:4000]), hash(constraint_text))
+    cache_key = ("abs", hash(response[:4000]), hash(constraint_text), hash(specific_test))
     if cache_key in _judge_cache:
         return _judge_cache[cache_key]
 
     constraints_clean = _parse_individual_constraints(constraint_text)
-
-    # Truncate to 4000 chars so the full response (including later try/except) is visible
     response_text = response[:4000]
+    user_context = f"\nUSER'S QUESTION IN THIS TURN:\n{user_message[:500]}\n" if user_message else ""
+    test_instruction = (f"\nSpecifically evaluate: {specific_test}" if specific_test else "")
 
     prompt = (
         f"You are evaluating how well an AI assistant follows user-specified rules.\n\n"
-        f"RULES the user asked the assistant to follow:\n{constraints_clean}\n\n"
-        f"ASSISTANT'S RESPONSE:\n{response_text}\n\n"
-        f"Rate the response on a scale of 1 to 10 for how well it follows ALL of the rules:\n"
+        f"RULES the user asked the assistant to follow:\n{constraints_clean}\n"
+        f"{user_context}"
+        f"\nASSISTANT'S RESPONSE:\n{response_text}\n\n"
+        f"Rate the response on a scale of 1 to 10 for how well it follows the rules:{test_instruction}\n"
         f"  10 = Perfectly follows every rule stated\n"
         f"   8 = Follows most rules, one minor lapse\n"
         f"   6 = Follows some rules but misses others\n"
@@ -818,10 +888,9 @@ def _absolute_judge(response: str, constraint_text: str,
         f"   2 = Almost completely ignores the rules\n"
         f"   1 = Completely ignores all rules\n\n"
         f"Notes:\n"
-        f"- Metric measurements (g, ml, kg) as primary with imperial in parentheses = following metric rule\n"
-        f"- Imperial measurements (cups, pounds) as primary = NOT following metric rule\n"
-        f"- Minor units (tablespoon, teaspoon) alone do not violate the metric rule\n"
-        f"- Budget alternatives or cheaper substitutions mentioned = following the substitution rule\n\n"
+        f"- If the user's question is conceptual/explanatory and produces no code, score 7 (constraint not applicable but not violated)\n"
+        f"- If code is produced, the constraint rules must be visible in the code to score above 5\n"
+        f"- Be consistent: judge the pattern of constraint adherence across the whole response\n\n"
         f"Output your score as: SCORE: <number>\n"
         f"Then optionally one sentence of reasoning."
     )
@@ -892,13 +961,15 @@ def compute_pairwise_comparison(all_results: Dict[str, List[Dict]],
             turn = cp.get("turn", 0)
             resp_a = _find_response_at_turn(results_a, turn)
             resp_b = _find_response_at_turn(results_b, turn)
+            user_msg = _find_user_msg_at_turn(results_a, turn)
             
             if not resp_a or not resp_b:
                 continue
             if resp_a.startswith("ERROR:") or resp_b.startswith("ERROR:"):
                 continue
             
-            result = _pairwise_judge(resp_a, resp_b, constraint_text, system_a, system_b)
+            result = _pairwise_judge(resp_a, resp_b, constraint_text, system_a, system_b,
+                                     user_message=user_msg)
             comparisons.append({
                 "convo": cid,
                 "turn": turn,
@@ -930,20 +1001,23 @@ def compute_pairwise_comparison(all_results: Dict[str, List[Dict]],
 
 
 def _pairwise_judge(resp_a: str, resp_b: str, constraint_text: str,
-                     name_a: str, name_b: str) -> Dict:
+                     name_a: str, name_b: str,
+                     user_message: str = "") -> Dict:
     """Ask LLM judge to compare two responses head-to-head.
     
     Returns {"winner": name_a|name_b|"tie", "score_a": 1-5, "score_b": 1-5}
     """
-    # Check cache
     cache_key = (hash(resp_a[:3000]), hash(resp_b[:3000]), hash(constraint_text))
     if cache_key in _judge_cache:
         return _judge_cache[cache_key]
     
+    user_context = f"\nUSER'S QUESTION IN THIS TURN:\n{user_message[:400]}\n" if user_message else ""
+
     prompt = (
         f"Compare two AI assistant responses for how well they follow user rules.\n\n"
-        f"USER RULES:\n{constraint_text}\n\n"
-        f"RESPONSE A:\n{resp_a[:3000]}\n\n"
+        f"USER RULES:\n{constraint_text}\n"
+        f"{user_context}"
+        f"\nRESPONSE A:\n{resp_a[:3000]}\n\n"
         f"RESPONSE B:\n{resp_b[:3000]}\n\n"
         f"Rate each response 1-5 for constraint compliance:\n"
         f"  5 = Perfectly follows all rules\n"
@@ -951,11 +1025,10 @@ def _pairwise_judge(resp_a: str, resp_b: str, constraint_text: str,
         f"  3 = Partially follows rules\n"
         f"  2 = Mostly ignores rules\n"
         f"  1 = Completely ignores rules\n\n"
-        f"Consider:\n"
-        f"- Metric measurements (g, ml, kg) primary with imperial in parentheses = following the metric rule\n"
-        f"- Imperial primary (cups, pounds) with metric in parentheses = NOT following\n"
-        f"- Budget alternatives, cheaper options, substitutions = following the substitution rule\n"
-        f"- Minor units (tablespoons, teaspoons) alone don't violate the metric rule\n\n"
+        f"Notes:\n"
+        f"- Judge based on whether the stated rules are applied in the content\n"
+        f"- If a response shows clear awareness of the rule even with minor misses, score it 4\n"
+        f"- If the question is conceptual and no code was produced, score both 3 (neutral)\n\n"
         f"Output EXACTLY in this format (3 lines):\n"
         f"A: <score>\n"
         f"B: <score>\n"
