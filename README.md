@@ -115,8 +115,9 @@ Neither the curator nor the post-processor ever sees the full conversation histo
 
 | Provider | Cost | Models | Setup |
 |----------|------|--------|-------|
-| **Ollama** (local) | Free | Llama 3.1 8B, Qwen 2.5 3B | [ollama.com](https://ollama.com) |
-| **Groq** (cloud) | Free tier | Llama 3.1 8B/70B | [console.groq.com](https://console.groq.com) |
+| **Ollama** (local) | Free | Qwen 2.5 14B/32B, Llama 3.1 8B | [ollama.com](https://ollama.com) |
+| **Groq** (cloud) | Free tier | Llama 3.3 70B, Llama 3.1 8B | [console.groq.com](https://console.groq.com) |
+| **Google Gemini** | Free tier (RPD limited) | Gemini 2.5 Flash | [aistudio.google.com](https://aistudio.google.com) |
 | **OpenAI** | Paid | GPT-4o-mini | [platform.openai.com](https://platform.openai.com) |
 | **Anthropic** | Paid | Claude Haiku | [console.anthropic.com](https://console.anthropic.com) |
 
@@ -143,12 +144,15 @@ cp .env.example .env
 # Edit .env with your provider and API key
 ```
 
-### Setup with Ollama (Free, Local)
+### Setup with Ollama (Free, Local — Recommended)
 
 ```bash
 # Install Ollama from https://ollama.com, then:
-ollama pull llama3.1:8b      # Main LLM (~4.7GB)
-ollama pull qwen2.5:3b       # Curator/Summarizer (~2GB)
+ollama pull qwen2.5:14b    # Main LLM (~9GB) — best quality/speed balance
+ollama pull qwen2.5:3b     # Curator/Summarizer (~2GB)
+
+# Optional: for higher accuracy benchmarks
+ollama pull qwen2.5:32b    # Main LLM (~19GB, requires ~20GB VRAM/RAM)
 ```
 
 Default config already points to Ollama. No API key needed.
@@ -158,12 +162,26 @@ Default config already points to Ollama. No API key needed.
 ```bash
 # Get free API key from https://console.groq.com
 # Edit .env:
-DEFAULT_PROVIDER=groq
+MAIN_PROVIDER=groq
+CURATOR_PROVIDER=ollama        # keep curator local (no rate limits)
 GROQ_API_KEY=gsk_your_key_here
-MAIN_LLM_MODEL=llama-3.1-70b-versatile
-CURATOR_MODEL=llama-3.1-8b-instant
-SUMMARIZER_MODEL=llama-3.1-8b-instant
+MAIN_LLM_MODEL=llama-3.3-70b-versatile
+CURATOR_MODEL=ollama/qwen2.5:3b
+SUMMARIZER_MODEL=ollama/qwen2.5:3b
 ```
+
+### Setup with Google Gemini (Free tier, RPD limited)
+
+```bash
+# Get free API key from https://aistudio.google.com
+# Edit .env:
+MAIN_PROVIDER=google
+GOOGLE_API_KEY=your_key_here
+MAIN_LLM_MODEL=gemini/gemini-2.5-flash
+CURATOR_PROVIDER=ollama        # keep curator local to avoid RPD limits
+```
+
+> ⚠️ Gemini free tier has a 20 requests/day cap on Gemini 2.5 Flash. Use local Ollama for benchmark inference runs; reserve Gemini for LLM-as-judge rescoring only.
 
 ### Verify Installation
 
@@ -214,10 +232,13 @@ llm-hiermem/
 │   └── memgpt_style.py               # Baseline 4: LLM self-manages memory
 │
 ├── eval/                              # Evaluation framework
-│   ├── run_benchmark.py               # Benchmark runner for all systems
-│   ├── metrics.py                     # CVR, task accuracy, degradation curves
+│   ├── run_benchmark.py               # Benchmark runner — all systems, resume support
+│   ├── metrics.py                     # CVR, task accuracy, LLM-as-judge, pairwise
+│   ├── paper_metrics.py               # Paper-grade metrics (degradation slope, memory efficiency, etc.)
+│   ├── normalize_datasets.py          # Normalizes raw ChatGPT JSON to benchmark format
 │   ├── visualize.py                   # Matplotlib comparison charts
-│   ├── datasets/                      # Generated test datasets
+│   ├── datasets/                      # Benchmark datasets
+│   │   └── constraint_tracking/       # LLM-generated constraint-tracking conversations
 │   └── generators/                    # Dataset generation scripts
 │
 ├── tests/                             # Unit tests (28 tests)
@@ -243,37 +264,61 @@ llm-hiermem/
 
 ### Benchmarks
 
-| Benchmark | What It Tests | Dataset |
+| Benchmark | What It Tests | Datasets |
 |-----------|--------------|---------|
-| **Constraint Tracking** | Are rules stated early still followed 40 turns later? | 50 synthetic conversations × 50 turns |
-| **Needle-in-a-Haystack** | Can a specific fact be recalled at varying distances? | 30 conversations with planted facts |
-| **Multi-step Reasoning** | Can the system chain facts from different turns? | 40 conversations with dependent setup turns |
+| **Constraint Tracking** | Are rules stated early still followed 40-50 turns later? | 6 LLM-generated conversations (SE: logging/auth/ETL/CLI, Finance: India-specific) |
+
+> Needle-in-a-Haystack and Multi-step Reasoning benchmarks are planned for a future release.
 
 ### Metrics
 
-| Metric | Description |
-|--------|-------------|
-| **Degradation Curve** (primary) | Accuracy plotted as a function of conversation length |
-| **Constraint Violation Rate (CVR)** | % of responses that violate stated constraints |
-| **Fact Recall@K** | Recall accuracy at K turns distance from the stated fact |
-| **Task Accuracy** | Overall correctness at checkpoint evaluations |
+| Metric | Type | Description |
+|--------|------|-------------|
+| **LLM-as-Judge Score (1–10)** | Primary | G-Eval style: independent per-response rating for constraint adherence |
+| **Degradation Curve** | Primary | Judge score plotted at 20/40/60/80/100% of conversation length |
+| **Constraint Violation Rate (CVR)** | Secondary | % of checkpoint responses that violate stated constraints |
+| **Task Accuracy** | Secondary | Binary pass/fail across checkpoint evaluations |
+| **Pairwise Win Rate** | Secondary | Head-to-head: HierMem vs each baseline at same checkpoints |
+
+### Current Results (qwen2.5:14b)
+
+*Evaluated on `chatgpt_software_engineering_01` (SE constraint tracking, 30 turns)*
+
+| System | Judge Score (1-10) | Task Accuracy |
+|--------|-------------------|---------------|
+| **HierMem** (ours) | **3.95** | **50%** |
+| RAG | 3.90 | 100% |
+| RAG + Summary | 3.70 | 67% |
+| Raw LLM | 3.58 | 50% |
+
+> Full multi-dataset results (SE3/SE4/SE5/Finance02, qwen14b + qwen32b) are in progress.
 
 ### Running Benchmarks
 
 ```bash
-# Generate datasets (already included, but regeneratable)
-python -m eval.generators.generate_constraint_convos
-python -m eval.generators.generate_niah
-python -m eval.generators.generate_multistep
+# Run all 4 systems on constraint tracking benchmark
+python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
+    --benchmark constraint_tracking \
+    --run-dir results/raw/benchmarks/qwen14b_run
 
-# Run all systems on a benchmark
-python -m eval.run_benchmark --systems all --benchmark constraint_tracking
+# Run on specific conversations only
+python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
+    --benchmark constraint_tracking \
+    --convo chatgpt_software_engineering_01 chatgpt_software_engineering_05 \
+    --run-dir results/raw/benchmarks/qwen14b_run
 
-# Run specific systems
-python -m eval.run_benchmark --systems hiermem raw_llm --benchmark needle_in_haystack
+# List available conversations
+python -m eval.run_benchmark --benchmark constraint_tracking --list
+
+# Re-score existing results with a stronger judge (e.g. Gemini)
+python -m eval.run_benchmark --rescore results/raw/benchmarks/qwen14b_run \
+    --judge-provider google --judge-model gemini-2.5-flash
+
+# Extract paper-grade metrics from results
+python -m eval.paper_metrics results/raw/benchmarks/qwen14b_run --json
 
 # Generate comparison charts
-python -m eval.visualize --results results/eval_YYYYMMDD_HHMMSS/
+python -m eval.visualize --results results/raw/benchmarks/qwen14b_run
 ```
 
 ## Demo
@@ -291,16 +336,28 @@ Features:
 
 ## Configuration
 
-All parameters are in `config.py` and can be overridden via environment variables:
+All parameters are in `config.py` and can be overridden via environment variables.
+
+**Provider configuration:**
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MAIN_PROVIDER` | `ollama` | Provider for main LLM (ollama/groq/google/openai) |
+| `CURATOR_PROVIDER` | `ollama` | Provider for curator agent (keep local to avoid rate limits) |
+| `SUMMARIZER_PROVIDER` | `ollama` | Provider for summarizer (same as curator by default) |
+| `MAIN_LLM_MODEL` | `ollama/qwen2.5:14b` | Main LLM model |
+| `CURATOR_MODEL` | `ollama/qwen2.5:3b` | Curator model (small, fast) |
+| `SUMMARIZER_MODEL` | `ollama/qwen2.5:3b` | Summarizer model |
+
+**Pipeline parameters:**
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `TOTAL_CONTEXT_BUDGET` | 6000 | Max tokens in assembled context |
-| `MAX_L0_ENTRIES` | 20 | Max segments in topic directory |
-| `SEGMENT_SIZE` | 10 | Turns per segment before rotation |
-| `MAX_CONSTRAINTS` | 20 | Max active constraints |
-| `RECENT_TURNS_ALWAYS_INCLUDED` | 3 | Recent turns always in context |
-| `SEMANTIC_TOP_K` | 5 | Top-k results from vector search |
+| `TOTAL_CONTEXT_BUDGET` | `6000` | Max tokens in assembled context |
+| `MAX_L0_ENTRIES` | `20` | Max segments in topic directory |
+| `SEGMENT_SIZE` | `10` | Turns per segment before rotation |
+| `MAX_CONSTRAINTS` | `20` | Max active constraints |
+| `OLLAMA_CONTEXT_SIZE` | `8192` | Context window for local Ollama models |
 
 ## Testing
 
@@ -352,6 +409,7 @@ If you use HierMem in your research, please cite:
 ```bibtex
 @software{hiermem2026,
   title={HierMem: Hierarchical Paged Context Management for Long-Horizon LLM Reliability},
+  author={Doke, Yash},
   year={2026},
   url={https://github.com/yashdoke7/llm-hiermem}
 }
