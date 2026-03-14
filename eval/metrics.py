@@ -24,6 +24,7 @@ Secondary metrics:
 """
 
 import re
+import random
 import logging
 from typing import Dict, List, Any, Optional
 
@@ -936,10 +937,15 @@ def compute_pairwise_comparison(all_results: Dict[str, List[Dict]],
     For each checkpoint turn that both systems have responses for,
     asks the judge: "Which response better follows the stated constraints?"
     
+    Presentation order (A-first vs B-first) is randomized per comparison
+    to eliminate position bias. A fixed seed ensures reproducibility.
+    
     Returns wins/losses/ties and per-turn comparison details.
     """
     if not _judge_available:
         return {"error": "LLM judge not available for pairwise comparison"}
+    
+    rng = random.Random(42)  # fixed seed for reproducible ordering
     
     convos_a = {c["conversation_id"]: c for c in all_results.get(system_a, [])}
     convos_b = {c["conversation_id"]: c for c in all_results.get(system_b, [])}
@@ -968,16 +974,34 @@ def compute_pairwise_comparison(all_results: Dict[str, List[Dict]],
             if resp_a.startswith("ERROR:") or resp_b.startswith("ERROR:"):
                 continue
             
-            result = _pairwise_judge(resp_a, resp_b, constraint_text, system_a, system_b,
-                                     user_message=user_msg)
-            comparisons.append({
-                "convo": cid,
-                "turn": turn,
-                "winner": result["winner"],
-                "score_a": result["score_a"],
-                "score_b": result["score_b"],
-                "reasoning": result.get("reasoning", ""),
-            })
+            # Randomize presentation order to eliminate position bias
+            # (LLM judges tend to slightly favor whichever response is shown first)
+            swapped = rng.random() < 0.5
+            if swapped:
+                result = _pairwise_judge(resp_b, resp_a, constraint_text, system_b, system_a,
+                                         user_message=user_msg)
+                # Un-swap the result so system_a/system_b stay consistent
+                comparisons.append({
+                    "convo": cid,
+                    "turn": turn,
+                    "winner": result["winner"],
+                    "score_a": result["score_b"],
+                    "score_b": result["score_a"],
+                    "reasoning": result.get("reasoning", ""),
+                    "presentation_order": "B_first",
+                })
+            else:
+                result = _pairwise_judge(resp_a, resp_b, constraint_text, system_a, system_b,
+                                         user_message=user_msg)
+                comparisons.append({
+                    "convo": cid,
+                    "turn": turn,
+                    "winner": result["winner"],
+                    "score_a": result["score_a"],
+                    "score_b": result["score_b"],
+                    "reasoning": result.get("reasoning", ""),
+                    "presentation_order": "A_first",
+                })
             
             if result["winner"] == system_a:
                 wins_a += 1
