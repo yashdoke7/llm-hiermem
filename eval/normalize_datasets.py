@@ -1,19 +1,14 @@
 """
-normalize_datasets.py — Fix SE3, SE4, SE5, Finance_02 JSON structures to match SE1 format.
+normalize_datasets.py — Standardise ALL benchmark dataset JSON structures.
 
-Handles all known ChatGPT output variations:
-  - "conversation" key instead of "turns"
-  - "content" instead of "text" in turn entries
-  - "speaker" instead of "role" in turn entries
-  - Wrong conversation_id
-  - Two consecutive user turns (collapsed into one, assistant turn inserted)
-  - checkpoints as dict/plain-list instead of list-of-objects
+Ensures every dataset file uses:
+  - Sequential turn numbering (1=user, 2=assistant, 3=user, 4=assistant, ...)
+  - Alternating user/assistant roles (no paired numbering, no consecutive same-role)
+  - Consistent checkpoint format with specific test questions per dimension
+  - 5 checkpoint positions at 20/40/60/80/100% of user turns, 2 entries each = 10 total
 
-Checkpoint strategy (standardised across ALL datasets):
-  5 positions at 20%, 40%, 60%, 80%, 100% of user turns.
-  Each position gets 2 keyword-group entries (one per constraint dimension).
-  → 10 checkpoint entries total per dataset, num_checkpoints=10.
-  This enables consistent degradation-curve plots across conversations.
+Handles both old format (paired: user+assistant share turn number)
+and new format (sequential: already correct).
 
 Run:
     python -m eval.normalize_datasets
@@ -95,6 +90,84 @@ def _std_checkpoints(turns: list, constraint_text: str,
     return checkpoints
 
 
+# ── SE1: REST API (old paired format → sequential) ───────────────────────────
+
+def normalize_se1():
+    src = BASE / "chatgpt_software_engineering_01.json"
+    data = json.loads(src.read_text(encoding="utf-8"))
+    if isinstance(data, list):
+        data = data[0]
+
+    raw = data.get("turns") or data.get("conversation") or []
+    turns = _fix_turns(raw)
+    num_user = len([t for t in turns if t["role"] == "user"])
+
+    constraint_text = (
+        "always use type hints in code; always include proper try/except error handling"
+    )
+    # Update constraints list to match the standardised text
+    kw_types = ["def ", ": str", ": int", ": float", ": bool", ": list", ": dict",
+                ": List", ": Dict", ": Optional", ": Tuple", "-> ", ": Any"]
+    kw_except = ["try:", "except ", "except:", "raise ", "HTTPException",
+                 "try:\n", "except Exception", "except ValueError"]
+    tests = ["Does response use Python type hints in function signatures and variables?",
+             "Does response include try/except error handling?"]
+
+    checkpoints = _std_checkpoints(turns, constraint_text, [kw_types, kw_except], tests)
+    cp_turns = sorted(set(c["turn"] for c in checkpoints))
+
+    out = {
+        "conversation_id": "chatgpt_software_engineering_01",
+        "domain": "software_engineering", "domain_name": "Software Engineering",
+        "source": "chatgpt", "constraints": [constraint_text],
+        "num_turns": num_user, "num_checkpoints": len(checkpoints),
+        "checkpoints": checkpoints, "turns": turns,
+    }
+    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"✅ SE1 normalised  ({len(turns)} entries, {num_user} user turns, "
+          f"checkpoints at turns {cp_turns})")
+
+
+# ── Cooking_01: College student recipes (old paired format → sequential) ──────
+
+def normalize_cooking01():
+    src = BASE / "chatgpt_cooking_recipes_01.json"
+    if not src.exists():
+        print("⏭  Cooking_01 not found — skipping")
+        return
+
+    data = json.loads(src.read_text(encoding="utf-8"))
+    if isinstance(data, list):
+        data = data[0]
+    raw = data.get("turns") or data.get("conversation") or []
+    turns = _fix_turns(raw)
+    num_user = len([t for t in turns if t["role"] == "user"])
+
+    constraint_text = (
+        "always give measurements in metric (grams, ml, celsius); "
+        "always suggest a cheaper substitution if an ingredient is expensive"
+    )
+    kw_metric = ["gram", "grams", "ml", "liter", "litre", "celsius", "°C", "kg", "metric"]
+    kw_subst = ["substitut", "alternative", "replace", "instead of", "cheaper",
+                "budget", "swap"]
+    tests = ["Does response use metric measurements (grams, ml, celsius)?",
+             "Does response suggest cheaper ingredient substitutions?"]
+
+    checkpoints = _std_checkpoints(turns, constraint_text, [kw_metric, kw_subst], tests)
+    cp_turns = sorted(set(c["turn"] for c in checkpoints))
+
+    out = {
+        "conversation_id": "chatgpt_cooking_recipes_01",
+        "domain": "cooking", "domain_name": "Cooking & Recipes",
+        "source": "chatgpt", "constraints": [constraint_text],
+        "num_turns": num_user, "num_checkpoints": len(checkpoints),
+        "checkpoints": checkpoints, "turns": turns,
+    }
+    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"✅ Cooking_01 normalised  ({len(turns)} entries, {num_user} user turns, "
+          f"checkpoints at turns {cp_turns})")
+
+
 # ── SE3: ETL pipeline ──────────────────────────────────────────────────────────
 
 def normalize_se3():
@@ -106,8 +179,8 @@ def normalize_se3():
     num_user = len([t for t in turns if t["role"] == "user"])
 
     constraint_text = "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts"
-    kw_polars = ["pl.", "polars", "pl.read_csv", "pl.DataFrame", "pl.LazyFrame", "scan_csv", "collect()"]
-    kw_dc = ["@dataclass", "dataclass", "from dataclasses import", "field(", ": str", ": int", ": List"]
+    kw_polars = ["pl.", "polars", "import polars", "pl.read_csv", "pl.DataFrame", "pl.LazyFrame", "scan_csv", "collect()"]
+    kw_dc = ["@dataclass", "dataclass", "from dataclasses import", "dataclasses", "field(", ": str", ": int", ": List"]
     tests = ["Does response use polars instead of pandas?",
              "Does response use Python dataclasses for structured objects?"]
 
@@ -179,8 +252,10 @@ def normalize_se5():
     num_user = len([t for t in fixed if t["role"] == "user"])
 
     constraint_text = data.get("constraints", [""])[0]
-    kw_logging = ["logging", "getLogger", "logger.", "log.", ".info(", ".debug(", ".warning(", ".error("]
-    kw_exit = ["sys.exit(0)", "sys.exit(1)", "exit_code = 0", "exit_code = 1", "return 0", "return 1", "sys.exit"]
+    kw_logging = ["logging", "getLogger", "logger.", "log.", ".info(", ".debug(", ".warning(", ".error(",
+                  "logging.config", "logging.getLogger", "logging.basicConfig", "logger ="]
+    kw_exit = ["sys.exit(0)", "sys.exit(1)", "sys.exit(", "exit(0)", "exit(1)",
+               "exit_code", "SystemExit", "raise SystemExit", "return 0", "return 1"]
     tests = ["Does response use logging module instead of print statements?",
              "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?"]
 
@@ -250,19 +325,42 @@ def validate(filename: str):
     user_turns = [t for t in data["turns"] if t.get("role") == "user"]
     roles = [t.get("role") for t in data["turns"]]
     consecutive = any(roles[i] == roles[i+1] for i in range(len(roles)-1))
+
+    # Check sequential numbering (every entry has unique, incrementing turn number)
+    turn_nums = [t["turn"] for t in data["turns"]]
+    expected_seq = list(range(1, len(data["turns"]) + 1))
+    is_sequential = (turn_nums == expected_seq)
+
+    # Check checkpoints land on user turns
+    user_turn_set = set(t["turn"] for t in user_turns)
+    cp_turns = set(c["turn"] for c in data["checkpoints"])
+    bad_cp = cp_turns - user_turn_set
+
+    issues = []
+    if consecutive:
+        issues.append("consecutive same-role turns")
+    if not is_sequential:
+        issues.append("NOT sequential numbering")
+    if bad_cp:
+        issues.append(f"checkpoints on non-user turns: {bad_cp}")
+
+    status = " ⚠ " + "; ".join(issues) if issues else " — OK"
     print(f"  {filename}: {len(data['turns'])} entries, {len(user_turns)} user turns, "
-          f"{len(data['checkpoints'])} checkpoints"
-          + (" ⚠ consecutive same-role turns!" if consecutive else " — OK"))
+          f"{len(data['checkpoints'])} checkpoints{status}")
 
 
 if __name__ == "__main__":
+    normalize_se1()
+    normalize_cooking01()
     normalize_se3()
     normalize_se4()
     normalize_se5()
     normalize_finance02()
 
     print("\nValidating...")
-    for f in ["chatgpt_software_engineering_03.json",
+    for f in ["chatgpt_software_engineering_01.json",
+              "chatgpt_cooking_recipes_01.json",
+              "chatgpt_software_engineering_03.json",
               "chatgpt_software_engineering_04.json",
               "chatgpt_software_engineering_05.json",
               "chatgpt_personal_finance_02.json"]:

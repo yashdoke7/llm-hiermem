@@ -22,7 +22,11 @@
         ".info(",
         ".debug(",
         ".warning(",
-        ".error("
+        ".error(",
+        "logging.config",
+        "logging.getLogger",
+        "logging.basicConfig",
+        "logger ="
       ]
     },
     {
@@ -33,11 +37,14 @@
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "exit_code = 0",
-        "exit_code = 1",
+        "sys.exit(",
+        "exit(0)",
+        "exit(1)",
+        "exit_code",
+        "SystemExit",
+        "raise SystemExit",
         "return 0",
-        "return 1",
-        "sys.exit"
+        "return 1"
       ]
     },
     {
@@ -53,7 +60,11 @@
         ".info(",
         ".debug(",
         ".warning(",
-        ".error("
+        ".error(",
+        "logging.config",
+        "logging.getLogger",
+        "logging.basicConfig",
+        "logger ="
       ]
     },
     {
@@ -64,11 +75,14 @@
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "exit_code = 0",
-        "exit_code = 1",
+        "sys.exit(",
+        "exit(0)",
+        "exit(1)",
+        "exit_code",
+        "SystemExit",
+        "raise SystemExit",
         "return 0",
-        "return 1",
-        "sys.exit"
+        "return 1"
       ]
     },
     {
@@ -84,7 +98,11 @@
         ".info(",
         ".debug(",
         ".warning(",
-        ".error("
+        ".error(",
+        "logging.config",
+        "logging.getLogger",
+        "logging.basicConfig",
+        "logger ="
       ]
     },
     {
@@ -95,11 +113,14 @@
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "exit_code = 0",
-        "exit_code = 1",
+        "sys.exit(",
+        "exit(0)",
+        "exit(1)",
+        "exit_code",
+        "SystemExit",
+        "raise SystemExit",
         "return 0",
-        "return 1",
-        "sys.exit"
+        "return 1"
       ]
     },
     {
@@ -115,7 +136,11 @@
         ".info(",
         ".debug(",
         ".warning(",
-        ".error("
+        ".error(",
+        "logging.config",
+        "logging.getLogger",
+        "logging.basicConfig",
+        "logger ="
       ]
     },
     {
@@ -126,11 +151,14 @@
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "exit_code = 0",
-        "exit_code = 1",
+        "sys.exit(",
+        "exit(0)",
+        "exit(1)",
+        "exit_code",
+        "SystemExit",
+        "raise SystemExit",
         "return 0",
-        "return 1",
-        "sys.exit"
+        "return 1"
       ]
     },
     {
@@ -146,7 +174,11 @@
         ".info(",
         ".debug(",
         ".warning(",
-        ".error("
+        ".error(",
+        "logging.config",
+        "logging.getLogger",
+        "logging.basicConfig",
+        "logger ="
       ]
     },
     {
@@ -157,11 +189,14 @@
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "exit_code = 0",
-        "exit_code = 1",
+        "sys.exit(",
+        "exit(0)",
+        "exit(1)",
+        "exit_code",
+        "SystemExit",
+        "raise SystemExit",
         "return 0",
-        "return 1",
-        "sys.exit"
+        "return 1"
       ]
     }
   ],
