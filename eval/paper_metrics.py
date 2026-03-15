@@ -416,6 +416,124 @@ def degradation_by_position(all_results: dict, metrics_rescored: dict) -> dict:
     return output
 
 
+# ─── NEW: Token-Accuracy Curve ────────────────────────────────────────────────
+
+def token_accuracy_curve(all_results: dict, metrics_rescored: dict) -> dict:
+    """Map context tokens used → judge score for every checkpoint turn per system.
+
+    Produces per-system lists of (tokens, score) pairs that can be plotted
+    directly as scatter or line charts.  This is the key efficiency chart:
+    HierMem should cluster in the low-token / high-score quadrant.
+
+    Returns {system: [{turn, convo, tokens, judge_score}, ...]}.
+    """
+    output = {}
+    for system_name, system_results in all_results.items():
+        judge_detail = (metrics_rescored.get(system_name, {})
+                        .get("judge_scores", {}).get("detail", []))
+        judge_map = {(d["convo"], d["turn"]): d["judge_score"] for d in judge_detail}
+
+        points = []
+        for conv in system_results:
+            cid = conv.get("conversation_id", "?")
+            for tl in _get_turn_logs(conv):
+                turn = tl.get("turn", 0)
+                ctx = _context_tokens(tl)
+                score = judge_map.get((cid, turn))
+                if score is not None and ctx > 0:
+                    points.append({
+                        "turn": turn, "convo": cid,
+                        "tokens": ctx, "judge_score": score,
+                    })
+        output[system_name] = points
+    return output
+
+
+def cost_quality_ratio(all_results: dict, metrics_rescored: dict) -> dict:
+    """Compute cost-quality trade-off per system.
+
+    Cost proxy = total estimated tokens consumed across ALL LLM calls per turn
+    (context tokens × num_calls).  For hiermem, pipeline_details may contain
+    multi-call breakdown; for baselines it's a single call.
+
+    Returns {system: {avg_quality, avg_cost_tokens, cost_per_quality_point,
+                      total_turns}}.
+    """
+    output = {}
+    for system_name, system_results in all_results.items():
+        judge_detail = (metrics_rescored.get(system_name, {})
+                        .get("judge_scores", {}).get("detail", []))
+        avg_score = mean([d["judge_score"] for d in judge_detail]) if judge_detail else 0
+
+        total_tokens, total_turns = 0, 0
+        for conv in system_results:
+            for tl in _get_turn_logs(conv):
+                ctx = _context_tokens(tl)
+                if ctx > 0:
+                    # Estimate call multiplier from pipeline details
+                    pd = tl.get("pipeline_details") or {}
+                    sources = pd.get("sources_used", [])
+                    is_hiermem_full = any("passthrough" not in str(s) for s in sources) and len(sources) > 1
+                    # hiermem full pipeline: curator(~1K) + main(~6K) + postproc(~1K) ≈ ctx * 1.3
+                    # baselines: 1 call = ctx
+                    if system_name == "hiermem" and is_hiermem_full:
+                        total_tokens += int(ctx * 1.3)
+                    elif system_name == "rag_summary":
+                        total_tokens += int(ctx * 1.15)  # main + summary update
+                    else:
+                        total_tokens += ctx
+                    total_turns += 1
+
+        avg_cost = round(total_tokens / max(total_turns, 1))
+        cost_per_point = round(avg_cost / max(avg_score, 0.1), 1)
+
+        output[system_name] = {
+            "avg_quality": round(avg_score, 2),
+            "avg_cost_tokens": avg_cost,
+            "cost_per_quality_point": cost_per_point,
+            "total_turns": total_turns,
+        }
+    return output
+
+
+def constraint_retention_by_distance(all_results: dict, metrics_rescored: dict) -> dict:
+    """Measure how constraint score changes as distance from constraint setup grows.
+
+    Groups checkpoints by how many turns have passed since the constraint was
+    set (turn 1), then averages judge scores per distance bucket.
+    Buckets: 0-10, 11-20, 21-30, 31-40, 41-50 turns from constraint.
+
+    Directly tests the "Lost in the Middle" hypothesis: baselines should
+    degrade with distance while HierMem stays flat.
+
+    Returns {system: {bucket_label: avg_judge_score}}.
+    """
+    BUCKETS = [(0, 10), (11, 20), (21, 30), (31, 40), (41, 50)]
+    LABELS = ["T1-10", "T11-20", "T21-30", "T31-40", "T41-50"]
+
+    output = {}
+    for system_name in all_results:
+        judge_detail = (metrics_rescored.get(system_name, {})
+                        .get("judge_scores", {}).get("detail", []))
+
+        bucket_scores = {label: [] for label in LABELS}
+        for d in judge_detail:
+            turn = d.get("turn", 0)
+            score = d.get("judge_score", 0)
+            for (lo, hi), label in zip(BUCKETS, LABELS):
+                if lo <= turn <= hi:
+                    bucket_scores[label].append(score)
+                    break
+            else:
+                # Turn > 50 — put in last bucket
+                if turn > 50:
+                    bucket_scores[LABELS[-1]].append(score)
+
+        output[system_name] = {
+            label: round(mean(scores), 2) if scores else None
+            for label, scores in bucket_scores.items()
+        }
+    return output
 
 
 def analyze_all(results: dict, metrics_rescored: dict) -> dict:
@@ -443,6 +561,9 @@ def analyze_all(results: dict, metrics_rescored: dict) -> dict:
         "memory_efficiency": memory_efficiency(results),
         "per_domain_accuracy": per_domain_accuracy(results, metrics_rescored),
         "degradation_by_position": degradation_by_position(results, metrics_rescored),
+        "token_accuracy_curve": token_accuracy_curve(results, metrics_rescored),
+        "cost_quality_ratio": cost_quality_ratio(results, metrics_rescored),
+        "constraint_retention_by_distance": constraint_retention_by_distance(results, metrics_rescored),
     }
     return output
 
@@ -561,6 +682,50 @@ def print_report(data: dict):
             print(f"  Violation auto-correction trigger rate:     {acs['trigger_rate']*100:.1f}%  "
                   f"({acs['triggered_turns']}/{acs['hybrid_turns']} turns)")
             print(f"  Total violations auto-corrected:            {acs['total_corrections']}")
+
+    # Cost-Quality Ratio
+    cqr = cross.get("cost_quality_ratio", {})
+    if cqr:
+        print("\n  10. COST-QUALITY TRADE-OFF (tokens per quality point)")
+        print(f"  {'System':<16} {'Judge Score':>12} {'Avg Tokens':>12} {'Tokens/Point':>14}")
+        print("  " + "-" * 58)
+        for s in systems:
+            row = cqr.get(s, {})
+            if row:
+                print(f"  {s:<16} {row['avg_quality']:>12.2f} {row['avg_cost_tokens']:>12,} {row['cost_per_quality_point']:>14.0f}")
+
+    # Constraint Retention by Distance
+    crbd = cross.get("constraint_retention_by_distance", {})
+    if crbd:
+        labels = ["T1-10", "T11-20", "T21-30", "T31-40", "T41-50"]
+        active_labels = [l for l in labels if any(crbd.get(s, {}).get(l) is not None for s in systems)]
+        if active_labels:
+            print("\n  11. CONSTRAINT RETENTION BY DISTANCE FROM SETUP (judge score)")
+            print(f"      Tests 'Lost in the Middle' — does score degrade with distance?")
+            header = f"  {'System':<16}" + "".join(f" {l:>8}" for l in active_labels)
+            print(header)
+            print("  " + "-" * (16 + 9 * len(active_labels)))
+            for s in systems:
+                row = crbd.get(s, {})
+                vals = "".join(
+                    f" {row[l]:>8.2f}" if row.get(l) is not None else f" {'N/A':>8}"
+                    for l in active_labels
+                )
+                print(f"  {s:<16}{vals}")
+
+    # Token-Accuracy summary (just stats, full data in JSON)
+    tac = cross.get("token_accuracy_curve", {})
+    if tac:
+        print("\n  12. TOKEN-ACCURACY SUMMARY (avg tokens at checkpoint turns vs judge score)")
+        print(f"  {'System':<16} {'Points':>8} {'Avg Tokens':>12} {'Avg Score':>11}")
+        print("  " + "-" * 50)
+        for s in systems:
+            points = tac.get(s, [])
+            if points:
+                avg_tok = round(mean(p["tokens"] for p in points))
+                avg_sc = round(mean(p["judge_score"] for p in points), 2)
+                print(f"  {s:<16} {len(points):>8} {avg_tok:>12,} {avg_sc:>11.2f}")
+        print(f"      (Full scatter data available in --json output for plotting)")
 
     print()
 
