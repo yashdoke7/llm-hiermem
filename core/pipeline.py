@@ -10,6 +10,7 @@ This is the heart of the system. For each user turn:
 """
 
 import re
+import logging
 from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
@@ -22,6 +23,8 @@ from core.assembler import ContextAssembler, ContextChunk, AssembledContext
 from core.post_processor import PostProcessor
 from retrieval.router import RetrievalRouter
 import config
+
+logger = logging.getLogger(__name__)
 
 
 def _strip_hallucinated_continuation(text: str) -> str:
@@ -166,6 +169,9 @@ class HierMemPipeline:
                 decision=curator_decision
             )
 
+            # Step 2.5: Tag pre-constraint chunks (Fix 2 + Fix 5)
+            relevant_chunks = self._tag_pre_constraint_chunks(relevant_chunks)
+
             # Step 3: Get recent turns (always included)
             recent_chunks = self._get_recent_turn_chunks()
 
@@ -250,6 +256,70 @@ class HierMemPipeline:
             ContextChunk.from_text(text=r.get("text", ""), source=f"recent:turn_{r.get('turn', '?')}")
             for r in recent
         ]
+
+    def _tag_pre_constraint_chunks(self, chunks: List[ContextChunk]) -> List[ContextChunk]:
+        """
+        Tag retrieved chunks that predate active constraints.
+
+        If a chunk comes from a segment whose turns ended before the earliest
+        active constraint was set, prepend a warning note so the main LLM
+        knows to follow the rules instead of the old patterns.
+        """
+        active = self.constraint_store.get_all_active()
+        if not active:
+            return chunks
+
+        earliest_constraint_turn = min(c.source_turn for c in active)
+        if earliest_constraint_turn <= 0:
+            return chunks
+
+        NOTE = (
+            "[⚠ PRE-RULE CONTEXT: This was recorded BEFORE current rules were set. "
+            "Always follow ACTIVE RULES & CONSTRAINTS above instead of patterns shown here.]\n"
+        )
+
+        tagged = []
+        for chunk in chunks:
+            end_turn = self._get_chunk_end_turn(chunk)
+            if end_turn is not None and end_turn < earliest_constraint_turn:
+                chunk = ContextChunk(
+                    text=NOTE + chunk.text,
+                    source=chunk.source,
+                    tokens_est=chunk.tokens_est + len(NOTE) // 4
+                )
+                logger.debug(
+                    "Tagged pre-constraint chunk %s (end_turn=%d < constraint_turn=%d)",
+                    chunk.source, end_turn, earliest_constraint_turn
+                )
+            tagged.append(chunk)
+        return tagged
+
+    def _get_chunk_end_turn(self, chunk: ContextChunk) -> Optional[int]:
+        """Determine the latest turn number in a chunk from its source metadata."""
+        source = chunk.source
+
+        # L1:seg_XXX → look up segment turn range in L0 directory
+        if source.startswith("L1:"):
+            seg_id = source[3:]
+            entry = self.archive.l0_directory.get(seg_id)
+            if entry:
+                return entry.turn_end
+
+        # L3:turn_N or recent:turn_N → direct turn number
+        if ":turn_" in source:
+            try:
+                turn_str = source.split(":turn_")[1]
+                return int(turn_str)
+            except (ValueError, IndexError):
+                pass
+
+        # Semantic results → try to extract turn number from text
+        if "Turn " in chunk.text:
+            match = re.search(r'Turn\s+(\d+)', chunk.text)
+            if match:
+                return int(match.group(1))
+
+        return None
 
     def get_conversation_trace(self) -> List[dict]:
         """Get the full conversation trace for logging/evaluation."""

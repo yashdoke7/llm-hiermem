@@ -55,7 +55,10 @@ Rules:
 - peripheral_segments: segments that might be tangentially relevant (1-line summary only)
 - fetch_full_turns: list turn numbers when you need the FULL raw content of a specific turn
   (e.g. the actual code a user pasted, a file they shared). Use this for debugging scenarios
-  where a summary is not enough — e.g. [7, 12] to get the raw content of turns 7 and 12."""
+  where a summary is not enough — e.g. [7, 12] to get the raw content of turns 7 and 12.
+- CONSTRAINT AWARENESS: If a constraint says "use X instead of Y" or "never use Y",
+  AVOID fetching segments that primarily demonstrate Y (the old pattern).
+  Prefer segments created AFTER constraints were set."""
 
 
 @dataclass

@@ -89,12 +89,20 @@ class ConstraintStore:
         return violations
 
     def get_display_text(self) -> str:
-        """Get formatted text for inclusion in assembled context."""
+        """Get formatted text for inclusion in assembled context.
+
+        Uses strong imperative framing so the main LLM treats constraints
+        as overriding any conflicting patterns in retrieved context.
+        """
         active = self.get_all_active()
         if not active:
             return "No active constraints."
-        lines = [c.to_display() for c in active]
-        return "\n".join(lines)
+        header = (
+            "⚠️ MANDATORY RULES — These override ALL prior code patterns and examples.\n"
+            "If earlier context shows code that conflicts with these rules, IGNORE that old code.\n"
+        )
+        lines = [f"{i+1}. {c.to_display()}" for i, c in enumerate(active)]
+        return header + "\n".join(lines)
 
     def total_tokens_estimate(self) -> int:
         """Rough token estimate (1 token ≈ 4 chars)."""

@@ -53,21 +53,21 @@ MAX_CONSTRAINTS = 20           # Max active constraints
 
 # === Context Assembly Settings ===
 # TOTAL_CONTEXT_BUDGET: Max tokens in assembled context for main LLM.
-# Benchmark standard = 6000 (matches Groq free-tier 6000 TPM — ensures fair cross-model comparison).
-# Override for local/Gemini runs: TOTAL_CONTEXT_BUDGET=8000 in .env
-TOTAL_CONTEXT_BUDGET = int(os.getenv("TOTAL_CONTEXT_BUDGET", "6000"))
-# Zone budgets — Z1/Z3 are fixed (constraints don't need more space),
-# Z2 (relevant context) gets the remaining budget and scales up when budget grows.
-ZONE_1_BUDGET = 500                                                             # Constraints zone (fixed)
-ZONE_4_BUDGET = max(1000, TOTAL_CONTEXT_BUDGET // 6)                           # Current prompt zone (~17%)
-ZONE_3_BUDGET = 500                                                             # Peripheral zone (fixed)
+# 8192 matches MemGPT paper benchmark standard (~25% of qwen2.5:14b's 32K window).
+# Groq TPM (6000) is UNRELATED — that rate-limits judge API calls, not main LLM context.
+TOTAL_CONTEXT_BUDGET = int(os.getenv("TOTAL_CONTEXT_BUDGET", "8192"))
+# Zone budgets — Z1 (constraints) and Z3 (peripheral) are fixed.
+# Z4 (current prompt) scales with budget. Z2 (relevant context) gets the remainder.
+ZONE_1_BUDGET = 700                                                             # Constraints zone (fixed, increased for stronger formatting)
+ZONE_4_BUDGET = max(1200, TOTAL_CONTEXT_BUDGET // 5)                           # Current prompt zone (~20%)
+ZONE_3_BUDGET = 300                                                             # Peripheral zone (fixed)
 ZONE_2_BUDGET = TOTAL_CONTEXT_BUDGET - ZONE_1_BUDGET - ZONE_3_BUDGET - ZONE_4_BUDGET  # Relevant context (gets the rest)
 
 # === Adaptive Passthrough ===
 # When conversation history fits within this token threshold, use full history
 # (like raw LLM) instead of curated context. Avoids information loss on short
 # conversations. Memory archiving still runs in the background.
-PASSTHROUGH_THRESHOLD = int(TOTAL_CONTEXT_BUDGET * 0.90)  # 5400 tokens — defer curation longer on slow hardware
+PASSTHROUGH_THRESHOLD = int(TOTAL_CONTEXT_BUDGET * 0.90)  # 7373 tokens at 8192 budget
 
 # === Curator Settings ===
 MAX_SEGMENTS_TO_FETCH = 4      # Curator can select at most this many segments

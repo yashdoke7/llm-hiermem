@@ -27,3 +27,8 @@ Rules:
 - Recent 2-3 turns are always auto-included — don't waste slots on them
 - For the first few turns, segments_to_fetch may be empty — that's fine
 - If uncertain whether something is relevant, include it as peripheral (cheap to include)
+- CONSTRAINT AWARENESS: When selecting segments, consider the active constraints.
+  If a constraint says "use X instead of Y" or "never use Y", AVOID fetching segments
+  that primarily demonstrate Y (the old/overridden pattern). Prefer segments created
+  AFTER constraints were set, as they reflect the user's current requirements.
+  Example: if constraint says "use polars not pandas", don't fetch segments full of pandas code.
