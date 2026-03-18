@@ -30,7 +30,7 @@ class RAGBaseline:
     """
 
     def __init__(self, provider: str = None, model: str = None,
-                 top_k: int = 5, max_context_tokens: int = None):
+                 top_k: int = 20, max_context_tokens: int = None):
         self.llm = LLMClient(provider=provider or config.DEFAULT_PROVIDER)
         self.model = model or config.MAIN_LLM_MODEL
         self.vector_store = VectorStore(collection_name="rag_baseline")

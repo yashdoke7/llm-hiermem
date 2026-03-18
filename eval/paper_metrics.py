@@ -7,7 +7,7 @@ Metrics computed (no re-running required):
   3.  Constraint retrieval rate   — % HierMem turns where constraint zone was active
   4.  Auto-correction rate        — % turns HierMem triggered violation_retry
   5.  Response length stability   — std dev of response length across turns (consistency)
-  6.  Context utilization         — avg % of 6000-token budget actually used
+  6.  Context utilization         — avg % of configured token budget actually used
   7.  Latency trend               — avg latency at early/mid/late turns
   8.  HierMem mode transition      — turn at which passthrough→HYBRID switches
   9.  Degradation slope           — how fast judge score drops (slope T8→T25)
@@ -26,8 +26,9 @@ from pathlib import Path
 from statistics import mean, stdev
 from typing import List, Dict, Any, Optional
 
+import config
 
-CONTEXT_BUDGET = 6000  # from config.TOTAL_CONTEXT_BUDGET
+CONTEXT_BUDGET = config.TOTAL_CONTEXT_BUDGET
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -630,7 +631,7 @@ def print_report(data: dict):
                 print(f"  {s:<16}{vals}")
 
     # Context utilization + memory efficiency
-    print("\n  6. CONTEXT BUDGET UTILIZATION (budget=6000 tokens)")
+    print(f"\n  6. CONTEXT BUDGET UTILIZATION (budget={CONTEXT_BUDGET} tokens)")
     print(f"  {'System':<16} {'Avg tokens':>12} {'Avg %':>8} {'Max %':>8}")
     print("  " + "-" * 48)
     for s in systems:

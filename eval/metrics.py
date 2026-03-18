@@ -400,18 +400,18 @@ def evaluate_checkpoint(response: str, constraint_text: str,
     else:
         keyword_result = _keyword_evaluate(response, keywords)
 
-    # Try LLM-as-judge if available
+    # Try LLM-as-judge if available — judge verdict is authoritative
     if _judge_available and _llm_client:
         try:
             llm_result = _llm_judge_evaluate(response, constraint_text,
                                              checkpoint_constraint,
                                              user_message=user_message,
                                              specific_test=specific_test)
-            logger.debug(f"Judge: keyword={keyword_result}, llm={llm_result}")
-            # Pass if EITHER method says pass (keywords are reliable for code patterns)
-            return keyword_result or llm_result
+            logger.debug(f"Judge: keyword={keyword_result}, llm={llm_result} (using judge)")
+            # Judge-primary: use LLM verdict when available (keywords are fallback only)
+            return llm_result
         except Exception as e:
-            logger.debug(f"LLM judge failed, using keywords only: {e}")
+            logger.debug(f"LLM judge failed, falling back to keywords: {e}")
 
     return keyword_result
 
@@ -443,9 +443,13 @@ def _llm_judge_evaluate(response: str, constraint_text: str,
         f"{user_context}"
         f"\nASSISTANT'S RESPONSE:\n{response[:2000]}\n\n"
         f"Does the response follow the rules?{test_instruction}\n"
-        f"- If the user's question is conceptual/explanatory and no code was produced, that is PASS\n"
-        f"- Be fair: if the response shows awareness of the constraint and mostly follows it, PASS\n"
-        f"- Only FAIL if the constraint is clearly ignored or violated in a major way\n\n"
+        f"- If the constraint involves code patterns (e.g. use library X, use pattern Y), "
+        f"the response MUST use them in any code it produces to PASS\n"
+        f"- If the turn is purely conceptual with no code, and the question does not "
+        f"call for code, give benefit of the doubt and PASS\n"
+        f"- If the turn should produce code but doesn't, evaluate whether the constraint "
+        f"is still acknowledged — only PASS if the omission is clearly intentional\n"
+        f"- FAIL if the constraint is clearly ignored or violated\n\n"
         f"Output ONLY one word: PASS or FAIL"
     )
 
@@ -889,8 +893,11 @@ def _absolute_judge(response: str, constraint_text: str,
         f"   2 = Almost completely ignores the rules\n"
         f"   1 = Completely ignores all rules\n\n"
         f"Notes:\n"
-        f"- If the user's question is conceptual/explanatory and produces no code, score 7 (constraint not applicable but not violated)\n"
-        f"- If code is produced, the constraint rules must be visible in the code to score above 5\n"
+        f"- If the question genuinely does not call for code and none is produced, score 8 "
+        f"(constraint acknowledged but not directly applicable)\n"
+        f"- If the question calls for code or code is produced, the constraint rules "
+        f"MUST be visible in the code to score above 5\n"
+        f"- If code uses the WRONG pattern (e.g. pandas instead of polars), score 2-3 regardless of other quality\n"
         f"- Be consistent: judge the pattern of constraint adherence across the whole response\n\n"
         f"Output your score as: SCORE: <number>\n"
         f"Then optionally one sentence of reasoning."
@@ -925,6 +932,106 @@ def _absolute_judge(response: str, constraint_text: str,
         logger.warning(f"Absolute judge failed: {e}")
         _judge_cache[cache_key] = 5.0
         return 5.0
+
+
+# ─── Judge Self-Consistency Checker ─────────────────────────────────────────
+
+
+def judge_self_consistency(all_results: Dict[str, List[Dict]],
+                           sample_pct: float = 0.10,
+                           seed: int = 42) -> Dict:
+    """Measure judge self-consistency by rescoring a sample of responses twice.
+    
+    Temporarily clears the judge cache for the selected samples so the LLM
+    is called twice for the same (response, constraint) pair. Reports:
+      - agreement_rate: % of binary PASS/FAIL verdicts that match
+      - score_mae: mean absolute error between absolute judge rescores
+      - n_samples: how many responses were rescored
+    
+    This is recommended by LLM-as-judge literature (MT-Bench, G-Eval)
+    to validate judge stability. Research papers should report this metric.
+    """
+    if not _judge_available:
+        return {"error": "LLM judge not available"}
+    
+    import random as _rand
+    rng = _rand.Random(seed)
+    
+    # Collect all (response, constraint, test, user_msg) tuples from checkpoints
+    samples = []
+    for system_name, convos in all_results.items():
+        for conv in convos:
+            turn_logs = conv.get("turn_logs", [])
+            checkpoints = conv.get("checkpoints", [])
+            for cp in checkpoints:
+                turn_num = cp.get("turn", 0)
+                response = None
+                user_msg = ""
+                for t in turn_logs:
+                    if t.get("turn") == turn_num:
+                        response = t.get("response", "")
+                        break
+                if not response or response.startswith("ERROR:"):
+                    continue
+                # Find user message for this turn
+                for t in turn_logs:
+                    if t.get("turn") == turn_num - 1 or t.get("turn") == turn_num:
+                        if t.get("user"):
+                            user_msg = t["user"]
+                            break
+                samples.append({
+                    "response": response,
+                    "constraint": cp.get("constraint_tested", ""),
+                    "test": cp.get("test", ""),
+                    "user_msg": user_msg,
+                })
+    
+    if not samples:
+        return {"error": "No checkpoint samples found"}
+    
+    n = max(1, int(len(samples) * sample_pct))
+    chosen = rng.sample(samples, min(n, len(samples)))
+    
+    binary_agreements = 0
+    score_diffs = []
+    
+    for s in chosen:
+        # First call (may use cache)
+        r1_binary = _llm_judge_evaluate(
+            s["response"], s["constraint"], s["constraint"],
+            user_message=s["user_msg"], specific_test=s["test"]
+        )
+        r1_score = _absolute_judge(
+            s["response"], s["constraint"],
+            user_message=s["user_msg"], specific_test=s["test"]
+        )
+        
+        # Clear cache for this specific pair
+        ck_binary = (hash(s["response"][:2000]), hash(s["constraint"]), hash(s["test"]))
+        ck_abs = ("abs", hash(s["response"][:4000]), hash(s["constraint"]), hash(s["test"]))
+        _judge_cache.pop(ck_binary, None)
+        _judge_cache.pop(ck_abs, None)
+        
+        # Second call (forced fresh)
+        r2_binary = _llm_judge_evaluate(
+            s["response"], s["constraint"], s["constraint"],
+            user_message=s["user_msg"], specific_test=s["test"]
+        )
+        r2_score = _absolute_judge(
+            s["response"], s["constraint"],
+            user_message=s["user_msg"], specific_test=s["test"]
+        )
+        
+        if r1_binary == r2_binary:
+            binary_agreements += 1
+        score_diffs.append(abs(r1_score - r2_score))
+    
+    n_sampled = len(chosen)
+    return {
+        "agreement_rate": round(binary_agreements / n_sampled * 100, 1),
+        "score_mae": round(sum(score_diffs) / n_sampled, 2),
+        "n_samples": n_sampled,
+    }
 
 
 # ─── Pairwise LLM Comparison ────────────────────────────────────────────────

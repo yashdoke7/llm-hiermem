@@ -1,5 +1,10 @@
 """
 Token Counter — Accurate token counting for budget management.
+
+NOTE: Uses tiktoken's cl100k_base (GPT-4) tokenizer as an approximation
+for all models. For non-OpenAI models (e.g. Qwen, Gemma, Llama), token
+counts will be approximate (~10-20% variance). The bias is consistent
+across all systems, so comparative metrics remain valid.
 """
 
 from typing import Optional
@@ -10,6 +15,10 @@ _encoder = None
 def count_tokens(text: str, model: str = "gpt-4") -> int:
     """
     Count tokens in text. Uses tiktoken if available, else estimates.
+    
+    Note: Always uses cl100k_base encoding regardless of target model.
+    This is an intentional cross-model approximation for consistent 
+    budget management across different LLM backends.
     """
     global _encoder
     try:

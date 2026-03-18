@@ -30,7 +30,7 @@ class RAGSummaryBaseline:
     """
 
     def __init__(self, provider: str = None, model: str = None,
-                 top_k: int = 5, max_context_tokens: int = None,
+                 top_k: int = 20, max_context_tokens: int = None,
                  max_summary_tokens: int = 500):
         self.llm = LLMClient(provider=provider or config.DEFAULT_PROVIDER)
         self.model = model or config.MAIN_LLM_MODEL

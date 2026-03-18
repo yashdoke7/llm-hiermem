@@ -5,6 +5,7 @@ Visualization — Generate comparison charts for evaluation results.
 import json
 import argparse
 from pathlib import Path
+import config
 
 try:
     import matplotlib.pyplot as plt
@@ -176,13 +177,14 @@ def plot_context_tokens_per_turn(results: dict, output_path: Path):
         lw = 2.5 if system_name == "hiermem" else 1.8
         ax.plot(turns, avgs, linewidth=lw, label=_label(system_name), color=_color(system_name))
 
-    ax.axhline(y=6000, color='black', linestyle='--', linewidth=1, alpha=0.4, label='Budget (6000 tok)')
+    budget = config.TOTAL_CONTEXT_BUDGET
+    ax.axhline(y=budget, color='black', linestyle='--', linewidth=1, alpha=0.4, label=f'Budget ({budget} tok)')
     ax.set_xlabel("Conversation Turn", fontsize=12)
     ax.set_ylabel("Context Tokens Used", fontsize=12)
     ax.set_title("Context Token Usage Per Turn", fontsize=13)
     ax.legend(fontsize=10)
     ax.grid(True, alpha=0.3)
-    ax.set_ylim(0, 7000)
+    ax.set_ylim(0, budget + 1000)
     fig.tight_layout()
     fig.savefig(output_path / "context_tokens_per_turn.png", dpi=150)
     plt.close(fig)
