@@ -1,0 +1,375 @@
+[
+  {
+    "conversation_id": "visualization_plotly_dark_mode",
+    "constraints": [
+      "Always chart using Plotly, never Matplotlib.",
+      "Explicitly set the chart theme to dark mode."
+    ],
+    "num_turns": 30,
+    "turns": [
+      {
+        "turn_id": 1,
+        "role": "user",
+        "content": "hey! starting a data visualization project for our sales dashboard. can you show me how to make a basic bar chart of monthly sales revenue using plotly?"
+      },
+      {
+        "turn_id": 2,
+        "role": "assistant",
+        "content": "Here's a clean bar chart with Plotly in dark mode:\n\n```python\nimport plotly.graph_objects as go\n\nmonths = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\",\n          \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\nrevenue = [42000, 38000, 55000, 61000, 58000, 72000,\n           69000, 74000, 81000, 76000, 88000, 95000]\n\nfig = go.Figure(\n    data=[\n        go.Bar(\n            x=months,\n            y=revenue,\n            marker_color=\"#7B61FF\",\n            text=[f\"${v:,}\" for v in revenue],\n            textposition=\"outside\",\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Monthly Sales Revenue\",\n    xaxis_title=\"Month\",\n    yaxis_title=\"Revenue (USD)\",\n    template=\"plotly_dark\",  # dark mode\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\nfig.show()\n```\n\nKey things: `template=\"plotly_dark\"` sets dark mode globally, and the `plot_bgcolor`/`paper_bgcolor` override gives you a deep dark background. Plotly is used throughout \u2014 no Matplotlib anywhere."
+      },
+      {
+        "turn_id": 3,
+        "role": "user",
+        "content": "nice! can you add a line chart on top of that showing the monthly target? like a combo bar + line chart"
+      },
+      {
+        "turn_id": 4,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\nmonths = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\",\n          \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\nrevenue = [42000, 38000, 55000, 61000, 58000, 72000,\n           69000, 74000, 81000, 76000, 88000, 95000]\ntargets = [50000, 50000, 55000, 60000, 65000, 70000,\n           70000, 75000, 80000, 80000, 85000, 90000]\n\nfig = go.Figure()\n\n# Bars for actual revenue\nfig.add_trace(go.Bar(\n    x=months,\n    y=revenue,\n    name=\"Actual Revenue\",\n    marker_color=\"#7B61FF\",\n))\n\n# Line for targets\nfig.add_trace(go.Scatter(\n    x=months,\n    y=targets,\n    name=\"Target\",\n    mode=\"lines+markers\",\n    line=dict(color=\"#f38ba8\", width=2, dash=\"dash\"),\n    marker=dict(size=6),\n))\n\nfig.update_layout(\n    title=\"Monthly Revenue vs Target\",\n    xaxis_title=\"Month\",\n    yaxis_title=\"Amount (USD)\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    legend=dict(orientation=\"h\", y=1.1),\n    barmode=\"group\",\n)\n\nfig.show()\n```\n\nCombines `go.Bar` and `go.Scatter` in a single figure. The dashed line stands out clearly against the bars in dark mode. `template=\"plotly_dark\"` ensures dark mode across both trace types."
+      },
+      {
+        "turn_id": 5,
+        "role": "user",
+        "content": "can you make a pie chart showing the revenue split by product category?"
+      },
+      {
+        "turn_id": 6,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\ncategories = [\"Electronics\", \"Clothing\", \"Home & Garden\", \"Sports\", \"Books\"]\nrevenue_split = [38, 25, 18, 12, 7]  # percentages\n\nfig = go.Figure(\n    data=[\n        go.Pie(\n            labels=categories,\n            values=revenue_split,\n            hole=0.4,  # donut style\n            marker=dict(\n                colors=[\"#7B61FF\", \"#f38ba8\", \"#a6e3a1\", \"#fab387\", \"#89dceb\"],\n                line=dict(color=\"#1e1e2e\", width=2),\n            ),\n            textinfo=\"label+percent\",\n            textfont=dict(size=13),\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Revenue by Product Category\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    legend=dict(orientation=\"v\", x=1.0),\n)\n\nfig.show()\n```\n\n`hole=0.4` makes it a donut chart \u2014 easier to read in dashboards than a solid pie. The `line` between slices uses the dark background color so segments are cleanly separated. `template=\"plotly_dark\"` is set explicitly for dark mode. Plotly only \u2014 no Matplotlib."
+      },
+      {
+        "turn_id": 7,
+        "role": "user",
+        "content": "can i make a scatter plot of customer age vs purchase value? i have a dataframe with those columns"
+      },
+      {
+        "turn_id": 8,
+        "role": "assistant",
+        "content": "```python\nimport plotly.express as px\nimport pandas as pd\n\n# Example DataFrame \u2014 replace with your actual data\ndf = pd.DataFrame({\n    \"age\": [22, 35, 28, 45, 52, 31, 67, 41, 29, 58],\n    \"purchase_value\": [120, 340, 210, 580, 720, 290, 410, 650, 175, 830],\n    \"category\": [\"Electronics\", \"Clothing\", \"Books\", \"Electronics\",\n                 \"Home & Garden\", \"Sports\", \"Clothing\", \"Electronics\",\n                 \"Books\", \"Home & Garden\"],\n})\n\nfig = px.scatter(\n    df,\n    x=\"age\",\n    y=\"purchase_value\",\n    color=\"category\",\n    size=\"purchase_value\",\n    hover_data=[\"age\", \"purchase_value\", \"category\"],\n    title=\"Customer Age vs Purchase Value\",\n    labels={\"age\": \"Customer Age\", \"purchase_value\": \"Purchase Value (USD)\"},\n    template=\"plotly_dark\",\n)\n\nfig.update_layout(\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\nfig.show()\n```\n\nUsing `plotly.express` here \u2014 much less boilerplate than `graph_objects` for scatter plots with color grouping. `template=\"plotly_dark\"` is still explicitly set for dark mode. The `size` parameter scales bubble size to purchase value, which adds a useful third dimension."
+      },
+      {
+        "turn_id": 9,
+        "role": "user",
+        "content": "can i add a trendline to the scatter plot?"
+      },
+      {
+        "turn_id": 10,
+        "role": "assistant",
+        "content": "```python\nimport plotly.express as px\n\nfig = px.scatter(\n    df,\n    x=\"age\",\n    y=\"purchase_value\",\n    color=\"category\",\n    trendline=\"ols\",        # Ordinary Least Squares trendline\n    trendline_scope=\"overall\",  # one global trendline across all categories\n    hover_data=[\"age\", \"purchase_value\", \"category\"],\n    title=\"Customer Age vs Purchase Value (with Trendline)\",\n    labels={\"age\": \"Customer Age\", \"purchase_value\": \"Purchase Value (USD)\"},\n    template=\"plotly_dark\",\n)\n\nfig.update_layout(\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\n# Print trendline stats\nresults = px.get_trendline_results(fig)\nprint(results.px_fit_results.iloc[0].summary())\n\nfig.show()\n```\n\nYou'll need `statsmodels` installed for OLS: `pip install statsmodels`. `trendline_scope=\"overall\"` draws one line across all data points. For per-category trendlines, use `trendline_scope=\"trace\"`. Dark mode is explicitly set via `template=\"plotly_dark\"` \u2014 the trendline inherits it automatically."
+      },
+      {
+        "turn_id": 11,
+        "role": "user",
+        "content": "how do i make a heatmap? i want to show correlation between numeric features in my dataset"
+      },
+      {
+        "turn_id": 12,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport pandas as pd\nimport numpy as np\n\n# Example correlation matrix \u2014 replace with df.corr() on your data\nnumeric_cols = [\"age\", \"purchase_value\", \"visits\", \"items_bought\", \"satisfaction\"]\ncorr_matrix = pd.DataFrame(\n    np.random.uniform(-1, 1, size=(5, 5)),\n    columns=numeric_cols,\n    index=numeric_cols,\n)\n# Force diagonal to 1 for realism\nnp.fill_diagonal(corr_matrix.values, 1.0)\n\nfig = go.Figure(\n    data=go.Heatmap(\n        z=corr_matrix.values,\n        x=corr_matrix.columns.tolist(),\n        y=corr_matrix.index.tolist(),\n        colorscale=\"RdBu\",     # red = negative, blue = positive\n        zmin=-1,\n        zmax=1,\n        text=np.round(corr_matrix.values, 2),\n        texttemplate=\"%{text}\",\n        textfont=dict(size=11),\n        colorbar=dict(title=\"Correlation\"),\n    )\n)\n\nfig.update_layout(\n    title=\"Feature Correlation Heatmap\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    xaxis=dict(side=\"bottom\"),\n)\n\nfig.show()\n```\n\n`go.Heatmap` with `colorscale=\"RdBu\"` is the standard for correlation matrices \u2014 diverging from red (\u22121) through white (0) to blue (+1). Values are overlaid directly on each cell. `template=\"plotly_dark\"` and explicit background colors for full dark mode. Plotly only \u2014 no Matplotlib."
+      },
+      {
+        "turn_id": 13,
+        "role": "user",
+        "content": "can i build a multi-panel dashboard layout? like 4 charts arranged in a 2x2 grid"
+      },
+      {
+        "turn_id": 14,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nfrom plotly.subplots import make_subplots\n\nfig = make_subplots(\n    rows=2, cols=2,\n    subplot_titles=[\n        \"Monthly Revenue\",\n        \"Revenue by Category\",\n        \"Age vs Purchase Value\",\n        \"Daily Orders\",\n    ],\n    specs=[\n        [{\"type\": \"bar\"},  {\"type\": \"pie\"}],\n        [{\"type\": \"scatter\"}, {\"type\": \"scatter\"}],\n    ]\n)\n\n# Panel 1: Bar chart\nfig.add_trace(\n    go.Bar(x=[\"Jan\",\"Feb\",\"Mar\"], y=[42000, 38000, 55000],\n           marker_color=\"#7B61FF\", showlegend=False),\n    row=1, col=1\n)\n\n# Panel 2: Pie chart\nfig.add_trace(\n    go.Pie(labels=[\"Electronics\",\"Clothing\",\"Other\"],\n           values=[38, 25, 37], hole=0.4, showlegend=False),\n    row=1, col=2\n)\n\n# Panel 3: Scatter\nfig.add_trace(\n    go.Scatter(x=[22,35,45,52,67], y=[120,340,580,720,410],\n               mode=\"markers\", marker=dict(color=\"#a6e3a1\", size=10),\n               showlegend=False),\n    row=2, col=1\n)\n\n# Panel 4: Line chart\nfig.add_trace(\n    go.Scatter(x=list(range(1, 31)), y=[int(50+i*2.5+(-1)**i*10) for i in range(30)],\n               mode=\"lines\", line=dict(color=\"#fab387\"), showlegend=False),\n    row=2, col=2\n)\n\nfig.update_layout(\n    title_text=\"Sales Dashboard\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    height=700,\n)\n\nfig.show()\n```\n\n`make_subplots` with `specs` allows mixing chart types \u2014 pie charts need `{\"type\": \"pie\"}`. `template=\"plotly_dark\"` applies dark mode to all panels at once. All panels use Plotly \u2014 no Matplotlib."
+      },
+      {
+        "turn_id": 15,
+        "role": "user",
+        "content": "how do i make an interactive time series chart? like with a date range slider at the bottom"
+      },
+      {
+        "turn_id": 16,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport pandas as pd\nimport numpy as np\n\n# Generate sample daily sales data\ndates = pd.date_range(start=\"2023-01-01\", end=\"2023-12-31\", freq=\"D\")\nnp.random.seed(42)\nrevenue = np.cumsum(np.random.normal(loc=1000, scale=200, size=len(dates))) + 50000\n\nfig = go.Figure(\n    data=[\n        go.Scatter(\n            x=dates,\n            y=revenue,\n            mode=\"lines\",\n            name=\"Daily Revenue\",\n            line=dict(color=\"#7B61FF\", width=1.5),\n            fill=\"tozeroy\",\n            fillcolor=\"rgba(123, 97, 255, 0.15)\",\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Daily Revenue \u2014 2023\",\n    xaxis_title=\"Date\",\n    yaxis_title=\"Cumulative Revenue (USD)\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    # Range slider\n    xaxis=dict(\n        rangeslider=dict(visible=True, bgcolor=\"#313244\"),\n        rangeselector=dict(\n            buttons=[\n                dict(count=7,  label=\"1W\", step=\"day\",  stepmode=\"backward\"),\n                dict(count=1,  label=\"1M\", step=\"month\", stepmode=\"backward\"),\n                dict(count=3,  label=\"3M\", step=\"month\", stepmode=\"backward\"),\n                dict(count=6,  label=\"6M\", step=\"month\", stepmode=\"backward\"),\n                dict(step=\"all\", label=\"All\"),\n            ],\n            bgcolor=\"#313244\",\n            activecolor=\"#7B61FF\",\n            font=dict(color=\"#cdd6f4\"),\n        ),\n    ),\n)\n\nfig.show()\n```\n\n`rangeslider` adds the scrubber bar at the bottom. `rangeselector` adds the 1W/1M/3M/6M/All quick-select buttons. The slider and buttons are styled to match the dark theme. All Plotly, no Matplotlib."
+      },
+      {
+        "turn_id": 17,
+        "role": "user",
+        "content": "can i add annotations to the time series? like marking the date when we launched a new product"
+      },
+      {
+        "turn_id": 18,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\n# Add to your existing fig after creating it\nlaunch_date = \"2023-06-15\"\nlaunch_revenue = revenue[dates.get_loc(launch_date)]\n\nfig.add_annotation(\n    x=launch_date,\n    y=launch_revenue,\n    text=\"Product Launch\",\n    showarrow=True,\n    arrowhead=2,\n    arrowcolor=\"#f38ba8\",\n    arrowwidth=2,\n    font=dict(color=\"#f38ba8\", size=12),\n    bgcolor=\"#313244\",\n    bordercolor=\"#f38ba8\",\n    borderwidth=1,\n    borderpad=4,\n    ax=40,   # arrow x offset\n    ay=-60,  # arrow y offset\n)\n\n# Vertical line at the launch date\nfig.add_vline(\n    x=launch_date,\n    line_dash=\"dash\",\n    line_color=\"#f38ba8\",\n    line_width=1.5,\n    opacity=0.7,\n)\n\nfig.show()\n```\n\n`add_annotation` places a callout with an arrow. `add_vline` draws a vertical dashed line at the event date \u2014 together they make the launch clearly visible on the dark background. The annotation background `bgcolor=\"#313244\"` ensures readability against the dark chart. All Plotly."
+      },
+      {
+        "turn_id": 19,
+        "role": "user",
+        "content": "can i make a funnel chart for our sales pipeline? like leads \u2192 qualified \u2192 proposal \u2192 negotiation \u2192 closed"
+      },
+      {
+        "turn_id": 20,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\nstages = [\"Leads\", \"Qualified\", \"Proposal Sent\", \"Negotiation\", \"Closed Won\"]\nvalues = [1200, 740, 420, 180, 95]\nconversion = [f\"{v/values[0]*100:.1f}%\" for v in values]\n\nfig = go.Figure(\n    data=[\n        go.Funnel(\n            y=stages,\n            x=values,\n            textinfo=\"value+percent initial\",\n            marker=dict(\n                color=[\"#7B61FF\", \"#89b4fa\", \"#a6e3a1\", \"#fab387\", \"#f38ba8\"],\n                line=dict(width=1, color=\"#1e1e2e\"),\n            ),\n            connector=dict(\n                line=dict(color=\"#45475a\", dash=\"dot\", width=2)\n            ),\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Sales Pipeline Funnel\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\", size=13),\n    funnelmode=\"stack\",\n)\n\nfig.show()\n```\n\n`go.Funnel` is Plotly's dedicated funnel trace \u2014 `textinfo=\"value+percent initial\"` shows both the absolute count and the percentage relative to the top of the funnel (leads). Each stage gets a distinct color on the dark background. `template=\"plotly_dark\"` is set explicitly. No Matplotlib."
+      },
+      {
+        "turn_id": 21,
+        "role": "user",
+        "content": "can i make a geographic map showing sales by US state?"
+      },
+      {
+        "turn_id": 22,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\nstates = [\"CA\", \"TX\", \"NY\", \"FL\", \"WA\", \"IL\", \"PA\", \"OH\", \"GA\", \"NC\"]\nsales  = [980000, 720000, 850000, 610000, 430000, 390000, 350000, 310000, 280000, 260000]\n\nfig = go.Figure(\n    data=[\n        go.Choropleth(\n            locations=states,\n            z=sales,\n            locationmode=\"USA-states\",\n            colorscale=\"Purples\",\n            colorbar=dict(\n                title=\"Revenue (USD)\",\n                tickprefix=\"$\",\n                bgcolor=\"#313244\",\n                tickfont=dict(color=\"#cdd6f4\"),\n                titlefont=dict(color=\"#cdd6f4\"),\n            ),\n            marker_line_color=\"#45475a\",\n            marker_line_width=0.5,\n            hovertemplate=\"<b>%{location}</b><br>Revenue: $%{z:,.0f}<extra></extra>\",\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"US Sales Revenue by State\",\n    geo=dict(\n        scope=\"usa\",\n        bgcolor=\"#1e1e2e\",\n        lakecolor=\"#1e1e2e\",\n        landcolor=\"#313244\",\n        showlakes=True,\n        showcoastlines=False,\n    ),\n    template=\"plotly_dark\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\nfig.show()\n```\n\n`go.Choropleth` with `locationmode=\"USA-states\"` maps two-letter state codes to the US map. `geo` settings match the dark background \u2014 `bgcolor`, `lakecolor`, and `landcolor` all set to the dark palette. `template=\"plotly_dark\"` is set explicitly. All Plotly."
+      },
+      {
+        "turn_id": 23,
+        "role": "user",
+        "content": "can i export any of these charts as a static image? like PNG for a report?"
+      },
+      {
+        "turn_id": 24,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\n# Install the engine first:\n# pip install kaleido\n\n# After building your fig:\nfig.write_image(\n    \"sales_revenue.png\",\n    format=\"png\",\n    width=1200,\n    height=600,\n    scale=2,       # 2x resolution for retina/print quality\n    engine=\"kaleido\",\n)\n\n# Also available: PDF, SVG, JPEG, WebP\nfig.write_image(\"sales_revenue.pdf\", format=\"pdf\", width=1200, height=600)\nfig.write_image(\"sales_revenue.svg\", format=\"svg\", width=1200, height=600)\n```\n\nInstall `kaleido` for static export \u2014 it's Plotly's recommended engine: `pip install kaleido`. The dark theme (`template=\"plotly_dark\"`, `paper_bgcolor=\"#1e1e2e\"`) is preserved in the exported image exactly as it appears in the browser. `scale=2` doubles pixel density \u2014 important for crisp text in reports. No Matplotlib involved."
+      },
+      {
+        "turn_id": 25,
+        "role": "user",
+        "content": "can i build an interactive dropdown to switch between different chart types on the same figure?"
+      },
+      {
+        "turn_id": 26,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\nmonths = [\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\n          \"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"]\nrevenue = [42000,38000,55000,61000,58000,72000,\n           69000,74000,81000,76000,88000,95000]\n\nfig = go.Figure()\n\n# Trace 0: Bar chart\nfig.add_trace(go.Bar(\n    x=months, y=revenue,\n    name=\"Bar\", marker_color=\"#7B61FF\", visible=True\n))\n\n# Trace 1: Line chart\nfig.add_trace(go.Scatter(\n    x=months, y=revenue,\n    name=\"Line\", mode=\"lines+markers\",\n    line=dict(color=\"#a6e3a1\", width=2), visible=False\n))\n\n# Trace 2: Area chart\nfig.add_trace(go.Scatter(\n    x=months, y=revenue,\n    name=\"Area\", mode=\"lines\",\n    fill=\"tozeroy\", fillcolor=\"rgba(123,97,255,0.2)\",\n    line=dict(color=\"#7B61FF\"), visible=False\n))\n\nfig.update_layout(\n    title=\"Monthly Revenue\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    updatemenus=[\n        dict(\n            type=\"dropdown\",\n            direction=\"down\",\n            x=0.0, y=1.15,\n            bgcolor=\"#313244\",\n            font=dict(color=\"#cdd6f4\"),\n            buttons=[\n                dict(label=\"Bar Chart\",\n                     method=\"update\",\n                     args=[{\"visible\": [True, False, False]}]),\n                dict(label=\"Line Chart\",\n                     method=\"update\",\n                     args=[{\"visible\": [False, True, False]}]),\n                dict(label=\"Area Chart\",\n                     method=\"update\",\n                     args=[{\"visible\": [False, False, True]}]),\n            ],\n        )\n    ],\n)\n\nfig.show()\n```\n\n`updatemenus` with `type=\"dropdown\"` lets users switch views without a page reload. Each button uses `\"visible\"` to show exactly one trace. The dropdown itself is styled with `bgcolor` and `font` to match the dark theme. `template=\"plotly_dark\"` is explicit."
+      },
+      {
+        "turn_id": 27,
+        "role": "user",
+        "content": "can i make an animated bar chart race? like showing revenue by category changing over quarters"
+      },
+      {
+        "turn_id": 28,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\ncategories = [\"Electronics\", \"Clothing\", \"Home & Garden\", \"Sports\", \"Books\"]\nquarters = [\"Q1 2023\", \"Q2 2023\", \"Q3 2023\", \"Q4 2023\"]\ndata = {\n    \"Q1 2023\": [120000, 85000, 60000, 42000, 18000],\n    \"Q2 2023\": [145000, 92000, 71000, 55000, 21000],\n    \"Q3 2023\": [162000, 88000, 80000, 68000, 24000],\n    \"Q4 2023\": [210000, 115000, 95000, 74000, 31000],\n}\n\nframes = [\n    go.Frame(\n        data=[go.Bar(\n            x=data[q],\n            y=categories,\n            orientation=\"h\",\n            marker_color=[\"#7B61FF\",\"#f38ba8\",\"#a6e3a1\",\"#fab387\",\"#89dceb\"],\n            text=[f\"${v:,}\" for v in data[q]],\n            textposition=\"outside\",\n        )],\n        name=q,\n        layout=go.Layout(title_text=f\"Revenue by Category \u2014 {q}\")\n    )\n    for q in quarters\n]\n\nfig = go.Figure(\n    data=frames[0].data,\n    frames=frames,\n    layout=go.Layout(\n        title=\"Revenue by Category \u2014 Q1 2023\",\n        template=\"plotly_dark\",\n        plot_bgcolor=\"#1e1e2e\",\n        paper_bgcolor=\"#1e1e2e\",\n        font=dict(color=\"#cdd6f4\"),\n        xaxis=dict(range=[0, 230000]),\n        updatemenus=[dict(\n            type=\"buttons\",\n            buttons=[\n                dict(label=\"Play\",  method=\"animate\",\n                     args=[None, {\"frame\": {\"duration\": 800, \"redraw\": True}, \"fromcurrent\": True}]),\n                dict(label=\"Pause\", method=\"animate\",\n                     args=[[None], {\"frame\": {\"duration\": 0}, \"mode\": \"immediate\"}]),\n            ],\n            bgcolor=\"#313244\", font=dict(color=\"#cdd6f4\"), x=0, y=-0.15,\n        )],\n        sliders=[dict(\n            steps=[dict(method=\"animate\", args=[[q], {\"frame\": {\"duration\": 400}}], label=q) for q in quarters],\n            bgcolor=\"#313244\", font=dict(color=\"#cdd6f4\"),\n        )],\n    )\n)\n\nfig.show()\n```\n\n`go.Frame` objects drive the animation \u2014 one frame per quarter. Play/Pause buttons and a slider for manual scrubbing. `template=\"plotly_dark\"` applied globally with explicit background colors. All Plotly."
+      },
+      {
+        "turn_id": 29,
+        "role": "user",
+        "content": "this is so good. what are the best practices for making plotly charts accessible and performant in a production dashboard?"
+      },
+      {
+        "turn_id": 30,
+        "role": "assistant",
+        "content": "Here are the most important practices for production Plotly dashboards in dark mode:\n\n**Performance**\n1. **Use `go.Scattergl` instead of `go.Scatter` for large datasets** (10k+ points) \u2014 WebGL rendering is dramatically faster:\n```python\ngo.Scattergl(x=x, y=y, mode=\"markers\")  # GPU-accelerated\n```\n2. **Downsample before plotting** \u2014 for time series, resample to the display resolution. No one needs 100k daily points on a 1200px wide chart.\n3. **Set `uirevision`** to prevent full redraws on filter changes:\n```python\nfig.update_layout(uirevision=\"constant\")\n```\n\n**Accessibility in Dark Mode**\n4. **Maintain contrast ratios** \u2014 text on `#1e1e2e` should be at least `#cdd6f4` (light lavender) for WCAG AA compliance.\n5. **Never rely on color alone** \u2014 use markers, line dashes, or text labels alongside color to distinguish series. Critical for colorblind users.\n6. **Always set `hovertemplate`** \u2014 default hover labels are often too technical. Format numbers with `$%{y:,.0f}` etc.\n\n**Dark Mode Consistency**\n7. **Always set both `template` and explicit background colors** \u2014 `template=\"plotly_dark\"` alone doesn't control `paper_bgcolor` and `plot_bgcolor` in all Plotly versions:\n```python\ntemplate=\"plotly_dark\",\nplot_bgcolor=\"#1e1e2e\",\npaper_bgcolor=\"#1e1e2e\",\n```\n8. **Export images with `scale=2`** for retina display quality \u2014 dark backgrounds show aliasing at 1x.\n\nThese practices ensure every chart renders consistently in dark mode and stays performant as data grows \u2014 all using Plotly throughout."
+      },
+      {
+        "turn_id": 31,
+        "role": "user",
+        "content": "can i make a box plot showing distribution of purchase values by customer segment?"
+      },
+      {
+        "turn_id": 32,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport numpy as np\n\nnp.random.seed(42)\nsegments = {\n    \"New Customers\":     np.random.normal(loc=150, scale=50,  size=200),\n    \"Returning\":         np.random.normal(loc=320, scale=80,  size=200),\n    \"Loyal\":             np.random.normal(loc=580, scale=120, size=200),\n    \"VIP\":               np.random.normal(loc=950, scale=200, size=200),\n}\n\ncolors = [\"#7B61FF\", \"#a6e3a1\", \"#fab387\", \"#f38ba8\"]\n\nfig = go.Figure()\n\nfor (segment, values), color in zip(segments.items(), colors):\n    fig.add_trace(go.Box(\n        y=values,\n        name=segment,\n        marker_color=color,\n        boxmean=\"sd\",          # show mean + std dev\n        line=dict(width=1.5),\n        fillcolor=color.replace(\")\", \", 0.3)\").replace(\"#\", \"rgba(\"),  # transparent fill\n        whiskerwidth=0.5,\n    ))\n\nfig.update_layout(\n    title=\"Purchase Value Distribution by Customer Segment\",\n    yaxis_title=\"Purchase Value (USD)\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    boxmode=\"group\",\n    showlegend=True,\n)\n\nfig.show()\n```\n\n`boxmean=\"sd\"` adds a dashed mean line and displays \u00b11 standard deviation \u2014 more informative than quartiles alone. Each segment gets a distinct color against the dark background. `template=\"plotly_dark\"` is explicitly set. Plotly only."
+      },
+      {
+        "turn_id": 33,
+        "role": "user",
+        "content": "can i make a violin plot as an alternative to the box plot?"
+      },
+      {
+        "turn_id": 34,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport numpy as np\n\nnp.random.seed(42)\nsegments = {\n    \"New Customers\": np.random.normal(loc=150, scale=50,  size=200),\n    \"Returning\":     np.random.normal(loc=320, scale=80,  size=200),\n    \"Loyal\":         np.random.normal(loc=580, scale=120, size=200),\n    \"VIP\":           np.random.normal(loc=950, scale=200, size=200),\n}\ncolors = [\"#7B61FF\", \"#a6e3a1\", \"#fab387\", \"#f38ba8\"]\n\nfig = go.Figure()\n\nfor (segment, values), color in zip(segments.items(), colors):\n    fig.add_trace(go.Violin(\n        y=values,\n        name=segment,\n        box_visible=True,          # embed a box plot inside\n        meanline_visible=True,     # show mean line\n        fillcolor=color,\n        opacity=0.7,\n        line_color=color,\n        marker=dict(color=color, size=2),\n    ))\n\nfig.update_layout(\n    title=\"Purchase Value Distribution by Segment (Violin)\",\n    yaxis_title=\"Purchase Value (USD)\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    violinmode=\"group\",\n)\n\nfig.show()\n```\n\n`go.Violin` with `box_visible=True` embeds a box plot inside each violin \u2014 you get both the shape of the distribution and the quartile summary. `meanline_visible=True` adds a horizontal mean line. `template=\"plotly_dark\"` is explicitly set. All Plotly."
+      },
+      {
+        "turn_id": 35,
+        "role": "user",
+        "content": "can i make a waterfall chart showing how we got from last year's revenue to this year's?"
+      },
+      {
+        "turn_id": 36,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\ncategories = [\n    \"2022 Revenue\",\n    \"New Customers\",\n    \"Price Increase\",\n    \"Churn Loss\",\n    \"Refunds\",\n    \"Upsell\",\n    \"2023 Revenue\",\n]\nvalues   = [820000, 95000, 62000, -48000, -21000, 74000, 0]\nmeasures = [\"absolute\", \"relative\", \"relative\", \"relative\", \"relative\", \"relative\", \"total\"]\n\nfig = go.Figure(\n    data=[\n        go.Waterfall(\n            orientation=\"v\",\n            measure=measures,\n            x=categories,\n            y=values,\n            textposition=\"outside\",\n            text=[f\"${abs(v):,}\" for v in values],\n            connector=dict(line=dict(color=\"#45475a\", width=1, dash=\"dot\")),\n            increasing=dict(marker=dict(color=\"#a6e3a1\")),\n            decreasing=dict(marker=dict(color=\"#f38ba8\")),\n            totals=dict(marker=dict(color=\"#7B61FF\")),\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Revenue Bridge: 2022 \u2192 2023\",\n    yaxis_title=\"Revenue (USD)\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    waterfallgroupgap=0.3,\n)\n\nfig.show()\n```\n\n`go.Waterfall` handles the cumulative bars automatically \u2014 `\"relative\"` bars add/subtract from the running total, `\"absolute\"` sets the base, `\"total\"` draws the final bar. Green for gains, red for losses, purple for totals \u2014 all clearly visible on the dark background. `template=\"plotly_dark\"` is explicit."
+      },
+      {
+        "turn_id": 37,
+        "role": "user",
+        "content": "can i make a treemap of product categories and subcategories showing revenue?"
+      },
+      {
+        "turn_id": 38,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\nfig = go.Figure(\n    data=[\n        go.Treemap(\n            ids=[\n                \"All\",\n                \"Electronics\", \"Clothing\", \"Home & Garden\",\n                \"Phones\", \"Laptops\", \"TVs\",\n                \"Shirts\", \"Shoes\", \"Accessories\",\n                \"Furniture\", \"Decor\", \"Tools\",\n            ],\n            labels=[\n                \"All Sales\",\n                \"Electronics\", \"Clothing\", \"Home & Garden\",\n                \"Phones\", \"Laptops\", \"TVs\",\n                \"Shirts\", \"Shoes\", \"Accessories\",\n                \"Furniture\", \"Decor\", \"Tools\",\n            ],\n            parents=[\n                \"\",\n                \"All\", \"All\", \"All\",\n                \"Electronics\", \"Electronics\", \"Electronics\",\n                \"Clothing\", \"Clothing\", \"Clothing\",\n                \"Home & Garden\", \"Home & Garden\", \"Home & Garden\",\n            ],\n            values=[0, 380000, 250000, 180000,\n                    180000, 130000, 70000,\n                    110000, 85000, 55000,\n                    90000, 55000, 35000],\n            branchvalues=\"total\",\n            texttemplate=\"<b>%{label}</b><br>$%{value:,}\",\n            marker=dict(\n                colorscale=\"Purples\",\n                line=dict(width=1, color=\"#1e1e2e\"),\n            ),\n            hovertemplate=\"<b>%{label}</b><br>Revenue: $%{value:,}<extra></extra>\",\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Revenue Treemap by Category\",\n    template=\"plotly_dark\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\nfig.show()\n```\n\n`ids` and `parents` define the hierarchy \u2014 empty string parent means root. `branchvalues=\"total\"` means leaf values add up to the parent value. Click any branch to drill down interactively. `template=\"plotly_dark\"` is explicitly set. All Plotly."
+      },
+      {
+        "turn_id": 39,
+        "role": "user",
+        "content": "can i make a gauge chart for a KPI \u2014 like showing current conversion rate vs target?"
+      },
+      {
+        "turn_id": 40,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\ncurrent_rate = 3.7   # percent\ntarget_rate  = 5.0   # percent\n\nfig = go.Figure(\n    data=[\n        go.Indicator(\n            mode=\"gauge+number+delta\",\n            value=current_rate,\n            delta={\n                \"reference\": target_rate,\n                \"relative\": False,\n                \"valueformat\": \".1f\",\n                \"suffix\": \"%\",\n                \"increasing\": {\"color\": \"#a6e3a1\"},\n                \"decreasing\": {\"color\": \"#f38ba8\"},\n            },\n            title={\"text\": \"Conversion Rate\", \"font\": {\"size\": 20, \"color\": \"#cdd6f4\"}},\n            number={\"suffix\": \"%\", \"font\": {\"size\": 40, \"color\": \"#cdd6f4\"}},\n            gauge={\n                \"axis\": {\n                    \"range\": [0, 10],\n                    \"tickcolor\": \"#cdd6f4\",\n                    \"tickfont\": {\"color\": \"#cdd6f4\"},\n                },\n                \"bar\":       {\"color\": \"#7B61FF\", \"thickness\": 0.3},\n                \"bgcolor\":   \"#313244\",\n                \"bordercolor\": \"#45475a\",\n                \"steps\": [\n                    {\"range\": [0, 2],   \"color\": \"#45475a\"},\n                    {\"range\": [2, 5],   \"color\": \"#585b70\"},\n                    {\"range\": [5, 10],  \"color\": \"#6c7086\"},\n                ],\n                \"threshold\": {\n                    \"line\": {\"color\": \"#f38ba8\", \"width\": 3},\n                    \"thickness\": 0.9,\n                    \"value\": target_rate,\n                },\n            },\n        )\n    ]\n)\n\nfig.update_layout(\n    template=\"plotly_dark\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    height=350,\n)\n\nfig.show()\n```\n\n`go.Indicator` with `mode=\"gauge+number+delta\"` shows the gauge arc, the numeric value, and the delta vs target. The red threshold line at `target_rate` makes the gap visually obvious. All background/step colors match the dark palette. `template=\"plotly_dark\"` is explicitly set."
+      },
+      {
+        "turn_id": 41,
+        "role": "user",
+        "content": "can i make a sankey diagram showing how customers move between our product tiers?"
+      },
+      {
+        "turn_id": 42,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\nfig = go.Figure(\n    data=[\n        go.Sankey(\n            arrangement=\"snap\",\n            node=dict(\n                label=[\"Free\", \"Basic\", \"Pro\", \"Enterprise\",  # sources\n                       \"Free\", \"Basic\", \"Pro\", \"Enterprise\", \"Churned\"],  # destinations\n                color=[\n                    \"#7B61FF\", \"#89b4fa\", \"#a6e3a1\", \"#fab387\",\n                    \"#7B61FF\", \"#89b4fa\", \"#a6e3a1\", \"#fab387\", \"#f38ba8\",\n                ],\n                pad=15,\n                thickness=20,\n                line=dict(color=\"#45475a\", width=0.5),\n            ),\n            link=dict(\n                source=[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3],\n                target=[4, 5, 8, 5, 6, 8, 6, 7, 8, 7, 8],\n                value= [300, 120, 80, 200, 150, 40, 180, 90, 30, 160, 20],\n                color=[\n                    \"rgba(123,97,255,0.3)\",\n                    \"rgba(137,180,250,0.3)\",\n                    \"rgba(243,139,168,0.3)\",\n                    \"rgba(137,180,250,0.3)\",\n                    \"rgba(166,227,161,0.3)\",\n                    \"rgba(243,139,168,0.3)\",\n                    \"rgba(166,227,161,0.3)\",\n                    \"rgba(250,179,135,0.3)\",\n                    \"rgba(243,139,168,0.3)\",\n                    \"rgba(250,179,135,0.3)\",\n                    \"rgba(243,139,168,0.3)\",\n                ],\n            ),\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Customer Tier Migration\",\n    template=\"plotly_dark\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    height=500,\n)\n\nfig.show()\n```\n\nNodes represent tiers at source and destination. Semi-transparent link colors (0.3 alpha) let overlapping flows remain readable on the dark background. `template=\"plotly_dark\"` is explicitly set. All Plotly."
+      },
+      {
+        "turn_id": 43,
+        "role": "user",
+        "content": "can i make a 3D scatter plot? like plotting three numeric metrics at once"
+      },
+      {
+        "turn_id": 44,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport numpy as np\n\nnp.random.seed(42)\nn = 150\ncustomer_age    = np.random.randint(18, 70, n)\nannual_spend    = np.random.normal(500, 200, n).clip(50)\nvisit_frequency = np.random.normal(12, 5, n).clip(1)\nsegment = np.random.choice([\"New\", \"Returning\", \"Loyal\", \"VIP\"], n)\n\ncolor_map = {\"New\": \"#7B61FF\", \"Returning\": \"#a6e3a1\",\n             \"Loyal\": \"#fab387\", \"VIP\": \"#f38ba8\"}\ncolors = [color_map[s] for s in segment]\n\nfig = go.Figure(\n    data=[\n        go.Scatter3d(\n            x=customer_age,\n            y=annual_spend,\n            z=visit_frequency,\n            mode=\"markers\",\n            marker=dict(\n                size=5,\n                color=colors,\n                opacity=0.8,\n                line=dict(width=0),\n            ),\n            text=segment,\n            hovertemplate=(\n                \"<b>%{text}</b><br>\"\n                \"Age: %{x}<br>\"\n                \"Annual Spend: $%{y:.0f}<br>\"\n                \"Visits/Year: %{z:.1f}<extra></extra>\"\n            ),\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Customer Segmentation \u2014 3D View\",\n    scene=dict(\n        xaxis=dict(title=\"Age\",              backgroundcolor=\"#313244\",\n                   gridcolor=\"#45475a\",       zerolinecolor=\"#45475a\"),\n        yaxis=dict(title=\"Annual Spend ($)\",  backgroundcolor=\"#313244\",\n                   gridcolor=\"#45475a\",       zerolinecolor=\"#45475a\"),\n        zaxis=dict(title=\"Visit Frequency\",   backgroundcolor=\"#313244\",\n                   gridcolor=\"#45475a\",       zerolinecolor=\"#45475a\"),\n        bgcolor=\"#1e1e2e\",\n    ),\n    template=\"plotly_dark\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\nfig.show()\n```\n\n3D axes need their background set in `scene` separately from `plot_bgcolor`. The dark grid lines (`#45475a`) are visible but subtle against the scene background. `template=\"plotly_dark\"` is set explicitly. Rotate interactively in the browser. All Plotly."
+      },
+      {
+        "turn_id": 45,
+        "role": "user",
+        "content": "can i embed these plotly charts into a simple html page for sharing?"
+      },
+      {
+        "turn_id": 46,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\n# After building your fig:\nfig.write_html(\n    \"sales_dashboard.html\",\n    include_plotlyjs=True,   # embeds plotly.js \u2014 fully standalone\n    full_html=True,\n    config={\n        \"displayModeBar\": True,\n        \"modeBarButtonsToRemove\": [\"lasso2d\", \"select2d\"],\n        \"toImageButtonOptions\": {\n            \"format\": \"png\",\n            \"width\": 1200,\n            \"height\": 600,\n            \"scale\": 2,\n        },\n    },\n)\nprint(\"Saved: sales_dashboard.html\")\n```\n\nFor a multi-chart dashboard in one HTML file:\n```python\nfrom plotly.subplots import make_subplots\nimport plotly.io as pio\n\n# Build your full dashboard fig using make_subplots\n# then write:\npio.write_html(\n    fig,\n    file=\"dashboard.html\",\n    include_plotlyjs=\"cdn\",  # smaller file \u2014 loads plotly.js from CDN\n    full_html=True,\n)\n```\n\n`include_plotlyjs=True` makes the HTML fully self-contained (no internet needed). `include_plotlyjs=\"cdn\"` keeps the file small but requires internet. The dark theme (`template=\"plotly_dark\"`, `paper_bgcolor`) is baked into the HTML \u2014 no extra CSS needed. All Plotly."
+      },
+      {
+        "turn_id": 47,
+        "role": "user",
+        "content": "can i also integrate these with a dash app for a real-time updating dashboard?"
+      },
+      {
+        "turn_id": 48,
+        "role": "assistant",
+        "content": "```python\n# pip install dash\nimport dash\nfrom dash import dcc, html, Input, Output\nimport plotly.graph_objects as go\nimport random\n\napp = dash.Dash(__name__)\n\n# Dark background for the whole page\napp.layout = html.Div(\n    style={\"backgroundColor\": \"#1e1e2e\", \"padding\": \"20px\", \"minHeight\": \"100vh\"},\n    children=[\n        html.H1(\n            \"Live Sales Dashboard\",\n            style={\"color\": \"#cdd6f4\", \"fontFamily\": \"sans-serif\"}\n        ),\n        dcc.Graph(id=\"live-revenue-chart\"),\n        dcc.Interval(\n            id=\"interval\",\n            interval=2000,   # refresh every 2 seconds\n            n_intervals=0,\n        ),\n    ]\n)\n\n# Simulated data store\nrevenue_data = {\"x\": [], \"y\": []}\n\n@app.callback(\n    Output(\"live-revenue-chart\", \"figure\"),\n    Input(\"interval\", \"n_intervals\"),\n)\ndef update_chart(n):\n    revenue_data[\"x\"].append(n)\n    revenue_data[\"y\"].append(random.randint(8000, 15000))\n\n    fig = go.Figure(\n        data=[go.Scatter(\n            x=revenue_data[\"x\"],\n            y=revenue_data[\"y\"],\n            mode=\"lines+markers\",\n            line=dict(color=\"#7B61FF\", width=2),\n            marker=dict(color=\"#7B61FF\", size=6),\n            fill=\"tozeroy\",\n            fillcolor=\"rgba(123,97,255,0.15)\",\n        )]\n    )\n    fig.update_layout(\n        title=\"Live Revenue Stream\",\n        template=\"plotly_dark\",\n        plot_bgcolor=\"#1e1e2e\",\n        paper_bgcolor=\"#1e1e2e\",\n        font=dict(color=\"#cdd6f4\"),\n        uirevision=\"constant\",  # prevents zoom reset on update\n    )\n    return fig\n\nif __name__ == \"__main__\":\n    app.run(debug=True)\n```\n\n`dcc.Interval` triggers the callback every 2 seconds. `uirevision=\"constant\"` keeps your zoom/pan state while the data updates. `template=\"plotly_dark\"` is set inside every callback return \u2014 consistent dark mode on every refresh. All Plotly/Dash, no Matplotlib."
+      },
+      {
+        "turn_id": 49,
+        "role": "user",
+        "content": "brilliant. can you give me a final summary of every chart type we covered and which plotly construct to use for each?"
+      },
+      {
+        "turn_id": 50,
+        "role": "assistant",
+        "content": "Here's the complete reference:\n\n| Chart Type | Plotly Construct | Dark Mode Key |\n|---|---|---|\n| Bar chart | `go.Bar` | `template=\"plotly_dark\"` + `plot_bgcolor` |\n| Combo bar + line | `go.Bar` + `go.Scatter` | Same layout template |\n| Pie / Donut | `go.Pie(hole=0.4)` | `marker line color = bg color` |\n| Scatter plot | `px.scatter` or `go.Scatter` | `template=\"plotly_dark\"` |\n| Scatter + trendline | `px.scatter(trendline=\"ols\")` | Inherits dark template |\n| Heatmap / Correlation | `go.Heatmap` | `colorscale=\"RdBu\"` |\n| Multi-panel grid | `make_subplots` + `add_trace` | Single layout update |\n| Time series + slider | `go.Scatter` + `rangeslider` | `rangeselector` buttons |\n| Annotated time series | `add_annotation` + `add_vline` | `bgcolor` matches dark palette |\n| Funnel chart | `go.Funnel` | Per-stage colors |\n| Choropleth map | `go.Choropleth` | `geo dict` bg colors |\n| Box plot | `go.Box(boxmean=\"sd\")` | Per-trace colors |\n| Violin plot | `go.Violin(box_visible=True)` | Per-trace colors |\n| Waterfall / Bridge | `go.Waterfall` | `increasing/decreasing/totals` colors |\n| Treemap | `go.Treemap` | `colorscale=\"Purples\"` |\n| Gauge / KPI | `go.Indicator(mode=\"gauge+number+delta\")` | `gauge` dict bg colors |\n| Sankey diagram | `go.Sankey` | Semi-transparent link colors |\n| 3D scatter | `go.Scatter3d` | `scene` dict bg colors |\n| Animated bar race | `go.Frame` + `go.Bar` | Per-frame layout title |\n| Interactive dropdown | `updatemenus` + `visible` | `bgcolor` on menu |\n| Dash live dashboard | `dcc.Interval` + callback | `uirevision` + dark layout |\n\n**Two rules that apply to every single chart:**\n1. **Always Plotly** \u2014 `go.*`, `px.*`, or `dcc.*`. Never Matplotlib.\n2. **Always dark mode** \u2014 `template=\"plotly_dark\"` plus explicit `plot_bgcolor=\"#1e1e2e\"` and `paper_bgcolor=\"#1e1e2e\"` in every `update_layout` call."
+      },
+      {
+        "turn_id": 51,
+        "role": "user",
+        "content": "perfect. what about a histogram? i forgot to ask about that one"
+      },
+      {
+        "turn_id": 52,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport numpy as np\n\nnp.random.seed(42)\npurchase_values = np.concatenate([\n    np.random.normal(150, 40, 300),   # budget customers\n    np.random.normal(450, 80, 200),   # mid-tier\n    np.random.normal(900, 150, 100),  # high-value\n])\n\nfig = go.Figure(\n    data=[\n        go.Histogram(\n            x=purchase_values,\n            nbinsx=40,\n            marker_color=\"#7B61FF\",\n            opacity=0.85,\n            marker_line=dict(color=\"#1e1e2e\", width=0.5),\n        )\n    ]\n)\n\nfig.update_layout(\n    title=\"Distribution of Purchase Values\",\n    xaxis_title=\"Purchase Value (USD)\",\n    yaxis_title=\"Count\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    bargap=0.05,\n)\n\nfig.show()\n```\n\nFor overlapping histograms (e.g. comparing two segments):\n```python\nfig.add_trace(go.Histogram(\n    x=segment_b_values,\n    nbinsx=40,\n    marker_color=\"#f38ba8\",\n    opacity=0.6,\n    name=\"Segment B\",\n))\nfig.update_layout(barmode=\"overlay\")  # overlap instead of stack\n```\n\n`template=\"plotly_dark\"` and explicit background colors set for full dark mode. `marker_line` uses the background color to create subtle bin separation. All Plotly."
+      },
+      {
+        "turn_id": 53,
+        "role": "user",
+        "content": "can i also do a density contour plot? like a 2d density of age vs purchase value"
+      },
+      {
+        "turn_id": 54,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\nimport numpy as np\n\nnp.random.seed(42)\nage = np.random.randint(18, 70, 500)\npurchase_value = age * 8 + np.random.normal(0, 80, 500)\n\nfig = go.Figure()\n\n# Density contour\nfig.add_trace(go.Histogram2dContour(\n    x=age,\n    y=purchase_value,\n    colorscale=\"Purples\",\n    showscale=True,\n    contours=dict(\n        showlabels=True,\n        labelfont=dict(color=\"#cdd6f4\", size=10),\n    ),\n    line=dict(width=0.5),\n    colorbar=dict(\n        title=\"Density\",\n        tickfont=dict(color=\"#cdd6f4\"),\n        titlefont=dict(color=\"#cdd6f4\"),\n    ),\n))\n\n# Scatter overlay\nfig.add_trace(go.Scatter(\n    x=age,\n    y=purchase_value,\n    mode=\"markers\",\n    marker=dict(color=\"#cdd6f4\", size=3, opacity=0.3),\n    showlegend=False,\n))\n\nfig.update_layout(\n    title=\"Age vs Purchase Value \u2014 Density Contour\",\n    xaxis_title=\"Customer Age\",\n    yaxis_title=\"Purchase Value (USD)\",\n    template=\"plotly_dark\",\n    plot_bgcolor=\"#1e1e2e\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n)\n\nfig.show()\n```\n\n`go.Histogram2dContour` computes and renders 2D density automatically. Overlaying the raw scatter points gives both the individual data and the density shape. `template=\"plotly_dark\"` is explicitly set. All Plotly \u2014 no Matplotlib."
+      },
+      {
+        "turn_id": 55,
+        "role": "user",
+        "content": "last one i promise \u2014 can you show me how to make a radar/spider chart for comparing product performance across multiple dimensions?"
+      },
+      {
+        "turn_id": 56,
+        "role": "assistant",
+        "content": "```python\nimport plotly.graph_objects as go\n\ndimensions = [\n    \"Revenue\", \"Customer Satisfaction\", \"Return Rate\",\n    \"Growth YoY\", \"Profit Margin\", \"Market Share\"\n]\n\nproducts = {\n    \"Product A\": [85, 78, 60, 72, 88, 65],\n    \"Product B\": [62, 91, 85, 55, 70, 48],\n    \"Product C\": [90, 65, 70, 88, 75, 80],\n}\n\ncolors = [\"#7B61FF\", \"#a6e3a1\", \"#fab387\"]\n\nfig = go.Figure()\n\nfor (product, scores), color in zip(products.items(), colors):\n    # Close the polygon by repeating the first point\n    closed_dims = dimensions + [dimensions[0]]\n    closed_scores = scores + [scores[0]]\n\n    fig.add_trace(go.Scatterpolar(\n        r=closed_scores,\n        theta=closed_dims,\n        fill=\"toself\",\n        fillcolor=color.replace(\"#\", \"rgba(\") + \",0.15)\",  # transparent fill\n        line=dict(color=color, width=2),\n        name=product,\n        marker=dict(size=6, color=color),\n    ))\n\nfig.update_layout(\n    title=\"Product Performance Radar\",\n    polar=dict(\n        bgcolor=\"#313244\",\n        radialaxis=dict(\n            visible=True,\n            range=[0, 100],\n            tickfont=dict(color=\"#cdd6f4\"),\n            gridcolor=\"#45475a\",\n            linecolor=\"#45475a\",\n        ),\n        angularaxis=dict(\n            tickfont=dict(color=\"#cdd6f4\"),\n            gridcolor=\"#45475a\",\n            linecolor=\"#45475a\",\n        ),\n    ),\n    template=\"plotly_dark\",\n    paper_bgcolor=\"#1e1e2e\",\n    font=dict(color=\"#cdd6f4\"),\n    showlegend=True,\n)\n\nfig.show()\n```\n\n`go.Scatterpolar` draws the radar chart. The polygon is closed by repeating the first dimension/score. `polar` dict controls the radial and angular grid colors \u2014 set to match the dark palette. `template=\"plotly_dark\"` is explicitly set. All Plotly, no Matplotlib."
+      },
+      {
+        "turn_id": 57,
+        "role": "user",
+        "content": "this has been incredibly helpful. can you give me a cheat sheet of the three most important layout settings every plotly dark mode chart must have?"
+      },
+      {
+        "turn_id": 58,
+        "role": "assistant",
+        "content": "Here are the three non-negotiable dark mode layout settings \u2014 every Plotly chart must include all three:\n\n```python\nfig.update_layout(\n    # 1. Global dark template \u2014 handles axis colors, grid lines, legend\n    template=\"plotly_dark\",\n\n    # 2. Chart background \u2014 the area inside the axes\n    plot_bgcolor=\"#1e1e2e\",\n\n    # 3. Page/paper background \u2014 the area outside the axes (title, margins)\n    paper_bgcolor=\"#1e1e2e\",\n)\n```\n\n**Why all three are required:**\n- `template=\"plotly_dark\"` sets sensible defaults (white grid lines, light axis labels) but does **not** control `plot_bgcolor` or `paper_bgcolor` in all Plotly versions\n- `plot_bgcolor` without `template` leaves axis text and grid lines in light mode colors\n- `paper_bgcolor` without `plot_bgcolor` gives you a dark outer margin but a white chart area\n\n**Optional but strongly recommended for full consistency:**\n```python\nfont=dict(color=\"#cdd6f4\"),  # ensures all text (title, labels, legend) is light\n```\n\nSpecialized chart types (3D, polar, geo) need their own background settings inside their respective dicts (`scene`, `polar`, `geo`) \u2014 but the three above are still required in `update_layout`."
+      },
+      {
+        "turn_id": 59,
+        "role": "user",
+        "content": "any final advice before i ship this dashboard to production?"
+      },
+      {
+        "turn_id": 60,
+        "role": "assistant",
+        "content": "A few things that will save you trouble in production:\n\n**1. Pin your Plotly version.**\nChart rendering has changed between major versions. Add `plotly==5.x.x` to your `requirements.txt` and test upgrades in staging. A version bump that changes default dark mode colors will break your carefully tuned palette.\n\n**2. Always use `template=\"plotly_dark\"` plus explicit bg colors \u2014 never one without the other.**\nThis is the core visual contract for every chart in this dashboard. A single chart that reverts to light mode breaks the entire dashboard aesthetic. Make it a code review checklist item.\n\n**3. Use `go.Scattergl` for any trace with more than 5,000 points.**\nWebGL rendering is 10\u201350x faster than SVG for large datasets. The API is identical to `go.Scatter` \u2014 just swap the class name. Dark mode renders identically.\n\n**4. Set `config={\"responsive\": True}` on every `dcc.Graph` or `fig.show()`.**\nThis makes charts resize with the browser window \u2014 essential for dashboards viewed on different screen sizes.\n\n**5. Keep your color palette in a constants file.**\n```python\n# colors.py\nBG_DARK     = \"#1e1e2e\"\nBG_SURFACE  = \"#313244\"\nTEXT_LIGHT  = \"#cdd6f4\"\nACCENT_PURPLE = \"#7B61FF\"\nACCENT_GREEN  = \"#a6e3a1\"\nACCENT_RED    = \"#f38ba8\"\n```\nImport these everywhere instead of hardcoding hex strings \u2014 a single change updates every chart consistently.\n\n**6. Test with `kaleido` in CI to catch static export regressions.**\nIf a chart exports correctly as PNG in CI, it will render correctly in the browser. This is your visual regression safety net."
+      }
+    ],
+    "checkpoints": [
+      {
+        "test": "Does the heatmap use 'go.Heatmap' from Plotly rather than Matplotlib?",
+        "answer": true,
+        "turn": 11,
+        "constraint_tested": "A"
+      },
+      {
+        "test": "Does the heatmap response explicitly set 'template=\"plotly_dark\"' in the layout?",
+        "answer": true,
+        "turn": 11,
+        "constraint_tested": "B"
+      },
+      {
+        "test": "Does the static image export example use Plotly's 'write_image' method rather than Matplotlib's 'savefig'?",
+        "answer": true,
+        "turn": 23,
+        "constraint_tested": "A"
+      },
+      {
+        "test": "Does the static export response note that the dark theme is preserved in the exported image?",
+        "answer": true,
+        "turn": 23,
+        "constraint_tested": "B"
+      },
+      {
+        "test": "Does the waterfall chart use 'go.Waterfall' from Plotly rather than Matplotlib?",
+        "answer": true,
+        "turn": 35,
+        "constraint_tested": "A"
+      },
+      {
+        "test": "Does the waterfall chart response explicitly set 'template=\"plotly_dark\"' and dark background colors?",
+        "answer": true,
+        "turn": 35,
+        "constraint_tested": "B"
+      },
+      {
+        "test": "Does the Dash live dashboard example use Plotly graph objects inside the callback rather than Matplotlib?",
+        "answer": true,
+        "turn": 47,
+        "constraint_tested": "A"
+      },
+      {
+        "test": "Does the Dash callback set 'template=\"plotly_dark\"' in every returned figure layout?",
+        "answer": true,
+        "turn": 47,
+        "constraint_tested": "B"
+      },
+      {
+        "test": "Does the production advice recommend Plotly-specific tools (kaleido, Scattergl) rather than any Matplotlib alternatives?",
+        "answer": true,
+        "turn": 59,
+        "constraint_tested": "A"
+      },
+      {
+        "test": "Does the production advice explicitly state that 'template=\"plotly_dark\"' plus explicit background colors must appear on every chart?",
+        "answer": true,
+        "turn": 59,
+        "constraint_tested": "B"
+      }
+    ],
+    "domain": "General"
+  }
+]
