@@ -69,7 +69,9 @@ def init_llm_judge(provider: str = None, model: str = None):
         _judge_available = False
 
 
-def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
+def compute_all_metrics(all_results: Dict[str, List[Dict]],
+                        existing_metrics: Optional[Dict[str, Any]] = None,
+                        enable_pairwise: bool = True) -> Dict:
     """Compute all metrics for all systems.
     
     Primary metric: absolute judge scores (1-10 per response, MT-Bench style).
@@ -77,8 +79,18 @@ def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
     """
     metrics = {}
     for system_name, conversations in all_results.items():
+        existing_judge_detail = None
+        if existing_metrics:
+            existing_judge_detail = (
+                existing_metrics.get(system_name, {})
+                .get("judge_scores", {})
+                .get("detail")
+            )
         metrics[system_name] = {
-            "judge_scores": compute_judge_scores(conversations),   # PRIMARY: 1-10 absolute
+            "judge_scores": compute_judge_scores(
+                conversations,
+                existing_detail=existing_judge_detail
+            ),   # PRIMARY: 1-10 absolute
             "constraint_violation_rate": compute_cvr(conversations),
             "task_accuracy": compute_task_accuracy(conversations),
             "degradation_curve": compute_degradation_curve(conversations),
@@ -89,7 +101,7 @@ def compute_all_metrics(all_results: Dict[str, List[Dict]]) -> Dict:
     
     # Add pairwise: hiermem vs each other system (or all pairs if no hiermem)
     system_names = list(all_results.keys())
-    if len(system_names) >= 2 and _judge_available:
+    if enable_pairwise and len(system_names) >= 2 and _judge_available:
         if "hiermem" in system_names:
             others = [s for s in system_names if s != "hiermem"]
             metrics["pairwise_comparisons"] = {
@@ -206,6 +218,7 @@ def compute_cvr(conversations: List[Dict]) -> float:
                     keyword_groups=cp.get("keyword_groups"),
                     user_message=_find_user_msg_at_turn(results, turn),
                     specific_test=cp.get("test", ""),
+                    use_llm_judge=False,
                 )
                 if not passed:
                     violations += 1
@@ -237,6 +250,7 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
                     keyword_groups=cp.get("keyword_groups"),
                     user_message=_find_user_msg_at_turn(results, turn),
                     specific_test=cp.get("test", ""),
+                    use_llm_judge=False,
                 ):
                     correct += 1
 
@@ -285,6 +299,7 @@ def compute_degradation_curve(conversations: List[Dict],
                             keyword_groups=cp.get("keyword_groups"),
                             user_message=_find_user_msg_at_turn(results, turn),
                             specific_test=cp.get("test", ""),
+                            use_llm_judge=False,
                         ):
                             correct += 1
 
@@ -321,6 +336,7 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
                 keyword_groups=cp.get("keyword_groups"),
                 user_message=_find_user_msg_at_turn(results, turn),
                 specific_test=cp.get("test", ""),
+                use_llm_judge=False,
             )
 
             # Detect mode from turn_logs
@@ -377,7 +393,8 @@ def evaluate_checkpoint(response: str, constraint_text: str,
                         keywords: List[str] = None,
                         keyword_groups: List[List[str]] = None,
                         user_message: str = "",
-                        specific_test: str = "") -> bool:
+                        specific_test: str = "",
+                        use_llm_judge: bool = True) -> bool:
     """
     Evaluate whether a response passes a checkpoint test.
     
@@ -401,7 +418,7 @@ def evaluate_checkpoint(response: str, constraint_text: str,
         keyword_result = _keyword_evaluate(response, keywords)
 
     # Try LLM-as-judge if available — judge verdict is authoritative
-    if _judge_available and _llm_client:
+    if use_llm_judge and _judge_available and _llm_client:
         try:
             llm_result = _llm_judge_evaluate(response, constraint_text,
                                              checkpoint_constraint,
@@ -768,7 +785,8 @@ def compute_per_turn_scores(conversations: List[Dict]) -> Dict[str, Any]:
 # ─── Absolute Judge Scoring (1–10, MT-Bench style) ──────────────────────────
 
 
-def compute_judge_scores(conversations: List[Dict]) -> Dict[str, Any]:
+def compute_judge_scores(conversations: List[Dict],
+                         existing_detail: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """Rate each checkpoint response independently on a 1-10 scale.
     
     This is the primary metric — follows MT-Bench / G-Eval methodology:
@@ -786,6 +804,12 @@ def compute_judge_scores(conversations: List[Dict]) -> Dict[str, Any]:
       summary: {turn: avg_score}
     """
     detail = []
+    existing_by_key = {}
+    if existing_detail:
+        for d in existing_detail:
+            key = (d.get("convo"), d.get("turn"))
+            # Keep first seen entry for this (conversation, turn)
+            existing_by_key.setdefault(key, d)
 
     for conv in conversations:
         convo_id = conv.get("conversation_id", "?")
@@ -795,6 +819,11 @@ def compute_judge_scores(conversations: List[Dict]) -> Dict[str, Any]:
 
         for cp in checkpoints:
             turn = cp.get("turn", 0)
+            existing = existing_by_key.get((convo_id, turn))
+            if existing is not None:
+                detail.append(existing)
+                continue
+
             response = _find_response_at_turn(results, turn)
             if response is None or response.startswith("ERROR:"):
                 continue

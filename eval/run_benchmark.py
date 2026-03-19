@@ -434,6 +434,10 @@ if __name__ == "__main__":
                         help="List available conversations and exit")
     parser.add_argument("--rescore", type=str, default=None,
                         help="Re-score existing results directory (skip running, just re-evaluate)")
+    parser.add_argument("--rescore-all", action="store_true",
+                        help="In --rescore mode, force re-judging all checkpoints (default: reuse existing judged turns)")
+    parser.add_argument("--debug-rescore-details", action="store_true",
+                        help="Print per-checkpoint debug details in --rescore mode (keyword-only debug, no judge calls)")
     parser.add_argument("--judge-provider", type=str, default=None,
                         help="Provider for LLM judge (e.g. google, openai). Default: same as benchmark provider")
     parser.add_argument("--judge-model", type=str, default=None,
@@ -459,6 +463,10 @@ if __name__ == "__main__":
             exit(1)
         all_results = json.loads(results_file.read_text(encoding="utf-8"))
         print(f"Re-scoring results from {rescore_dir}")
+        if args.rescore_all:
+            print("Rescore mode: re-judging ALL checkpoints")
+        else:
+            print("Rescore mode: reusing existing judged checkpoints when available (new-only calls)")
         
         judge_provider = args.judge_provider
         judge_model = args.judge_model
@@ -467,47 +475,62 @@ if __name__ == "__main__":
         print("Initializing LLM judge...")
         init_llm_judge(provider=judge_provider, model=judge_model)
 
-        # Debug: show checkpoint evaluation details
-        from eval.metrics import (evaluate_checkpoint, score_checkpoint,
-            _get_results, _find_response_at_turn, _find_user_msg_at_turn,
-            _deduplicate_checkpoints, _get_constraint_text,
-            _score_keyword_group, _absolute_judge)
-        for sys_name, convos in all_results.items():
-            print(f"\n--- {sys_name} ---")
-            for ci, conv in enumerate(convos):
-                cid = conv.get("conversation_id", f"conv_{ci}")
-                checkpoints = _deduplicate_checkpoints(conv.get("checkpoints", []))
-                results = _get_results(conv)
-                constraint_text = _get_constraint_text(conv)
-                print(f"  {cid}: {len(checkpoints)} checkpoints")
-                for cp in checkpoints:
-                    turn = cp.get("turn", 0)
-                    keywords = cp.get("keywords", [])
-                    kw_groups = cp.get("keyword_groups")
-                    response = _find_response_at_turn(results, turn)
-                    user_msg = _find_user_msg_at_turn(results, turn)
-                    if response and not response.startswith("ERROR:"):
-                        # Gradient score
-                        sc = score_checkpoint(response, keywords, kw_groups)
-                        group_strs = []
-                        if kw_groups:
-                            for g in kw_groups:
-                                gs = _score_keyword_group(response, g)
-                                group_strs.append(f"{gs:.0f}:{g[:3]}")
-                        
-                        passed = evaluate_checkpoint(
-                            response, constraint_text,
-                            cp.get("constraint_tested", ""),
-                            keywords,
-                            keyword_groups=kw_groups,
-                            user_message=user_msg,
-                            specific_test=cp.get("test", ""),
-                        )
-                        print(f"    Turn {turn}: score={sc:.0f} ({'PASS' if passed else 'FAIL'}) "
-                              f"groups=[{', '.join(group_strs)}]"
-                              + (f"  | Q: {user_msg[:60]}..." if user_msg else ""))
+        if args.debug_rescore_details:
+            # Debug: show checkpoint evaluation details (keyword-only to avoid extra judge calls)
+            from eval.metrics import (evaluate_checkpoint, score_checkpoint,
+                _get_results, _find_response_at_turn, _find_user_msg_at_turn,
+                _deduplicate_checkpoints, _get_constraint_text,
+                _score_keyword_group)
+            for sys_name, convos in all_results.items():
+                print(f"\n--- {sys_name} ---")
+                for ci, conv in enumerate(convos):
+                    cid = conv.get("conversation_id", f"conv_{ci}")
+                    checkpoints = _deduplicate_checkpoints(conv.get("checkpoints", []))
+                    results = _get_results(conv)
+                    constraint_text = _get_constraint_text(conv)
+                    print(f"  {cid}: {len(checkpoints)} checkpoints")
+                    for cp in checkpoints:
+                        turn = cp.get("turn", 0)
+                        keywords = cp.get("keywords", [])
+                        kw_groups = cp.get("keyword_groups")
+                        response = _find_response_at_turn(results, turn)
+                        user_msg = _find_user_msg_at_turn(results, turn)
+                        if response and not response.startswith("ERROR:"):
+                            # Gradient score
+                            sc = score_checkpoint(response, keywords, kw_groups)
+                            group_strs = []
+                            if kw_groups:
+                                for g in kw_groups:
+                                    gs = _score_keyword_group(response, g)
+                                    group_strs.append(f"{gs:.0f}:{g[:3]}")
+                            
+                            passed = evaluate_checkpoint(
+                                response, constraint_text,
+                                cp.get("constraint_tested", ""),
+                                keywords,
+                                keyword_groups=kw_groups,
+                                user_message=user_msg,
+                                specific_test=cp.get("test", ""),
+                                use_llm_judge=False,
+                            )
+                            print(f"    Turn {turn}: score={sc:.0f} ({'PASS' if passed else 'FAIL'}) "
+                                  f"groups=[{', '.join(group_strs)}]"
+                                  + (f"  | Q: {user_msg[:60]}..." if user_msg else ""))
 
-        metrics = compute_all_metrics(all_results)
+        existing_metrics = None
+        if not args.rescore_all:
+            for candidate in ("metrics_rescored.json", "metrics.json"):
+                p = rescore_dir / candidate
+                if p.exists():
+                    existing_metrics = json.loads(p.read_text(encoding="utf-8"))
+                    print(f"Loaded previous metrics from {p.name} for judge-score reuse")
+                    break
+
+        metrics = compute_all_metrics(
+            all_results,
+            existing_metrics=existing_metrics,
+            enable_pairwise=args.rescore_all
+        )
         metrics_file = rescore_dir / "metrics_rescored.json"
         metrics_file.write_text(json.dumps(metrics, indent=2))
         print(f"\nRe-scored metrics saved to {metrics_file}")
