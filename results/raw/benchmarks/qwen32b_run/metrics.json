@@ -1,0 +1,590 @@
+{
+  "hiermem": {
+    "judge_scores": {
+      "avg_score": 5.97,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 6.3,
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 6.0,
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.6,
+          "mode": "curator:HYBRID"
+        }
+      ],
+      "summary": {
+        "8": 6.3,
+        "15": 6.0,
+        "25": 5.6
+      }
+    },
+    "constraint_violation_rate": 0.0,
+    "task_accuracy": 1.0,
+    "degradation_curve": {
+      "8": 1.0,
+      "15": 1.0,
+      "25": 1.0
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "curator:HYBRID"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 1.0
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 58.8,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 71.4
+            }
+          ],
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 55.0,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 38.5
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 71.4
+            }
+          ],
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 51.1,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 30.8
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 71.4
+            }
+          ],
+          "mode": "curator:HYBRID"
+        }
+      ],
+      "summary": {
+        "8": 58.8,
+        "15": 55.0,
+        "25": 51.1
+      },
+      "avg_score": 55.0
+    },
+    "total_turns_processed": 30
+  },
+  "raw_llm": {
+    "judge_scores": {
+      "avg_score": 5.57,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.7,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.3,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.7,
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 5.7,
+        "15": 5.3,
+        "25": 5.7
+      }
+    },
+    "constraint_violation_rate": 0.0,
+    "task_accuracy": 1.0,
+    "degradation_curve": {
+      "8": 1.0,
+      "15": 1.0,
+      "25": 1.0
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 1.0
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 51.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 48.3,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 53.8
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 42.9
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 51.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 51.7,
+        "15": 48.3,
+        "25": 51.7
+      },
+      "avg_score": 50.6
+    },
+    "total_turns_processed": 30
+  },
+  "rag": {
+    "judge_scores": {
+      "avg_score": 5.0,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.3,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 4.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.7,
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 5.3,
+        "15": 4.0,
+        "25": 5.7
+      }
+    },
+    "constraint_violation_rate": 0.0,
+    "task_accuracy": 1.0,
+    "degradation_curve": {
+      "8": 1.0,
+      "15": 1.0,
+      "25": 1.0
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 1.0
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 47.8,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 38.5
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 33.0,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 23.1
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 42.9
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 51.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 47.8,
+        "15": 33.0,
+        "25": 51.7
+      },
+      "avg_score": 44.2
+    },
+    "total_turns_processed": 30
+  },
+  "rag_summary": {
+    "judge_scores": {
+      "avg_score": 5.43,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 6.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.3,
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 6.0,
+        "15": 5.0,
+        "25": 5.3
+      }
+    },
+    "constraint_violation_rate": 0.0,
+    "task_accuracy": 1.0,
+    "degradation_curve": {
+      "8": 1.0,
+      "15": 1.0,
+      "25": 1.0
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 1.0
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 55.0,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 38.5
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 71.4
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 44.5,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 42.9
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 47.8,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 38.5
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 55.0,
+        "15": 44.5,
+        "25": 47.8
+      },
+      "avg_score": 49.1
+    },
+    "total_turns_processed": 30
+  }
+}

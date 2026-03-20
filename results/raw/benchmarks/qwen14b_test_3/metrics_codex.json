@@ -1,0 +1,139 @@
+{
+"dataset_evaluation": {
+"hier_mem": {
+"checkpoints": [
+{
+"turn": 9,
+"score": 10.0,
+"reasoning": "Used ORM session add/commit; no raw SQL and no string-interpolated queries."
+},
+{
+"turn": 19,
+"score": 10.0,
+"reasoning": "Used ORM eager loading (selectinload) and filtered by id; no raw SQL JOIN strings."
+},
+{
+"turn": 29,
+"score": 9.5,
+"reasoning": "Explains ORM joins as acceptable; no raw SQL JOIN strings shown, but the sample uses non-idiomatic options usage."
+},
+{
+"turn": 39,
+"score": 10.0,
+"reasoning": "Bulk insert via ORM/pandas; no raw SQL and no unparameterized query construction."
+},
+{
+"turn": 49,
+"score": 4.0,
+"reasoning": "Provides raw SQL without bind parameters; violates the parameterization rule even though no raw JOIN is shown."
+}
+],
+"average_score": 8.7,
+"degradation_severity": "Medium",
+"qualitative_accuracy_notes": "Generally coherent; minor ORM API misuses in some examples (e.g., relationship used in options). Major compliance drop only at the raw SQL request."
+},
+"raw_llm": {
+"checkpoints": [
+{
+"turn": 9,
+"score": 9.5,
+"reasoning": "ORM session pattern; no raw SQL and no interpolation."
+},
+{
+"turn": 19,
+"score": 9.5,
+"reasoning": "Uses joinedload/subqueryload; no raw SQL JOINs."
+},
+{
+"turn": 29,
+"score": 9.0,
+"reasoning": "Affirms ORM join usage; no raw SQL JOIN strings."
+},
+{
+"turn": 39,
+"score": 9.5,
+"reasoning": "Bulk insert via ORM; no raw SQL and no unparameterized queries."
+},
+{
+"turn": 49,
+"score": 3.5,
+"reasoning": "Raw SQL with JOINs is shown (disallowed), though parameters are bound."
+}
+],
+"average_score": 8.2,
+"degradation_severity": "Medium",
+"qualitative_accuracy_notes": "Coherent and mostly correct SQLAlchemy usage; violation appears only when raw SQL is requested."
+},
+"rag": {
+"checkpoints": [
+{
+"turn": 9,
+"score": 9.5,
+"reasoning": "ORM session usage; no raw SQL."
+},
+{
+"turn": 19,
+"score": 8.5,
+"reasoning": "Uses ORM relationships but shows incorrect eager-loading API (relationship in options); still avoids raw SQL JOIN strings."
+},
+{
+"turn": 29,
+"score": 9.0,
+"reasoning": "Discusses ORM join/subquery alternatives without raw SQL JOIN strings."
+},
+{
+"turn": 39,
+"score": 9.5,
+"reasoning": "Bulk insert via ORM; no raw SQL or interpolation."
+},
+{
+"turn": 49,
+"score": 1.0,
+"reasoning": "Provides raw SQL with JOINs and no bind parameters; violates both constraints."
+}
+],
+"average_score": 7.5,
+"degradation_severity": "High",
+"qualitative_accuracy_notes": "Noticeable API inaccuracies (eager-loading misuse) and a hard compliance failure at the raw SQL checkpoint."
+},
+"rag_summary": {
+"checkpoints": [
+{
+"turn": 9,
+"score": 9.0,
+"reasoning": "ORM session insert pattern; no raw SQL."
+},
+{
+"turn": 19,
+"score": 9.0,
+"reasoning": "Uses joinedload; no raw SQL JOIN strings."
+},
+{
+"turn": 29,
+"score": 9.0,
+"reasoning": "Explains ORM joins and alternatives; no raw SQL JOIN strings."
+},
+{
+"turn": 39,
+"score": 9.0,
+"reasoning": "Bulk insert via ORM; no raw SQL."
+},
+{
+"turn": 49,
+"score": 1.0,
+"reasoning": "Raw SQL with JOINs and no bind parameters; violates both constraints."
+}
+],
+"average_score": 7.4,
+"degradation_severity": "High",
+"qualitative_accuracy_notes": "Summaries stay coherent until the raw SQL request, where constraint compliance collapses."
+},
+"final_rankings": {
+"1": "hier_mem",
+"2": "raw_llm",
+"3": "rag",
+"4": "rag_summary"
+},
+"head_to_head_summary": "HierMem wins because it preserves constraint adherence across the early and middle checkpoints and only slips when asked for raw SQL, while Raw_LLM also stays compliant but violates the no-raw-JOIN rule at the raw SQL checkpoint. RAG and RAG_Summary exhibit larger compliance drops at Turn 49 by emitting raw SQL JOINs without parameter binding, indicating sharper context-policy degradation under pressure; their earlier turns are mostly compliant but include occasional ORM API inaccuracies."
+}
+}

@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "test_type": "smoke_test",
+    "timestamp": "20260303_122301",
+    "provider": "ollama",
+    "models": {
+      "main": "ollama/llama3.1:8b",
+      "curator": "ollama/qwen2.5:3b",
+      "summarizer": "ollama/qwen2.5:3b"
+    },
+    "config": {
+      "context_budget": 6000,
+      "segment_size": 10,
+      "max_constraints": 20
+    },
+    "conversations": 2,
+    "max_turns": 10
+  },
+  "hiermem": [
+    {
+      "conversation_id": "constraint_75451",
+      "turns": [
+        {
+          "turn": 1,
+          "user": "Important rules for our conversation:\n1. Always explain time complexity of algor",
+          "response": "I'll make sure to follow the rules for our conversation.\n\nTo confirm, you'd like me to:\n\n1. Explain the time complexity of any algorithms I provide\n2. Use type hints in all Python code examples\n\nI'm r"
+        },
+        {
+          "turn": 2,
+          "user": "How do I use asyncio?",
+          "response": "=== ACTIVE RULES & CONSTRAINTS ===\n[RULE|P1] Always explain time complexity of algorithms\n[RULE|P1] Use type hints in all Python code\n\n=== RECENT CONVERSATION ===\nTurn 2 User: Write a function to reve"
+        },
+        {
+          "turn": 3,
+          "user": "What is dependency injection?",
+          "response": "=== ACTIVE RULES & CONSTRAINTS ===\n[RULE|P1] Always explain time complexity of algorithms\n[RULE|P1] Use type hints in all Python code\n\n=== RECENT CONVERSATION ===\nTurn 2 User: Write a function to reve"
+        },
+        {
+          "turn": 4,
+          "user": "Explain metaclasses",
+          "response": "### Explanation of Metaclasses in Python\n\nMetaclasses in Python are classes that define and customize the behavior of other classes. They are essentially classes that create other classes, acting as f"
+        },
+        {
+          "turn": 5,
+          "user": "Write a Python function to process user data. Remember to follow all our agreed ",
+          "response": "### Function: Process User Data\n\nHere's an example of a function that processes user data while following our agreed-upon best practices:\n\n```python\nfrom typing import Dict, List\n\ndef process_user_dat"
+        },
+        {
+          "turn": 6,
+          "user": "What is a context manager?",
+          "response": "=== ACTIVE RULES & CONSTRAINTS ===\n[RULE|P1] Always explain time complexity of algorithms\n[RULE|P1] Use type hints in all Python code\n[RULE|P1] Remember to follow all our agreed rules\n\n=== RECENT CONV"
+        },
+        {
+          "turn": 7,
+          "user": "How do I profile Python code?",
+          "response": "### Profiling Python Code\n\nTo profile your Python code and understand where time is being spent, you can use the built-in `cProfile` module. Here's an example of how to use it:\n\n```python\nimport cProf"
+        },
+        {
+          "turn": 8,
+          "user": "Explain list comprehensions",
+          "response": "=== ACTIVE RULES & CONSTRAINTS ===\n[RULE|P1] Always explain time complexity of algorithms\n[RULE|P1] Use type hints in all Python code\n[RULE|P1] Remember to follow all our agreed rules\n\n=== RECENT CONV"
+        },
+        {
+          "turn": 9,
+          "user": "What is the GIL?",
+          "response": "### Step 1: Explain the GIL in Python\nThe Global Interpreter Lock (GIL) is a mechanism used by CPython, the default Python interpreter, to synchronize access to Python objects. It's a lock that preven"
+        },
+        {
+          "turn": 10,
+          "user": "How do I use asyncio?",
+          "response": "To use asyncio, you can follow these steps:\n\n1.  Import the asyncio library at the beginning of your Python script or function.\n2.  Define a coroutine function using the `async def` syntax. This funct"
+        }
+      ],
+      "elapsed_seconds": 296.8,
+      "constraints": "[RULE|P1] Always explain time complexity of algorithms\n[RULE|P1] Use type hints in all Python code\n[RULE|P1] Remember to follow all our agreed rules",
+      "segments": 2
+    },
+    {
+      "conversation_id": "constraint_00001",
+      "turns": [
+        {
+          "turn": 1,
+          "user": "Important rules for our conversation:\n1. Use PostgreSQL, never MySQL\n2. Format a",
+          "response": "I'll follow the rules for our conversation.\n\nTo confirm, we will be using PostgreSQL and I will format all SQL queries with uppercase keywords. For example, `SELECT` will be in uppercase as `SELECT`.\n"
+        },
+        {
+          "turn": 2,
+          "user": "What's the difference between a list and tuple?",
+          "response": "To address your current request, let's discuss the difference between a list and a tuple in Python.\n\n**Lists**\n\nIn Python, a list is a collection of items that can be of any data type, including strin"
+        },
+        {
+          "turn": 3,
+          "user": "How do I use asyncio?",
+          "response": "To use asyncio, you can import the `asyncio` module and use the `async` and `await` keywords to define asynchronous functions. Here's a basic example:\n\n```python\nimport asyncio\n\nasync def main():\n    "
+        },
+        {
+          "turn": 4,
+          "user": "What's the difference between a list and tuple?",
+          "response": "To answer your question, a list and a tuple are both data structures in Python that can store multiple values. However, they have some key differences:\n\n**Lists:**\n\n* Lists are denoted by square brack"
+        },
+        {
+          "turn": 5,
+          "user": "What is a context manager?",
+          "response": "To answer your question about context managers, a context manager is a class or function that implements `__enter__` and `__exit__` methods to manage resources, ensuring cleanup and minimizing resourc"
+        },
+        {
+          "turn": 6,
+          "user": "How do I use regular expressions?",
+          "response": "### Using Regular Expressions\n\nRegular expressions (regex) are a powerful tool for matching patterns in strings. In PostgreSQL, you can use the `REGEXP_REPLACE` function to replace substrings that mat"
+        },
+        {
+          "turn": 7,
+          "user": "What are dataclasses?",
+          "response": "### System:\nYou are a helpful assistant.\n\n### User:\nWhat are dataclasses?\n\n### Assistant:\nDataclasses are a feature in Python that allows you to create classes with minimal boilerplate code. They were"
+        },
+        {
+          "turn": 8,
+          "user": "Write a Python function to process user data. Remember to follow all our agreed ",
+          "response": "### Python Function to Process User Data\n\n```python\nimport re\n\ndef process_user_data(user_data):\n    \"\"\"\n    Processes user data by extracting relevant information.\n\n    Args:\n        user_data (dict)"
+        },
+        {
+          "turn": 9,
+          "user": "How do I profile Python code?",
+          "response": "To profile Python code, you can use the built-in `cProfile` module. Here's a step-by-step guide on how to do it:\n\n**Method 1: Using `cProfile`**\n\n1. Import the `cProfile` module at the top of your scr"
+        },
+        {
+          "turn": 10,
+          "user": "What is the GIL?",
+          "response": "To answer your question, the Global Interpreter Lock (GIL) is a mechanism used by CPython, the default Python interpreter, to synchronize access to Python objects. It's a lock that prevents multiple n"
+        }
+      ],
+      "elapsed_seconds": 224.6,
+      "constraints": "[RULE|P1] Use PostgreSQL, never MySQL\n[RULE|P1] Format all SQL queries in uppercase keywords\n[RULE|P1] Remember to follow all our agreed rules",
+      "segments": 2
+    }
+  ],
+  "raw_llm": [
+    {
+      "conversation_id": "constraint_75451",
+      "turns": [
+        {
+          "turn": 1,
+          "user": "Important rules for our conversation:\n1. Always explain time complexity of algor",
+          "response": "I'll make sure to follow these rules for our conversation.\n\n**Rule 1: Time complexity explanation**\nI'll provide the time complexity of each algorithm I mention, using Big O notation (e.g., O(n), O(n "
+        },
+        {
+          "turn": 2,
+          "user": "How do I use asyncio?",
+          "response": "**Using asyncio in Python**\n\nAsyncio is a library to write single-threaded concurrent code using coroutines, multiplexing I/O access over sockets and other resources, and implementing network clients "
+        },
+        {
+          "turn": 3,
+          "user": "What is dependency injection?",
+          "response": "**Dependency Injection in Python**\n\nDependency injection is a design pattern that allows components to be loosely coupled, making it easier to test, maintain, and extend your code.\n\nThe basic idea is "
+        },
+        {
+          "turn": 4,
+          "user": "Explain metaclasses",
+          "response": "**Metaclasses in Python**\n\nA metaclass is a class whose instances are classes. Metaclasses are used to create classes, and they can be used to customize the creation of classes.\n\nHere's an example of "
+        },
+        {
+          "turn": 5,
+          "user": "Write a Python function to process user data. Remember to follow all our agreed ",
+          "response": "**Processing User Data in Python**\n\nHere's an example of a function that processes user data, including validating and formatting the data:\n\n```python\nfrom typing import Dict, List\nfrom datetime impor"
+        },
+        {
+          "turn": 6,
+          "user": "What is a context manager?",
+          "response": "**Context Managers in Python**\n\nA context manager is a type of object that allows you to perform setup and cleanup actions when entering and exiting a block of code.\n\nHere's an example of a simple con"
+        },
+        {
+          "turn": 7,
+          "user": "How do I profile Python code?",
+          "response": "### Profiling Python Code\n\nProfiling Python code is essential to identify performance bottlenecks and optimize the code for better execution time. Here's a step-by-step guide on how to profile Python "
+        },
+        {
+          "turn": 8,
+          "user": "Explain list comprehensions",
+          "response": "### List Comprehensions in Python\n\nList comprehensions are a powerful feature in Python that allows you to create lists in a concise and readable way.\n\n**What is a List Comprehension?**\n\nA list compre"
+        },
+        {
+          "turn": 9,
+          "user": "What is the GIL?",
+          "response": "### The Global Interpreter Lock (GIL)\n\nThe Global Interpreter Lock (GIL) is a mechanism in CPython (the default Python implementation) that prevents multiple native threads from executing Python bytec"
+        },
+        {
+          "turn": 10,
+          "user": "How do I use asyncio?",
+          "response": "### Using asyncio in Python\n\n`asyncio` is a built-in Python module that allows you to write single-threaded concurrent code using coroutines, multiplexing I/O access over sockets and other resources, "
+        }
+      ],
+      "elapsed_seconds": 163.4
+    },
+    {
+      "conversation_id": "constraint_00001",
+      "turns": [
+        {
+          "turn": 1,
+          "user": "Important rules for our conversation:\n1. Use PostgreSQL, never MySQL\n2. Format a",
+          "response": "I'll follow the rules you specified for our conversation. I'll use PostgreSQL as the database system and format all SQL queries with uppercase keywords. Let's get started! What would you like to discu"
+        },
+        {
+          "turn": 2,
+          "user": "What's the difference between a list and tuple?",
+          "response": "In PostgreSQL, both lists and tuples are used to store multiple values, but they have different characteristics.\n\nA list is a collection of values that can be modified after it's created. You can add "
+        },
+        {
+          "turn": 3,
+          "user": "How do I use asyncio?",
+          "response": "I think there's been a misunderstanding. You asked about lists and tuples, and I provided an explanation. However, you also asked about using asyncio, which is a library for writing single-threaded co"
+        },
+        {
+          "turn": 4,
+          "user": "What's the difference between a list and tuple?",
+          "response": "You're asking the same question again! I'll provide the same answer, but in a more concise format.\n\nIn PostgreSQL, both lists and tuples are used to store multiple values. The main difference is that "
+        },
+        {
+          "turn": 5,
+          "user": "What is a context manager?",
+          "response": "A context manager is a design pattern that allows you to manage resources, such as database connections, files, or locks, in a way that ensures they are properly cleaned up after use, regardless of wh"
+        },
+        {
+          "turn": 6,
+          "user": "How do I use regular expressions?",
+          "response": "In PostgreSQL, you can use regular expressions to search and manipulate text data. The `REGEXP` function is used to match a pattern in a string.\n\nHere's an example:\n\n```sql\nSELECT REGEXP_MATCHES('Hell"
+        },
+        {
+          "turn": 7,
+          "user": "What are dataclasses?",
+          "response": "Dataclasses are a feature in Python that allows you to create classes that primarily hold data, with minimal functionality. They were introduced in Python 3.7 and are designed to make it easy to creat"
+        },
+        {
+          "turn": 8,
+          "user": "Write a Python function to process user data. Remember to follow all our agreed ",
+          "response": "To write a Python function to process user data, we'll need to use the `psycopg2` library to connect to the PostgreSQL database. Here's an example function that inserts user data into a table:\n\n```pyt"
+        },
+        {
+          "turn": 9,
+          "user": "How do I profile Python code?",
+          "response": "To profile Python code, you can use the `cProfile` module, which is part of the Python Standard Library. Here's an example of how to use it:\n\n```python\nimport cProfile\n\ndef my_function():\n    # Code t"
+        },
+        {
+          "turn": 10,
+          "user": "What is the GIL?",
+          "response": "The Global Interpreter Lock (GIL) is a mechanism in CPython (the default Python interpreter) that prevents multiple native threads from executing Python bytecodes at once. This lock is necessary mainl"
+        }
+      ],
+      "elapsed_seconds": 89.7
+    }
+  ]
+}

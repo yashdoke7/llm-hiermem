@@ -1,0 +1,878 @@
+{
+  "hiermem": {
+    "judge_scores": {
+      "avg_score": 6.67,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 6.0,
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 7.0,
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 3.0,
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 8,
+          "convo": "chatgpt_cooking_recipes_01",
+          "judge_score": 10.0,
+          "mode": "passthrough"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_cooking_recipes_01",
+          "judge_score": 8.0,
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_cooking_recipes_01",
+          "judge_score": 6.0,
+          "mode": "curator:HYBRID"
+        }
+      ],
+      "summary": {
+        "8": 8.0,
+        "15": 7.5,
+        "25": 4.5
+      }
+    },
+    "constraint_violation_rate": 0.1667,
+    "task_accuracy": 0.8333,
+    "degradation_curve": {
+      "1": 0.0,
+      "10": 1.0,
+      "20": 1.0,
+      "30": 0.8333,
+      "40": 0.8333,
+      "50": 0.8333
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_cooking_recipes_01",
+          "mode": "passthrough"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_cooking_recipes_01",
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "passed": false,
+          "convo": "chatgpt_cooking_recipes_01",
+          "mode": "curator:HYBRID"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 0.5
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 58.8,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 71.4
+            }
+          ],
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 58.2,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 30.8
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 85.7
+            }
+          ],
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 29.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 30.8
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 28.6
+            }
+          ],
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 8,
+          "convo": "chatgpt_cooking_recipes_01",
+          "score": 37.5,
+          "group_scores": [
+            {
+              "keywords": [
+                "gram",
+                "ml",
+                "liter"
+              ],
+              "score": 50.0
+            },
+            {
+              "keywords": [
+                "substitut",
+                "alternative",
+                "replace"
+              ],
+              "score": 25.0
+            }
+          ],
+          "mode": "passthrough"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_cooking_recipes_01",
+          "score": 0.0,
+          "group_scores": [
+            {
+              "keywords": [
+                "gram",
+                "ml",
+                "liter"
+              ],
+              "score": 0.0
+            },
+            {
+              "keywords": [
+                "substitut",
+                "alternative",
+                "replace"
+              ],
+              "score": 0.0
+            }
+          ],
+          "mode": "curator:HYBRID"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_cooking_recipes_01",
+          "score": 12.5,
+          "group_scores": [
+            {
+              "keywords": [
+                "gram",
+                "ml",
+                "liter"
+              ],
+              "score": 25.0
+            },
+            {
+              "keywords": [
+                "substitut",
+                "alternative",
+                "replace"
+              ],
+              "score": 0.0
+            }
+          ],
+          "mode": "curator:HYBRID"
+        }
+      ],
+      "summary": {
+        "8": 48.1,
+        "15": 29.1,
+        "25": 21.1
+      },
+      "avg_score": 32.8
+    },
+    "total_turns_processed": 60
+  },
+  "raw_llm": {
+    "judge_scores": {
+      "avg_score": 4.5,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 4.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 2.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 3.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 8,
+          "convo": "chatgpt_cooking_recipes_01",
+          "judge_score": 10.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_cooking_recipes_01",
+          "judge_score": 6.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_cooking_recipes_01",
+          "judge_score": 2.0,
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 7.0,
+        "15": 4.0,
+        "25": 2.5
+      }
+    },
+    "constraint_violation_rate": 0.5,
+    "task_accuracy": 0.5,
+    "degradation_curve": {
+      "1": 0.0,
+      "10": 0.5,
+      "20": 0.5,
+      "30": 0.5,
+      "40": 0.5,
+      "50": 0.5
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 8,
+          "passed": false,
+          "convo": "chatgpt_cooking_recipes_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": false,
+          "convo": "chatgpt_cooking_recipes_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": false,
+          "convo": "chatgpt_cooking_recipes_01",
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 0.5,
+        "15": 0.5,
+        "25": 0.5
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 51.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 29.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 30.8
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 28.6
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 40.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 38.5
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 42.9
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 8,
+          "convo": "chatgpt_cooking_recipes_01",
+          "score": 37.5,
+          "group_scores": [
+            {
+              "keywords": [
+                "gram",
+                "ml",
+                "liter"
+              ],
+              "score": 50.0
+            },
+            {
+              "keywords": [
+                "substitut",
+                "alternative",
+                "replace"
+              ],
+              "score": 25.0
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_cooking_recipes_01",
+          "score": 11.1,
+          "group_scores": [
+            {
+              "keywords": [
+                "gram",
+                "ml",
+                "liter"
+              ],
+              "score": 22.2
+            },
+            {
+              "keywords": [
+                "substitut",
+                "alternative",
+                "replace"
+              ],
+              "score": 0.0
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_cooking_recipes_01",
+          "score": 0.0,
+          "group_scores": [
+            {
+              "keywords": [
+                "gram",
+                "ml",
+                "liter"
+              ],
+              "score": 0.0
+            },
+            {
+              "keywords": [
+                "substitut",
+                "alternative",
+                "replace"
+              ],
+              "score": 0.0
+            }
+          ],
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 44.6,
+        "15": 20.4,
+        "25": 20.4
+      },
+      "avg_score": 28.5
+    },
+    "total_turns_processed": 60
+  },
+  "rag": {
+    "judge_scores": {
+      "avg_score": 2.0,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 2.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 2.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 2.0,
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 2.0,
+        "15": 2.0,
+        "25": 2.0
+      }
+    },
+    "constraint_violation_rate": 0.0,
+    "task_accuracy": 1.0,
+    "degradation_curve": {
+      "1": 0.0,
+      "10": 1.0,
+      "20": 1.0,
+      "30": 1.0,
+      "40": 1.0,
+      "50": 1.0
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 1.0
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 33.0,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 23.1
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 42.9
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 44.0,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 30.8
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 18.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 23.1
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 14.3
+            }
+          ],
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 33.0,
+        "15": 44.0,
+        "25": 18.7
+      },
+      "avg_score": 31.9
+    },
+    "total_turns_processed": 30
+  },
+  "rag_summary": {
+    "judge_scores": {
+      "avg_score": 3.0,
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 5.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 3.0,
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "judge_score": 1.0,
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 5.0,
+        "15": 3.0,
+        "25": 1.0
+      }
+    },
+    "constraint_violation_rate": 0.3333,
+    "task_accuracy": 0.6667,
+    "degradation_curve": {
+      "1": 0.0,
+      "10": 1.0,
+      "20": 1.0,
+      "30": 0.6667,
+      "40": 0.6667,
+      "50": 0.6667
+    },
+    "per_turn_accuracy": {
+      "detail": [
+        {
+          "turn": 8,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "passed": true,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "passed": false,
+          "convo": "chatgpt_software_engineering_01",
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 1.0,
+        "15": 1.0,
+        "25": 0.0
+      }
+    },
+    "per_turn_scores": {
+      "detail": [
+        {
+          "turn": 8,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 51.7,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 46.2
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 57.1
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 15,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 26.4,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 38.5
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 14.3
+            }
+          ],
+          "mode": "full_history"
+        },
+        {
+          "turn": 25,
+          "convo": "chatgpt_software_engineering_01",
+          "score": 11.6,
+          "group_scores": [
+            {
+              "keywords": [
+                ":",
+                "->",
+                "int"
+              ],
+              "score": 23.1
+            },
+            {
+              "keywords": [
+                "try:",
+                "except",
+                "try/except"
+              ],
+              "score": 0.0
+            }
+          ],
+          "mode": "full_history"
+        }
+      ],
+      "summary": {
+        "8": 51.7,
+        "15": 26.4,
+        "25": 11.6
+      },
+      "avg_score": 29.9
+    },
+    "total_turns_processed": 30
+  },
+  "pairwise_comparison": {
+    "system_a": "hiermem",
+    "system_b": "raw_llm",
+    "wins_a": 4,
+    "wins_b": 0,
+    "ties": 2,
+    "total": 6,
+    "win_rate_a": 66.7,
+    "win_rate_b": 0.0,
+    "comparisons": [
+      {
+        "convo": "chatgpt_software_engineering_01",
+        "turn": 8,
+        "winner": "tie",
+        "score_a": 2,
+        "score_b": 2,
+        "reasoning": "Both models failed to include any try/except blocks in their code, and both models cut off mid-sentence, failing to provide a complete or functional response."
+      },
+      {
+        "convo": "chatgpt_software_engineering_01",
+        "turn": 15,
+        "winner": "hiermem",
+        "score_a": 3,
+        "score_b": 2,
+        "reasoning": "Response A included try/except blocks in the endpoint logic, whereas Response B completely ignored the request for error handling; both failed to consistently apply type hints to function signatures."
+      },
+      {
+        "convo": "chatgpt_software_engineering_01",
+        "turn": 25,
+        "winner": "tie",
+        "score_a": 2,
+        "score_b": 2,
+        "reasoning": "Both models failed to include try/except handling in their code examples and were inconsistent with applying type hints, despite the user explicitly requesting both."
+      },
+      {
+        "convo": "chatgpt_cooking_recipes_01",
+        "turn": 8,
+        "winner": "hiermem",
+        "score_a": 5,
+        "score_b": 3,
+        "reasoning": "Response A explicitly included a section for cheaper substitutions as requested, whereas Response B failed to provide specific budget alternatives for the ingredients listed."
+      },
+      {
+        "convo": "chatgpt_cooking_recipes_01",
+        "turn": 15,
+        "winner": "hiermem",
+        "score_a": 5,
+        "score_b": 2,
+        "reasoning": "Response A followed both constraints by providing metric measurements for all ingredients and offering specific, budget-friendly substitutions, whereas Response B failed to provide metric measurements and did not offer any budget-friendly substitutions."
+      },
+      {
+        "convo": "chatgpt_cooking_recipes_01",
+        "turn": 25,
+        "winner": "hiermem",
+        "score_a": 4,
+        "score_b": 1,
+        "reasoning": "Response A followed the metric rule for most ingredients and included a budget-friendly recipe, whereas Response B used imperial measurements throughout and failed to provide any budget-conscious substitutions."
+      }
+    ]
+  }
+}

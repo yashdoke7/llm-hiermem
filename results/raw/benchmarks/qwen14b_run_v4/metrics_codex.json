@@ -1,0 +1,239 @@
+{
+  "dataset_evaluation": {
+    "hier_mem": {
+      "checkpoints": [
+        {
+          "turn": 9,
+          "score": 10.0,
+          "reasoning": "Explicitly switches to polars and uses dataclasses; fully aligns with the stated constraints."
+        },
+        {
+          "turn": 19,
+          "score": 8.0,
+          "reasoning": "Uses polars-based transforms and avoids pandas; does not explicitly reinforce dataclass-based pipeline objects but no conflicting dict-based config."
+        },
+        {
+          "turn": 29,
+          "score": 9.0,
+          "reasoning": "Uses a dataclass for run metadata and polars for data handling; adheres to constraints."
+        },
+        {
+          "turn": 39,
+          "score": 9.0,
+          "reasoning": "Dataclass configs and polars usage are maintained; consistent with preferences."
+        },
+        {
+          "turn": 49,
+          "score": 9.0,
+          "reasoning": "Recap keeps polars and dataclasses; no pandas regressions."
+        },
+        {
+          "turn": 59,
+          "score": 9.0,
+          "reasoning": "Maintains polars and dataclass configurations in examples."
+        },
+        {
+          "turn": 69,
+          "score": 6.0,
+          "reasoning": "Config loader shown as dict-based without dataclasses; still avoids pandas."
+        },
+        {
+          "turn": 79,
+          "score": 8.0,
+          "reasoning": "Kubernetes guidance is neutral to constraints and does not introduce pandas."
+        },
+        {
+          "turn": 89,
+          "score": 7.0,
+          "reasoning": "Lineage discussion is constraint-neutral; no pandas usage, but no dataclass conventions."
+        },
+        {
+          "turn": 99,
+          "score": 9.0,
+          "reasoning": "Recap explicitly reinforces polars and dataclasses."
+        }
+      ],
+      "average_score": 8.4,
+      "degradation_severity": "Low",
+      "qualitative_accuracy_notes": "Stays aligned with polars and dataclass conventions throughout; minor drift in config-loader examples, but no pandas regressions or major hallucinations."
+    },
+    "raw_llm": {
+      "checkpoints": [
+        {
+          "turn": 9,
+          "score": 9.0,
+          "reasoning": "Switches to polars and dataclasses as requested; minor verbosity but compliant."
+        },
+        {
+          "turn": 19,
+          "score": 8.0,
+          "reasoning": "Uses polars for aggregations; pipeline object conventions are not explicitly dataclass-based."
+        },
+        {
+          "turn": 29,
+          "score": 9.0,
+          "reasoning": "Dataclass metadata and polars usage align with constraints."
+        },
+        {
+          "turn": 39,
+          "score": 8.0,
+          "reasoning": "Maintains dataclass metadata and polars; no pandas usage."
+        },
+        {
+          "turn": 49,
+          "score": 8.0,
+          "reasoning": "Recap references polars and prior conventions; no explicit violations."
+        },
+        {
+          "turn": 59,
+          "score": 6.0,
+          "reasoning": "Uses csv module and dict configs without dataclasses; still avoids pandas but drifts from stated preferences."
+        },
+        {
+          "turn": 69,
+          "score": 6.0,
+          "reasoning": "Config loader is dict-based and not dataclass-oriented; no pandas."
+        },
+        {
+          "turn": 79,
+          "score": 7.0,
+          "reasoning": "Kubernetes guidance is constraint-neutral; no pandas use."
+        },
+        {
+          "turn": 89,
+          "score": 7.0,
+          "reasoning": "Lineage discussion is neutral; no pandas, but no dataclass consistency."
+        },
+        {
+          "turn": 99,
+          "score": 8.0,
+          "reasoning": "Recap reinforces polars/dataclasses; compliant."
+        }
+      ],
+      "average_score": 7.6,
+      "degradation_severity": "Medium",
+      "qualitative_accuracy_notes": "Generally coherent, but mid-conversation examples drift to dict-based configs and generic patterns rather than dataclass conventions."
+    },
+    "rag": {
+      "checkpoints": [
+        {
+          "turn": 9,
+          "score": 9.0,
+          "reasoning": "Acknowledges polars/dataclasses and provides compliant examples."
+        },
+        {
+          "turn": 19,
+          "score": 7.0,
+          "reasoning": "Uses polars but falls back to dict configs and generic patterns."
+        },
+        {
+          "turn": 29,
+          "score": 7.0,
+          "reasoning": "Metadata tracking is acceptable but lacks dataclass pipeline object conventions."
+        },
+        {
+          "turn": 39,
+          "score": 3.0,
+          "reasoning": "Reverts to pandas and dict-based connectors, violating the polars requirement."
+        },
+        {
+          "turn": 49,
+          "score": 3.0,
+          "reasoning": "Recap uses pandas/dict patterns; strong constraint violation."
+        },
+        {
+          "turn": 59,
+          "score": 3.0,
+          "reasoning": "Examples revert to pandas/dict config and drop dataclasses."
+        },
+        {
+          "turn": 69,
+          "score": 7.0,
+          "reasoning": "Uses dataclass-based config loader; polars not emphasized but no pandas use."
+        },
+        {
+          "turn": 79,
+          "score": 7.0,
+          "reasoning": "Kubernetes guidance is constraint-neutral."
+        },
+        {
+          "turn": 89,
+          "score": 4.0,
+          "reasoning": "Uses pandas in lineage example; violates polars constraint."
+        },
+        {
+          "turn": 99,
+          "score": 4.0,
+          "reasoning": "Checklist explicitly recommends pandas; violates constraint."
+        }
+      ],
+      "average_score": 5.4,
+      "degradation_severity": "High",
+      "qualitative_accuracy_notes": "Frequent mid-late regressions to pandas and dict configs indicate lost constraint memory; otherwise coherent but inconsistent with requirements."
+    },
+    "rag_summary": {
+      "checkpoints": [
+        {
+          "turn": 9,
+          "score": 7.0,
+          "reasoning": "Switches to polars but uses pydantic instead of dataclasses."
+        },
+        {
+          "turn": 19,
+          "score": 7.0,
+          "reasoning": "Polars is used; dataclass pipeline objects are not reinforced."
+        },
+        {
+          "turn": 29,
+          "score": 7.0,
+          "reasoning": "Metadata guidance is acceptable but not dataclass-centric."
+        },
+        {
+          "turn": 39,
+          "score": 8.0,
+          "reasoning": "Uses dataclass configs and polars consistently."
+        },
+        {
+          "turn": 49,
+          "score": 3.0,
+          "reasoning": "Recap uses pandas and dict configs; violates polars requirement."
+        },
+        {
+          "turn": 59,
+          "score": 3.0,
+          "reasoning": "Examples revert to pandas/dict patterns; constraint violation."
+        },
+        {
+          "turn": 69,
+          "score": 3.0,
+          "reasoning": "Config loader shows pandas/dict usage rather than polars/dataclasses."
+        },
+        {
+          "turn": 79,
+          "score": 7.0,
+          "reasoning": "Kubernetes guidance is constraint-neutral; no pandas introduced."
+        },
+        {
+          "turn": 89,
+          "score": 7.0,
+          "reasoning": "Lineage tracking is neutral to constraints; no pandas use."
+        },
+        {
+          "turn": 99,
+          "score": 7.0,
+          "reasoning": "Closing advice is neutral and avoids explicit pandas."
+        }
+      ],
+      "average_score": 5.9,
+      "degradation_severity": "High",
+      "qualitative_accuracy_notes": "Early compliance erodes mid-conversation with multiple pandas/dict regressions; summaries remain coherent but constraint survival is weak."
+    },
+    "final_rankings": {
+      "1": "hier_mem",
+      "2": "raw_llm",
+      "3": "rag_summary",
+      "4": "rag"
+    },
+    "head_to_head_summary": "HierMem wins by preserving the polars and dataclass constraints across nearly all checkpoints, showing only minor drift in configuration examples. Raw_LLM remains mostly compliant but slips more often into generic dict-based patterns. RAG and RAG_Summary both exhibit clear context collapse mid-conversation, repeatedly reverting to pandas and non-dataclass configs, which directly violate the explicit constraints. Overall, HierMem shows the best constraint survival and least degradation, while the retrieval-heavy baselines degrade structurally as the conversation progresses."
+  }
+}

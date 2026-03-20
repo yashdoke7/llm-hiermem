@@ -1,0 +1,307 @@
+{
+  "hiermem": {
+    "judge_score_trend": {
+      "early": null,
+      "mid": 10.0,
+      "late": 4.5
+    },
+    "degradation_slope": -0.085,
+    "first_violation_turn": {
+      "sql_databases_parameterized_orm": null
+    },
+    "cvr_per_convo": {
+      "sql_databases_parameterized_orm": 0.0
+    },
+    "response_length_stats": {
+      "avg_chars": 3788,
+      "std_chars": 992,
+      "cv": 0.262
+    },
+    "context_utilization": {
+      "avg_utilization_pct": 75.8,
+      "max_utilization_pct": 100.3,
+      "avg_tokens": 6208
+    },
+    "latency_trend": {
+      "early": 150.8,
+      "mid": 179.3,
+      "late": 189.2
+    },
+    "constraint_retrieval_rate": 0.814,
+    "auto_correction_stats": {
+      "hybrid_turns": 43,
+      "triggered_turns": 1,
+      "trigger_rate": 0.0233,
+      "total_corrections": 1
+    },
+    "mode_transition_turn": 15
+  },
+  "raw_llm": {
+    "judge_score_trend": {
+      "early": null,
+      "mid": 10.0,
+      "late": 3.5
+    },
+    "degradation_slope": -0.13,
+    "first_violation_turn": {
+      "sql_databases_parameterized_orm": null
+    },
+    "cvr_per_convo": {
+      "sql_databases_parameterized_orm": 0.0
+    },
+    "response_length_stats": {
+      "avg_chars": 5827,
+      "std_chars": 3256,
+      "cv": 0.559
+    },
+    "context_utilization": {
+      "avg_utilization_pct": 81.1,
+      "max_utilization_pct": 99.8,
+      "avg_tokens": 6648
+    },
+    "latency_trend": {
+      "early": 117.9,
+      "mid": 131.0,
+      "late": 237.9
+    },
+    "constraint_retrieval_rate": null,
+    "auto_correction_stats": null,
+    "mode_transition_turn": null
+  },
+  "rag_summary": {
+    "judge_score_trend": {
+      "early": null,
+      "mid": null,
+      "late": null
+    },
+    "degradation_slope": 0.0,
+    "first_violation_turn": {
+      "sql_databases_parameterized_orm": null
+    },
+    "cvr_per_convo": {
+      "sql_databases_parameterized_orm": 0.0
+    },
+    "response_length_stats": {
+      "avg_chars": 4687,
+      "std_chars": 1405,
+      "cv": 0.3
+    },
+    "context_utilization": {
+      "avg_utilization_pct": 82.0,
+      "max_utilization_pct": 99.2,
+      "avg_tokens": 6718
+    },
+    "latency_trend": {
+      "early": 102.9,
+      "mid": 153.2,
+      "late": 235.6
+    },
+    "constraint_retrieval_rate": null,
+    "auto_correction_stats": null,
+    "mode_transition_turn": null
+  },
+  "rag": {
+    "judge_score_trend": {
+      "early": null,
+      "mid": null,
+      "late": null
+    },
+    "degradation_slope": 0.0,
+    "first_violation_turn": {
+      "sql_databases_parameterized_orm": null
+    },
+    "cvr_per_convo": {
+      "sql_databases_parameterized_orm": 0.0
+    },
+    "response_length_stats": {
+      "avg_chars": 5998,
+      "std_chars": 2275,
+      "cv": 0.379
+    },
+    "context_utilization": {
+      "avg_utilization_pct": 81.4,
+      "max_utilization_pct": 99.1,
+      "avg_tokens": 6668
+    },
+    "latency_trend": {
+      "early": 91.9,
+      "mid": 197.0,
+      "late": 264.1
+    },
+    "constraint_retrieval_rate": null,
+    "auto_correction_stats": null,
+    "mode_transition_turn": null
+  },
+  "_cross_system": {
+    "memory_efficiency": {
+      "avg_tokens_hiermem": 6208,
+      "avg_tokens_raw_llm": 6648,
+      "efficiency_ratio": 0.934,
+      "tokens_saved_pct": 6.6
+    },
+    "per_domain_accuracy": {
+      "hiermem": {
+        "other": 5.6
+      },
+      "raw_llm": {
+        "other": 4.8
+      },
+      "rag_summary": {},
+      "rag": {}
+    },
+    "degradation_by_position": {
+      "hiermem": {
+        "20%": 10.0,
+        "40%": 10.0,
+        "60%": 1.0,
+        "80%": 1.0,
+        "100%": 6.0
+      },
+      "raw_llm": {
+        "20%": 10.0,
+        "40%": 10.0,
+        "60%": 1.0,
+        "80%": 2.0,
+        "100%": 1.0
+      },
+      "rag_summary": {
+        "20%": null,
+        "40%": null,
+        "60%": null,
+        "80%": null,
+        "100%": null
+      },
+      "rag": {
+        "20%": null,
+        "40%": null,
+        "60%": null,
+        "80%": null,
+        "100%": null
+      }
+    },
+    "token_accuracy_curve": {
+      "hiermem": [
+        {
+          "turn": 19,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 4391,
+          "judge_score": 10.0
+        },
+        {
+          "turn": 39,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7130,
+          "judge_score": 10.0
+        },
+        {
+          "turn": 59,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 6533,
+          "judge_score": 1.0
+        },
+        {
+          "turn": 79,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7945,
+          "judge_score": 1.0
+        },
+        {
+          "turn": 99,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7948,
+          "judge_score": 6.0
+        }
+      ],
+      "raw_llm": [
+        {
+          "turn": 19,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7703,
+          "judge_score": 10.0
+        },
+        {
+          "turn": 39,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7510,
+          "judge_score": 10.0
+        },
+        {
+          "turn": 59,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 4832,
+          "judge_score": 1.0
+        },
+        {
+          "turn": 79,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7697,
+          "judge_score": 2.0
+        },
+        {
+          "turn": 99,
+          "convo": "sql_databases_parameterized_orm",
+          "tokens": 7435,
+          "judge_score": 1.0
+        }
+      ],
+      "rag_summary": [],
+      "rag": []
+    },
+    "cost_quality_ratio": {
+      "hiermem": {
+        "avg_quality": 5.6,
+        "avg_cost_tokens": 7948,
+        "cost_per_quality_point": 1419.3,
+        "total_turns": 50
+      },
+      "raw_llm": {
+        "avg_quality": 4.8,
+        "avg_cost_tokens": 6648,
+        "cost_per_quality_point": 1385.0,
+        "total_turns": 50
+      },
+      "rag_summary": {
+        "avg_quality": 0,
+        "avg_cost_tokens": 7725,
+        "cost_per_quality_point": 77250.0,
+        "total_turns": 50
+      },
+      "rag": {
+        "avg_quality": 0,
+        "avg_cost_tokens": 6668,
+        "cost_per_quality_point": 66680.0,
+        "total_turns": 50
+      }
+    },
+    "constraint_retention_by_distance": {
+      "hiermem": {
+        "T1-10": null,
+        "T11-20": 10.0,
+        "T21-30": null,
+        "T31-40": 10.0,
+        "T41-50": 2.67
+      },
+      "raw_llm": {
+        "T1-10": null,
+        "T11-20": 10.0,
+        "T21-30": null,
+        "T31-40": 10.0,
+        "T41-50": 1.33
+      },
+      "rag_summary": {
+        "T1-10": null,
+        "T11-20": null,
+        "T21-30": null,
+        "T31-40": null,
+        "T41-50": null
+      },
+      "rag": {
+        "T1-10": null,
+        "T11-20": null,
+        "T21-30": null,
+        "T31-40": null,
+        "T41-50": null
+      }
+    }
+  }
+}
