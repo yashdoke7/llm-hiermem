@@ -137,8 +137,8 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
         if turn_data.get("role") != "user":
             continue
 
-        user_msg = turn_data["text"]
-        turn_num = turn_data.get("turn", 0)
+        user_msg = turn_data.get("text", turn_data.get("content"))
+        turn_num = turn_data.get("turn", turn_data.get("turn_id", 0))
         turn_type = turn_data.get("type", "unknown")
 
         # Skip already-completed turns when resuming
@@ -267,7 +267,8 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
 def run_benchmark(systems_to_run: List[str], benchmark_name: str,
                   output_dir: Path = None, max_convos: int = None,
                   convo_ids: List[str] = None, run_dir: Path = None,
-                  judge_provider: str = None, judge_model: str = None):
+                  judge_provider: str = None, judge_model: str = None,
+                  skip_metrics: bool = False):
     """Run specified systems on a benchmark.
     
     Args:
@@ -370,27 +371,31 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     results_file.write_text(json.dumps(all_results, indent=2))
     print(f"\nAll results saved to {results_file}")
     
-    # Compute metrics (with LLM judge if available)
-    print("\nInitializing LLM judge for evaluation...")
-    init_llm_judge(provider=judge_provider, model=judge_model)
-    metrics = compute_all_metrics(all_results)
-    metrics_file = output_dir / "metrics.json"
-    metrics_file.write_text(json.dumps(metrics, indent=2))
-    print(f"Metrics saved to {metrics_file}")
-    
-    # Quick metrics summary
-    print("\n" + "="*50)
-    for sys_name, m in metrics.items():
-        if sys_name in ("pairwise_comparison", "pairwise_comparisons"):
-            continue
-        js = m.get("judge_scores", {})
-        print(f"  {sys_name}: judge={js.get('avg_score','?')}/10  "
-              f"accuracy={m['task_accuracy']*100:.0f}%")
-    if "pairwise_comparisons" in metrics:
-        for key, pc in metrics["pairwise_comparisons"].items():
-            print(f"  Pairwise {key}: {pc['system_a']}={pc['wins_a']}W "
-                  f"{pc['system_b']}={pc['wins_b']}W ties={pc['ties']}")
-    print("="*50)
+    metrics = None
+    if not skip_metrics:
+        # Compute metrics (with LLM judge if available)
+        print("\nInitializing LLM judge for evaluation...")
+        init_llm_judge(provider=judge_provider, model=judge_model)
+        metrics = compute_all_metrics(all_results)
+        metrics_file = output_dir / "metrics.json"
+        metrics_file.write_text(json.dumps(metrics, indent=2))
+        print(f"Metrics saved to {metrics_file}")
+        
+        # Quick metrics summary
+        print("\n" + "="*50)
+        for sys_name, m in metrics.items():
+            if sys_name in ("pairwise_comparison", "pairwise_comparisons"):
+                continue
+            js = m.get("judge_scores", {})
+            print(f"  {sys_name}: judge={js.get('avg_score','?')}/10  "
+                  f"accuracy={m['task_accuracy']*100:.0f}%")
+        if "pairwise_comparisons" in metrics:
+            for key, pc in metrics["pairwise_comparisons"].items():
+                print(f"  Pairwise {key}: {pc['system_a']}={pc['wins_a']}W "
+                      f"{pc['system_b']}={pc['wins_b']}W ties={pc['ties']}")
+        print("="*50)
+    else:
+        print("\nSkipping metrics generation (--skip-metrics enabled).")
     
     # Save run config
     run_info = {
@@ -442,6 +447,8 @@ if __name__ == "__main__":
                         help="Provider for LLM judge (e.g. google, openai). Default: same as benchmark provider")
     parser.add_argument("--judge-model", type=str, default=None,
                         help="Model for LLM judge (e.g. gemini-2.5-flash, gpt-4o-mini). Default: summarizer model")
+    parser.add_argument("--skip-metrics", action="store_true",
+                        help="Skip automatic metrics generation after benchmark run (faster; use --rescore later)")
     args = parser.parse_args()
 
     if args.list:
@@ -578,4 +585,5 @@ if __name__ == "__main__":
         run_dir = Path(args.run_dir) if args.run_dir else None
         run_benchmark(systems, args.benchmark, output_dir, args.max_convos,
                       convo_ids=args.convo, run_dir=run_dir,
-                      judge_provider=args.judge_provider, judge_model=args.judge_model)
+                      judge_provider=args.judge_provider, judge_model=args.judge_model,
+                      skip_metrics=args.skip_metrics)

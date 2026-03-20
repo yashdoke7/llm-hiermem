@@ -44,8 +44,14 @@ build/
 docs/HierMem_Blueprint.md
 docs/HierMem_Blueprint.docx
 docs/paper_draft_outline.md
+docs/research_paper_blueprint.md
+docs/HierMem_Benchmark_Plan.html
+docs/HierMem_Benchmark_Plan.docx
 
 # Real chat exports (private data — never push)
 eval/datasets/*/real_exports/
 
 results/smoke_test.json
+
+prompt.txt
+runpod_dataset_commands.txt

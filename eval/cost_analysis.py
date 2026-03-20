@@ -45,10 +45,15 @@ def main():
                 cost_this_turn = (tokens / 1_000_000) * MAIN_MODEL_PRICE_PER_1M
                 cumulative_main_cost += cost_this_turn
                 
-                # Curator Model Cost (Only for hiermem, triggers when a segment fills)
-                # We approximate by charging the curator model every 5 turns.
+                # Curator/Summarizer auxiliary cost
+                # - HierMem: approximate curator+summarizer calls every 5 turns
+                # - rag_summary: summary update happens every turn (max_tokens ~300)
                 if system_name == "hiermem" and (i + 1) % 5 == 0:
                     curator_cost_this_turn = (CURATOR_TOKENS_PER_SUMMARY / 1_000_000) * CURATOR_MODEL_PRICE_PER_1M
+                    cumulative_curator_cost += curator_cost_this_turn
+                elif system_name == "rag_summary":
+                    rag_summary_aux_tokens = 300
+                    curator_cost_this_turn = (rag_summary_aux_tokens / 1_000_000) * CURATOR_MODEL_PRICE_PER_1M
                     cumulative_curator_cost += curator_cost_this_turn
                     
                 cumulative_cost = cumulative_main_cost + cumulative_curator_cost

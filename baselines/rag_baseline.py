@@ -36,7 +36,7 @@ class RAGBaseline:
         self.vector_store = VectorStore(collection_name="rag_baseline")
         self.vector_store.clear()  # fresh store per conversation
         self.top_k = top_k
-        self.max_context_tokens = max_context_tokens or config.TOTAL_CONTEXT_BUDGET
+        self.max_context_tokens = max_context_tokens or config.RAG_CONTEXT_BUDGET
         self.turn_count = 0
 
     def process_turn(self, user_message: str,

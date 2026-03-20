@@ -69,6 +69,15 @@ ZONE_2_BUDGET = TOTAL_CONTEXT_BUDGET - ZONE_1_BUDGET - ZONE_3_BUDGET - ZONE_4_BU
 # conversations. Memory archiving still runs in the background.
 PASSTHROUGH_THRESHOLD = int(TOTAL_CONTEXT_BUDGET * 0.90)  # 7373 tokens at 8192 budget
 
+# Per-system context budgets (for architecture experiments, e.g. Arch B/C)
+HIERMEM_CONTEXT_BUDGET = int(os.getenv("HIERMEM_CONTEXT_BUDGET", str(TOTAL_CONTEXT_BUDGET)))
+RAW_LLM_CONTEXT_BUDGET = int(os.getenv("RAW_LLM_CONTEXT_BUDGET", str(TOTAL_CONTEXT_BUDGET)))
+RAG_CONTEXT_BUDGET = int(os.getenv("RAG_CONTEXT_BUDGET", str(TOTAL_CONTEXT_BUDGET)))
+RAG_SUMMARY_CONTEXT_BUDGET = int(os.getenv("RAG_SUMMARY_CONTEXT_BUDGET", str(TOTAL_CONTEXT_BUDGET)))
+
+# Optional explicit passthrough threshold for HierMem; 0 => auto 90% of HierMem budget
+HIERMEM_PASSTHROUGH_THRESHOLD = int(os.getenv("HIERMEM_PASSTHROUGH_THRESHOLD", "0"))
+
 # === Curator Settings ===
 MAX_SEGMENTS_TO_FETCH = 4      # Curator can select at most this many segments
 MAX_SEMANTIC_QUERIES = 3       # Max vector search queries per turn

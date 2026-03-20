@@ -37,7 +37,7 @@ class RAGSummaryBaseline:
         self.vector_store = VectorStore(collection_name="rag_summary_baseline")
         self.vector_store.clear()  # fresh store per conversation
         self.top_k = top_k
-        self.max_context_tokens = max_context_tokens or config.TOTAL_CONTEXT_BUDGET
+        self.max_context_tokens = max_context_tokens or config.RAG_SUMMARY_CONTEXT_BUDGET
         self.rolling_summary = ""
         self.turn_count = 0
 

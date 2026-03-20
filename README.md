@@ -69,7 +69,7 @@ Every conversation turn goes through 5 stages:
                   │ Zone 4: Current Prompt (BOTTOM) │ ← high attention
                   └─────────────────────────────────┘
 
-4. MAIN LLM      Generates response from assembled context (~6000 tokens adaptive)
+4. MAIN LLM      Generates response from assembled context (~8192 tokens adaptive, configurable)
 
 5. POST-PROCESS   Extracts new constraints, checks violations, summarizes turn,
                   updates archive (L0/L1/L2/L3) — ALL writes happen here
@@ -280,18 +280,29 @@ llm-hiermem/
 | **Task Accuracy** | Secondary | Binary pass/fail across checkpoint evaluations |
 | **Pairwise Win Rate** | Secondary | Head-to-head: HierMem vs each baseline at same checkpoints |
 
-### Current Results (qwen2.5:14b)
+### Current Results (latest snapshots)
 
-*Evaluated on `chatgpt_software_engineering_01` (SE constraint tracking, 30 turns)*
+Recent runs are tracked under `results/raw/benchmarks/*`.
 
-| System | Judge Score (1-10) | Task Accuracy |
-|--------|-------------------|---------------|
-| **HierMem** (ours) | **3.95** | **50%** |
-| RAG | 3.90 | 100% |
-| RAG + Summary | 3.70 | 67% |
-| Raw LLM | 3.58 | 50% |
+#### qwen14b_run_v4 (`chatgpt_software_engineering_03`, Codex evaluation)
 
-> Full multi-dataset results (SE3/SE4/SE5/Finance02, qwen14b + qwen32b) are in progress.
+| Rank | System | Avg Score |
+|------|--------|-----------|
+| 1 | **hier_mem** | **8.4** |
+| 2 | raw_llm | 7.6 |
+| 3 | rag_summary | 5.9 |
+| 4 | rag | 5.4 |
+
+#### qwen14b_test_3 (`sql_databases_parameterized_orm`, Codex evaluation)
+
+| Rank | System | Avg Checkpoint Score |
+|------|--------|----------------------|
+| 1 | **rag_summary** | **8.1** |
+| 2 | hiermem | 7.3 |
+| 3 | raw_llm | 7.1 |
+
+> These two runs test different datasets and constraints, so rankings are not directly comparable across runs.
+> Full 23-dataset sweeps (SE3/SE4/SE5 + additional datasets, qwen14b + qwen32b) are in progress.
 
 ### Running Benchmarks
 
@@ -300,6 +311,12 @@ llm-hiermem/
 python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
     --benchmark constraint_tracking \
     --run-dir results/raw/benchmarks/qwen14b_run
+
+# Faster benchmark-only run (skip local metrics generation; rescore later)
+python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
+    --benchmark constraint_tracking \
+    --run-dir results/raw/benchmarks/qwen14b_run \
+    --skip-metrics
 
 # Run on specific conversations only
 python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
@@ -310,9 +327,14 @@ python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
 # List available conversations
 python -m eval.run_benchmark --benchmark constraint_tracking --list
 
-# Re-score existing results with a stronger judge (e.g. Gemini)
+# Re-score existing results with a stronger judge (e.g. Gemini/OpenAI/Groq)
+# Default behavior reuses previously scored checkpoints and only scores new/unseen ones.
 python -m eval.run_benchmark --rescore results/raw/benchmarks/qwen14b_run \
     --judge-provider google --judge-model gemini-2.5-flash
+
+# Force full re-judge of every checkpoint (expensive)
+python -m eval.run_benchmark --rescore results/raw/benchmarks/qwen14b_run \
+    --rescore-all --judge-provider google --judge-model gemini-2.5-flash
 
 # Extract paper-grade metrics from results
 python -m eval.paper_metrics results/raw/benchmarks/qwen14b_run --json
@@ -345,7 +367,7 @@ All parameters are in `config.py` and can be overridden via environment variable
 | `MAIN_PROVIDER` | `ollama` | Provider for main LLM (ollama/groq/google/openai) |
 | `CURATOR_PROVIDER` | `ollama` | Provider for curator agent (keep local to avoid rate limits) |
 | `SUMMARIZER_PROVIDER` | `ollama` | Provider for summarizer (same as curator by default) |
-| `MAIN_LLM_MODEL` | `ollama/qwen2.5:14b` | Main LLM model |
+| `MAIN_LLM_MODEL` | `ollama/llama3.1:8b` | Main LLM fallback model (commonly overridden to qwen2.5:14b in `.env`) |
 | `CURATOR_MODEL` | `ollama/qwen2.5:3b` | Curator model (small, fast) |
 | `SUMMARIZER_MODEL` | `ollama/qwen2.5:3b` | Summarizer model |
 
@@ -353,7 +375,7 @@ All parameters are in `config.py` and can be overridden via environment variable
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `TOTAL_CONTEXT_BUDGET` | `6000` | Max tokens in assembled context |
+| `TOTAL_CONTEXT_BUDGET` | `8192` | Max tokens in assembled context |
 | `MAX_L0_ENTRIES` | `20` | Max segments in topic directory |
 | `SEGMENT_SIZE` | `10` | Turns per segment before rotation |
 | `MAX_CONSTRAINTS` | `20` | Max active constraints |

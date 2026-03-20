@@ -61,7 +61,8 @@ class HierMemPipeline:
     def __init__(self, main_llm: LLMClient, curator: ContextCurator,
                  assembler: ContextAssembler, post_processor: PostProcessor,
                  constraint_store: ConstraintStore, archive: HierarchicalArchive,
-                 retrieval_router: RetrievalRouter):
+                 retrieval_router: RetrievalRouter,
+                 context_budget: int = None, passthrough_threshold: int = None):
         self.main_llm = main_llm
         self.curator = curator
         self.assembler = assembler
@@ -69,6 +70,16 @@ class HierMemPipeline:
         self.constraint_store = constraint_store
         self.archive = archive
         self.retrieval_router = retrieval_router
+        self.context_budget = context_budget or config.HIERMEM_CONTEXT_BUDGET
+        self.passthrough_threshold = (
+            passthrough_threshold
+            if passthrough_threshold is not None
+            else (
+                config.HIERMEM_PASSTHROUGH_THRESHOLD
+                if config.HIERMEM_PASSTHROUGH_THRESHOLD > 0
+                else int(self.context_budget * 0.90)
+            )
+        )
         self.turn_count = 0
         self.history: List[TurnResult] = []
 
@@ -112,7 +123,8 @@ class HierMemPipeline:
             post_processor=post_processor,
             constraint_store=constraint_store,
             archive=archive,
-            retrieval_router=retrieval_router
+            retrieval_router=retrieval_router,
+            context_budget=config.HIERMEM_CONTEXT_BUDGET
         )
 
     def process_turn(self, user_message: str,
@@ -134,7 +146,7 @@ class HierMemPipeline:
 
         # Check if we should use passthrough mode
         history_tokens = self._estimate_history_tokens(user_message)
-        use_passthrough = history_tokens < config.PASSTHROUGH_THRESHOLD
+        use_passthrough = history_tokens < self.passthrough_threshold
 
         if use_passthrough:
             # --- Passthrough: send full history like raw_llm ---
@@ -208,6 +220,7 @@ class HierMemPipeline:
 
         if use_passthrough:
             warnings.append(f"passthrough_mode (history {history_tokens} < {config.PASSTHROUGH_THRESHOLD} threshold)")
+            warnings[-1] = f"passthrough_mode (history {history_tokens} < {self.passthrough_threshold} threshold)"
 
         result = TurnResult(
             turn_number=turn_num,
