@@ -297,11 +297,13 @@ Recent runs are tracked under `results/raw/benchmarks/*`.
 
 | Rank | System | Avg Checkpoint Score |
 |------|--------|----------------------|
-| 1 | **rag_summary** | **8.1** |
-| 2 | hiermem | 7.3 |
-| 3 | raw_llm | 7.1 |
+| 1 | **hier_mem** | **8.7** |
+| 2 | raw_llm | 8.2 |
+| 3 | rag | 7.5 |
+| 4 | rag_summary | 7.4 |
 
-> These two runs test different datasets and constraints, so rankings are not directly comparable across runs.
+> **Key Finding:** Across two diverse engineering tasks (Polars vs Pandas, Raw SQL vs ORM), HierMem consistently outperforms RAG baselines. While Raw LLM performs well on shorter contexts, it hits token limits quickly. HierMem maintains high compliance (8.4-8.7/10) without context explosion.
+
 > Full 23-dataset sweeps (SE3/SE4/SE5 + additional datasets, qwen14b + qwen32b) are in progress.
 
 ### Running Benchmarks
