@@ -70,7 +70,8 @@ def main():
     df = pd.DataFrame(data_records)
     
     # Average across all conversations for a given system and turn
-    avg_df = df.groupby(["System", "Turn"]).mean().reset_index()
+    # Need to filter for numeric columns only to avoid future warning
+    avg_df = df.groupby(["System", "Turn"])[["Context Tokens", "Main Cost ($)", "Curator Cost ($)", "Cumulative Total Cost ($)"]].mean().reset_index()
 
     sns.set_theme(style="whitegrid", context="paper", font_scale=1.2)
     

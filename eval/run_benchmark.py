@@ -53,8 +53,11 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
                 if isinstance(data, list):
                     # Only include conversations with required benchmark fields
                     valid = [d for d in data if isinstance(d, dict) and "turns" in d and "checkpoints" in d]
+                    for v in valid:
+                        v["source_file"] = f.name
                     all_data.extend(valid)
                 elif isinstance(data, dict) and "turns" in data and "checkpoints" in data:
+                    data["source_file"] = f.name
                     all_data.append(data)
             return all_data
     
@@ -268,12 +271,13 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
                   output_dir: Path = None, max_convos: int = None,
                   convo_ids: List[str] = None, run_dir: Path = None,
                   judge_provider: str = None, judge_model: str = None,
-                  skip_metrics: bool = False):
+                  skip_metrics: bool = False, specific_file: str = None):
     """Run specified systems on a benchmark.
     
     Args:
         run_dir: If set, accumulate results into this directory across multiple runs.
                  New results are merged with existing ones.
+        specific_file: If set, only run conversations from this source file (substring match).
     """
     main_model = config.MAIN_LLM_MODEL.split("/")[-1].replace(":", "-")
     
@@ -285,6 +289,13 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
     output_dir.mkdir(parents=True, exist_ok=True)
     
     conversations = load_benchmark(benchmark_name)
+    
+    # Filter by specific file
+    if specific_file:
+        conversations = [c for c in conversations if specific_file in c.get("source_file", "")]
+        if not conversations:
+            print(f"No conversations found matching file substring: {specific_file}")
+            return None, None
     
     # Filter by specific conversation IDs
     if convo_ids:
@@ -449,6 +460,8 @@ if __name__ == "__main__":
                         help="Model for LLM judge (e.g. gemini-2.5-flash, gpt-4o-mini). Default: summarizer model")
     parser.add_argument("--skip-metrics", action="store_true",
                         help="Skip automatic metrics generation after benchmark run (faster; use --rescore later)")
+    parser.add_argument("--specific-file", type=str, default=None,
+                        help="Run only conversations from files matching this substring (e.g. 'dataset_01')")
     args = parser.parse_args()
 
     if args.list:
@@ -586,4 +599,4 @@ if __name__ == "__main__":
         run_benchmark(systems, args.benchmark, output_dir, args.max_convos,
                       convo_ids=args.convo, run_dir=run_dir,
                       judge_provider=args.judge_provider, judge_model=args.judge_model,
-                      skip_metrics=args.skip_metrics)
+                      skip_metrics=args.skip_metrics, specific_file=args.specific_file)
