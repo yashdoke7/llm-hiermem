@@ -320,6 +320,17 @@ python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
     --run-dir results/raw/benchmarks/qwen14b_run \
     --skip-metrics
 
+# New default workflow: benchmark first (no auto-metrics), then unified post-processing
+python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
+    --benchmark constraint_tracking \
+    --run-dir results/raw/benchmarks/qwen14b_arch_b
+
+# If you want old behavior, explicitly enable auto metrics
+python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
+    --benchmark constraint_tracking \
+    --run-dir results/raw/benchmarks/qwen14b_arch_b \
+    --auto-metrics
+
 # Run on specific conversations only
 python -m eval.run_benchmark --systems hiermem raw_llm rag rag_summary \
     --benchmark constraint_tracking \
@@ -340,6 +351,9 @@ python -m eval.run_benchmark --rescore results/raw/benchmarks/qwen14b_run \
 
 # Extract paper-grade metrics from results
 python -m eval.paper_metrics results/raw/benchmarks/qwen14b_run --json
+
+# Unified post-run pipeline (dataset-wise folders + laaj template + metrics + PNGs)
+python -m eval.research_metrics --run-dir results/raw/benchmarks/qwen14b_arch_b --arch qwen14b_arch_b
 
 # Generate comparison charts
 python -m eval.visualize --results results/raw/benchmarks/qwen14b_run

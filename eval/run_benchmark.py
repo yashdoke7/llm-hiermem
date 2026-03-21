@@ -250,6 +250,7 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
     
     return {
         "conversation_id": conversation.get("conversation_id", "unknown"),
+        "source_file": conversation.get("source_file"),
         "system": system_name,
         "turns_processed": len(turn_logs),
         "total_elapsed_seconds": total_elapsed,
@@ -460,6 +461,8 @@ if __name__ == "__main__":
                         help="Model for LLM judge (e.g. gemini-2.5-flash, gpt-4o-mini). Default: summarizer model")
     parser.add_argument("--skip-metrics", action="store_true",
                         help="Skip automatic metrics generation after benchmark run (faster; use --rescore later)")
+    parser.add_argument("--auto-metrics", action="store_true",
+                        help="Enable automatic metrics generation at the end of benchmark run (default is off)")
     parser.add_argument("--specific-file", type=str, default=None,
                         help="Run only conversations from files matching this substring (e.g. 'dataset_01')")
     args = parser.parse_args()
@@ -596,7 +599,10 @@ if __name__ == "__main__":
         systems = list(SYSTEMS.keys()) if "all" in args.systems else args.systems
         output_dir = Path(args.output) if args.output else None
         run_dir = Path(args.run_dir) if args.run_dir else None
+        # Default workflow: run benchmark first, then run unified post-processing separately.
+        # --auto-metrics can be used to keep the old behavior.
+        effective_skip_metrics = args.skip_metrics or (not args.auto_metrics)
         run_benchmark(systems, args.benchmark, output_dir, args.max_convos,
                       convo_ids=args.convo, run_dir=run_dir,
                       judge_provider=args.judge_provider, judge_model=args.judge_model,
-                      skip_metrics=args.skip_metrics, specific_file=args.specific_file)
+                      skip_metrics=effective_skip_metrics, specific_file=args.specific_file)

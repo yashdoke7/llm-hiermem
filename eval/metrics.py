@@ -914,7 +914,7 @@ def _absolute_judge(response: str, constraint_text: str,
         f"RULES the user asked the assistant to follow:\n{constraints_clean}\n"
         f"{user_context}"
         f"\nASSISTANT'S RESPONSE:\n{response_text}\n\n"
-        f"Rate the response on a scale of 1 to 10 for how well it follows the rules:{test_instruction}\n"
+        f"Rate the response on a scale of 1.0 to 10.0 for how well it follows the rules:{test_instruction}\n"
         f"  10 = Perfectly follows every rule stated\n"
         f"   8 = Follows most rules, one minor lapse\n"
         f"   6 = Follows some rules but misses others\n"
@@ -928,7 +928,8 @@ def _absolute_judge(response: str, constraint_text: str,
         f"MUST be visible in the code to score above 5\n"
         f"- If code uses the WRONG pattern (e.g. pandas instead of polars), score 2-3 regardless of other quality\n"
         f"- Be consistent: judge the pattern of constraint adherence across the whole response\n\n"
-        f"Output your score as: SCORE: <number>\n"
+        f"- Avoid default/template scoring. Score from observed evidence only.\n"
+        f"Output your score as: SCORE: <number with one decimal, e.g., 8.7>\n"
         f"Then optionally one sentence of reasoning."
     )
 
@@ -946,14 +947,21 @@ def _absolute_judge(response: str, constraint_text: str,
             _judge_cache[cache_key] = 5.0
             return 5.0
 
-        # Try to extract "SCORE: N" first (most reliable)
-        score_match = re.search(r'SCORE:\s*(10|[1-9])', result, re.IGNORECASE)
+        # Try to extract "SCORE: X.Y" first (most reliable)
+        score_match = re.search(
+            r'SCORE:\s*((?:10(?:\.0+)?|[1-9](?:\.\d+)?))',
+            result,
+            re.IGNORECASE,
+        )
         if score_match:
             score = float(score_match.group(1))
         else:
-            # Fallback: find the LAST standalone integer in response (avoids numbered lists)
-            all_matches = re.findall(r'(?<!\d)(10|[1-9])(?!\d)', result.strip())
+            # Fallback: find the LAST standalone 1.0-10.0 number in response.
+            all_matches = re.findall(r'(?<!\d)(?:10(?:\.0+)?|[1-9](?:\.\d+)?)(?!\d)', result.strip())
             score = float(all_matches[-1]) if all_matches else 5.0
+
+        # Clamp to valid range in case the judge emits out-of-band values.
+        score = max(1.0, min(10.0, score))
         _judge_cache[cache_key] = score
         return score
 
