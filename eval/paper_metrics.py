@@ -1,6 +1,13 @@
 """
 Paper Metrics — Extracts research-grade metrics from existing results.json.
 
+DEPRECATION NOTE: The cost_quality_ratio, judge_score_trend, and
+degradation_slope functions have been migrated and improved in
+eval/research_metrics.py (the canonical post-processor). Use:
+  python -m eval.research_metrics --run-dir <dir> --arch <n>
+for new paper runs. This file remains for backward-compatible --rescore
+workflows and supplementary table generation.
+
 Metrics computed (no re-running required):
   1.  Judge score trend          — avg judge score at early/mid/late turns
   2.  First violation turn        — turn where constraint first fails per system/convo
@@ -126,7 +133,10 @@ def judge_score_trend(system_results: list, metrics_detail: list) -> dict:
     buckets = {"early": [], "mid": [], "late": []}
     for entry in metrics_detail:
         turn = entry.get("turn", 0)
-        score = entry.get("judge_score", 0)
+        score = entry.get("judge_score")
+        # Skip entries with no judge score — never default to 0
+        if score is None:
+            continue
         if turn <= 10:
             buckets["early"].append(score)
         elif turn <= 20:
@@ -136,14 +146,21 @@ def judge_score_trend(system_results: list, metrics_detail: list) -> dict:
     return {k: round(mean(v), 2) if v else None for k, v in buckets.items()}
 
 
-def degradation_slope(judge_detail: list) -> float:
+def degradation_slope(judge_detail: list) -> Optional[float]:
     """Linear slope of judge score over turns (negative = degrading).
-    
+
     Uses least-squares fit over all (turn, score) pairs.
+    Returns None when fewer than 2 judged checkpoints exist — do not
+    substitute 0.0, as that would imply a flat (perfect) trend.
     """
-    points = [(d.get("turn", 0), d.get("judge_score", 0)) for d in judge_detail]
+    # Filter to entries that have a real judge score — never zero-fill
+    points = [
+        (d.get("turn", 0), d["judge_score"])
+        for d in judge_detail
+        if d.get("judge_score") is not None
+    ]
     if len(points) < 2:
-        return 0.0
+        return None  # not enough data for a meaningful slope
     n = len(points)
     turns = [p[0] for p in points]
     scores = [p[1] for p in points]
@@ -356,7 +373,10 @@ def per_domain_accuracy(all_results: dict, metrics_rescored: dict) -> dict:
         for entry in judge_detail:
             cid = entry.get("convo", "?")
             domain = domain_map.get(cid, "other")
-            domain_scores.setdefault(domain, []).append(entry.get("judge_score", 0))
+            score = entry.get("judge_score")
+            # Skip unjudged entries — never append 0 as a stand-in
+            if score is not None:
+                domain_scores.setdefault(domain, []).append(score)
 
         output[system_name] = {
             domain: round(mean(scores), 2)
@@ -406,7 +426,9 @@ def degradation_by_position(all_results: dict, metrics_rescored: dict) -> dict:
             try:
                 idx = cp_turns.index(turn)
                 if idx < len(POSITIONS):
-                    position_scores[POSITIONS[idx]].append(entry.get("judge_score", 0))
+                    score = entry.get("judge_score")
+                    if score is not None:
+                        position_scores[POSITIONS[idx]].append(score)
             except ValueError:
                 pass
 
@@ -457,6 +479,10 @@ def cost_quality_ratio(all_results: dict, metrics_rescored: dict) -> dict:
     (context tokens × num_calls).  For hiermem, pipeline_details may contain
     multi-call breakdown; for baselines it's a single call.
 
+    cost_per_quality_point is set to None (not 0 or a sentinel) when judge
+    scores are absent — callers must handle None explicitly before printing
+    or doing arithmetic.
+
     Returns {system: {avg_quality, avg_cost_tokens, cost_per_quality_point,
                       total_turns}}.
     """
@@ -464,7 +490,9 @@ def cost_quality_ratio(all_results: dict, metrics_rescored: dict) -> dict:
     for system_name, system_results in all_results.items():
         judge_detail = (metrics_rescored.get(system_name, {})
                         .get("judge_scores", {}).get("detail", []))
-        avg_score = mean([d["judge_score"] for d in judge_detail]) if judge_detail else 0
+        # Never default to 0 — if no judge scores, avg_quality is None
+        valid_scores = [d["judge_score"] for d in judge_detail if d.get("judge_score") is not None]
+        avg_score: Optional[float] = mean(valid_scores) if valid_scores else None
 
         total_tokens, total_turns = 0, 0
         for conv in system_results:
@@ -486,11 +514,17 @@ def cost_quality_ratio(all_results: dict, metrics_rescored: dict) -> dict:
                     total_turns += 1
 
         avg_cost = round(total_tokens / max(total_turns, 1))
-        cost_per_point = round(avg_cost / max(avg_score, 0.1), 1)
+
+        # cost_per_quality_point is meaningful only when avg_score is real.
+        # Never substitute max(avg_score, 0.1) — that produces garbage ratios.
+        cost_per_point: Optional[float] = (
+            round(avg_cost / avg_score, 1) if (avg_score is not None and avg_score > 0) else None
+        )
 
         output[system_name] = {
-            "avg_quality": round(avg_score, 2),
+            "avg_quality": round(avg_score, 2) if avg_score is not None else None,
             "avg_cost_tokens": avg_cost,
+            # None when judge scores unavailable — not 0, not 999
             "cost_per_quality_point": cost_per_point,
             "total_turns": total_turns,
         }
@@ -520,7 +554,9 @@ def constraint_retention_by_distance(all_results: dict, metrics_rescored: dict) 
         bucket_scores = {label: [] for label in LABELS}
         for d in judge_detail:
             turn = d.get("turn", 0)
-            score = d.get("judge_score", 0)
+            score = d.get("judge_score")
+            if score is None:
+                continue
             for (lo, hi), label in zip(BUCKETS, LABELS):
                 if lo <= turn <= hi:
                     bucket_scores[label].append(score)
@@ -586,8 +622,12 @@ def print_report(data: dict):
         e = f"{t['early']:.2f}" if t["early"] is not None else "N/A"
         m = f"{t['mid']:.2f}" if t["mid"] is not None else "N/A"
         l = f"{t['late']:.2f}" if t["late"] is not None else "N/A"
-        arrow = "↓" if slope < -0.05 else ("↑" if slope > 0.05 else "→")
-        print(f"  {s:<16} {e:>14} {m:>13} {l:>12}  {slope:>+.4f} {arrow}")
+        if slope is None:
+            slope_str, arrow = " N/A ", "?"
+        else:
+            arrow = "↓" if slope < -0.05 else ("↑" if slope > 0.05 else "→")
+            slope_str = f"{slope:>+.4f}"
+        print(f"  {s:<16} {e:>14} {m:>13} {l:>12}  {slope_str:>8} {arrow}")
 
     # Degradation by position (normalized, good for plotting)
     cross = data.get("_cross_system", {})

@@ -14,6 +14,15 @@ Usage:
 Optional:
   --arch qwen14b_arch_b
   --judge-model gpt-4.1
+
+Canonical post-processing command (replaces legacy tools):
+  python -m eval.research_metrics --run-dir <dir> --arch <name> --judge-model gpt-4.1
+
+Supersedes (kept for backward compatibility, do not delete yet):
+  eval/visualize.py          — python eval/visualize.py --results <dir>
+  eval/cost_analysis.py      — python eval/cost_analysis.py --results <dir>
+  generate_visualizations.py — python generate_visualizations.py
+  generate_cost_visualizations.py
 """
 
 from __future__ import annotations
@@ -24,7 +33,7 @@ import json
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from statistics import mean
+from statistics import mean, variance
 from typing import Any, Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
@@ -240,6 +249,81 @@ def _load_laaj_scores(laaj_path: Path) -> Dict[Tuple[str, str, int], float]:
     return scores
 
 
+def _load_external_judge_scores(judge_results_path: Optional[Path]) -> Dict[Tuple[str, str, int], float]:
+    """Load judge scores from external evaluation outputs.
+
+    Supports both schemas:
+      1) metrics.json (legacy):
+         {system: {judge_scores: {detail: [{convo, turn, judge_score}]}}}
+
+      2) metrics_rescored_fixed.json (anonymous system_a/system_b format):
+         {
+           system_evaluations: {system_a: {checkpoints: [{turn, weighted_score}]}, ...},
+           system_identity_reveal: {system_a: "hiermem", ...}
+         }
+
+    Returns score map keyed by (system_name, conversation_id_or_wildcard, turn).
+    Uses conversation wildcard "*" when a source file does not carry convo ids.
+    """
+    if not judge_results_path or not judge_results_path.exists():
+        return {}
+
+    with judge_results_path.open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+
+    out: Dict[Tuple[str, str, int], float] = {}
+
+    # Schema 1: metrics.json style
+    if isinstance(payload, dict) and "system_evaluations" not in payload:
+        for system_name, sys_block in payload.items():
+            if not isinstance(sys_block, dict):
+                continue
+            detail = (sys_block.get("judge_scores") or {}).get("detail", [])
+            for d in detail:
+                convo = str(d.get("convo", "*"))
+                turn = d.get("turn")
+                score = d.get("judge_score")
+                if turn is None or score is None:
+                    continue
+                out[(str(system_name), convo, int(turn))] = float(score)
+        return out
+
+    # Schema 2: metrics_rescored_fixed.json style
+    system_evals = payload.get("system_evaluations", {}) if isinstance(payload, dict) else {}
+    reveal = payload.get("system_identity_reveal", {}) if isinstance(payload, dict) else {}
+
+    for anon_key, eval_block in system_evals.items():
+        real_name = reveal.get(anon_key, anon_key)
+        checkpoints = eval_block.get("checkpoints", []) if isinstance(eval_block, dict) else []
+        for cp in checkpoints:
+            turn = cp.get("turn")
+            score = cp.get("weighted_score")
+            if turn is None or score is None:
+                continue
+            # No convo id in this schema; use wildcard and resolve per dataset later.
+            out[(str(real_name), "*", int(turn))] = float(score)
+
+    return out
+
+
+def _judge_status(expected: int, present: int) -> str:
+    """Classify completeness of LAAJ judging for a dataset.
+
+    Returns one of:
+      "no_checkpoints"   – dataset has no evaluation checkpoints
+      "pending_judge"    – checkpoints exist but none have been scored yet
+      "partial_judge"    – some checkpoints scored, some still null
+      "ready_for_paper"  – all expected checkpoints have been scored
+    """
+    if expected == 0:
+        return "no_checkpoints"
+    if present == 0:
+        return "pending_judge"
+    if present < expected:
+        return "partial_judge"
+    return "ready_for_paper"
+
+
 def _build_metrics_for_dataset(
     dataset_name: str,
     dataset_system_results: Dict[str, List[Dict[str, Any]]],
@@ -255,14 +339,20 @@ def _build_metrics_for_dataset(
     }
 
     for system_name, convos in dataset_system_results.items():
-        turn_latencies = []
-        turn_costs = []
-        main_tokens = []
-        curator_tokens = []
-        embedding_tokens = []
-        context_util = []
-        judge_scores = []
+        turn_latencies: List[float] = []
+        turn_costs: List[float] = []
+        main_tokens: List[float] = []
+        curator_tokens: List[float] = []
+        embedding_tokens: List[float] = []
+        context_util: List[float] = []
+        judge_scores: List[float] = []
         checkpoint_expected = 0
+
+        # Degradation tracking: per-turn judge score lists and violation detection
+        degradation_by_turn: Dict[int, List[float]] = {}
+        first_violation_turn: Optional[int] = None
+        # A weighted_score < 5.0 on the [1,10] scale signals a constraint violation
+        VIOLATION_THRESHOLD = 5.0
 
         for conv in convos:
             cid = conv.get("conversation_id", "unknown")
@@ -275,6 +365,7 @@ def _build_metrics_for_dataset(
                     turn_latencies.append(float(lat))
 
                 tc = _estimate_turn_cost(system_name, t)
+                # NOTE: all cost figures are ESTIMATED from token counts, not observed
                 turn_costs.append(tc.total_cost_units)
                 main_tokens.append(tc.main_tokens)
                 curator_tokens.append(tc.curator_tokens)
@@ -287,34 +378,101 @@ def _build_metrics_for_dataset(
 
             for cp in _collect_checkpoints(conv):
                 checkpoint_expected += 1
-                key = (system_name, cid, int(cp.get("turn", 0)))
+                cp_turn = int(cp.get("turn", 0))
+                key = (system_name, cid, cp_turn)
+                wildcard_key = (system_name, "*", cp_turn)
+                score = None
                 if key in laaj_scores:
-                    judge_scores.append(laaj_scores[key])
+                    score = laaj_scores[key]
+                elif wildcard_key in laaj_scores:
+                    score = laaj_scores[wildcard_key]
+                elif cp_turn % 2 == 1:
+                    # Some judge exports (e.g., metrics_rescored_fixed.json) use
+                    # assistant-turn indexing (10,20,30,...) while results.json may
+                    # store absolute odd turns (19,39,59,...). Normalize fallback.
+                    normalized_turn = (cp_turn + 1) // 2
+                    norm_key = (system_name, cid, normalized_turn)
+                    norm_wildcard = (system_name, "*", normalized_turn)
+                    if norm_key in laaj_scores:
+                        score = laaj_scores[norm_key]
+                    elif norm_wildcard in laaj_scores:
+                        score = laaj_scores[norm_wildcard]
+
+                if score is not None:
+                    judge_scores.append(score)
+                    degradation_by_turn.setdefault(cp_turn, []).append(score)
+                    # Track first turn where a violation was judged
+                    if score < VIOLATION_THRESHOLD and first_violation_turn is None:
+                        first_violation_turn = cp_turn
 
         out["coverage"]["judge_scores_expected"] += checkpoint_expected
         out["coverage"]["judge_scores_present"] += len(judge_scores)
 
-        avg_score = mean(judge_scores) if judge_scores else None
+        # --- Aggregate scores — never default to 0 when absent ---
+        avg_score: Optional[float] = mean(judge_scores) if judge_scores else None
         total_cost = float(sum(turn_costs))
-        cqp = (total_cost / avg_score) if (avg_score and avg_score > 0) else None
+
+        # cost_per_quality_point is undefined (None) when judge scores are missing.
+        # Never substitute 0 or a sentinel like 999 — callers must handle None.
+        cqp: Optional[float] = (total_cost / avg_score) if (avg_score and avg_score > 0) else None
+
+        # Degradation curve: average LAAJ score at each checkpoint turn
+        degradation_curve: Dict[int, float] = {
+            t: round(mean(scores), 4)
+            for t, scores in sorted(degradation_by_turn.items())
+        }
+
+        # Constraint survival rate: fraction of judged checkpoints with score >= threshold
+        all_scored = [s for scores in degradation_by_turn.values() for s in scores]
+        survival_rate: Optional[float] = (
+            round(sum(1 for s in all_scored if s >= VIOLATION_THRESHOLD) / len(all_scored), 4)
+            if all_scored else None
+        )
+
+        # Token totals for share calculation — use 1.0 floor to avoid division by zero
+        total_tokens_all = max(
+            1.0,
+            sum(main_tokens) + sum(curator_tokens) + sum(embedding_tokens),
+        )
 
         out["systems"][system_name] = {
             "num_conversations": len(convos),
+            # --- Latency (OBSERVED from wall-clock) ---
             "avg_latency_seconds": round(mean(turn_latencies), 3) if turn_latencies else None,
+            # --- Cost (ESTIMATED from token counts) ---
             "avg_cost_per_turn_units": round(mean(turn_costs), 8) if turn_costs else None,
             "total_cost_units": round(total_cost, 8),
-            "avg_main_tokens": round(mean(main_tokens), 2) if main_tokens else 0,
-            "avg_curator_tokens": round(mean(curator_tokens), 2) if curator_tokens else 0,
-            "avg_embedding_tokens": round(mean(embedding_tokens), 2) if embedding_tokens else 0,
-            "curator_token_share": round(
-                (sum(curator_tokens) / max(1.0, (sum(main_tokens) + sum(curator_tokens) + sum(embedding_tokens)))),
-                5,
-            ),
+            "avg_main_tokens": round(mean(main_tokens), 2) if main_tokens else None,
+            "avg_curator_tokens": round(mean(curator_tokens), 2) if curator_tokens else None,
+            "avg_embedding_tokens": round(mean(embedding_tokens), 2) if embedding_tokens else None,
+            "curator_token_share": round(sum(curator_tokens) / total_tokens_all, 5),
             "context_utilization_pct": round(100.0 * mean(context_util), 2) if context_util else None,
+            # --- Judge scores (OBSERVED, only present when laaj.json is filled) ---
             "judge_score_avg": round(avg_score, 4) if avg_score is not None else None,
             "judge_samples": len(judge_scores),
+            # cost_per_quality_point is None when judge scores are absent — never 0 or fake sentinel
             "cost_per_quality_point": round(cqp, 8) if cqp is not None else None,
+            # --- Degradation & survival (derived from LAAJ, None when no scores) ---
+            "first_violation_turn": first_violation_turn,
+            "constraint_survival_rate": survival_rate,
+            "degradation_curve": degradation_curve,
         }
+
+    # --- Dataset-level status and confidence flags (written after all systems) ---
+    out["dataset_status"] = _judge_status(
+        out["coverage"]["judge_scores_expected"],
+        out["coverage"]["judge_scores_present"],
+    )
+    out["confidence_flags"] = {
+        # Latency comes from wall-clock measurements in run_benchmark.py
+        "latency_is_observed": True,
+        # All cost figures are derived from token counts, not billed invoices
+        "cost_is_estimated": True,
+        # Token breakdown uses heuristics (curator ≈ 4-10% of main, embedding ≈ 120 per query)
+        "token_breakdown_is_estimated": True,
+        # Judge scores are real LAAJ judgments only when status is partial or ready
+        "judge_score_is_observed": out["dataset_status"] in ("partial_judge", "ready_for_paper"),
+    }
 
     return out
 
@@ -342,9 +500,14 @@ def _write_summary_csv(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> No
         "avg_embedding_tokens",
         "curator_token_share",
         "context_utilization_pct",
+        # Degradation / survival fields (None when laaj.json not yet filled)
+        "first_violation_turn",
+        "constraint_survival_rate",
     ]
     with csv_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fields)
+        # extrasaction='ignore' so nested fields like degradation_curve
+        # (which is a dict, not a scalar) are silently omitted from the flat CSV.
+        writer = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
         for system_name in SYSTEM_ORDER:
             if system_name not in metrics_payload["systems"]:
@@ -354,7 +517,13 @@ def _write_summary_csv(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> No
             writer.writerow(row)
 
 
-def _plot_quality_cost(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> None:
+def _plot_quality_cost(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Scatter plot of cost vs LAAJ quality score.
+
+    Returns True if the chart was written, False if skipped (no systems
+    have both a judge score and cost data). The caller records this in
+    visualization_status.json so paper authors know why the file is absent.
+    """
     fig, ax = plt.subplots(figsize=(9, 6))
 
     plotted = 0
@@ -365,6 +534,7 @@ def _plot_quality_cost(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> No
         x = row.get("avg_cost_per_turn_units")
         y = row.get("judge_score_avg")
         if x is None or y is None:
+            # Skip silently — judge scores not yet filled in laaj.json
             continue
         plotted += 1
         ax.scatter(
@@ -375,24 +545,34 @@ def _plot_quality_cost(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> No
             edgecolors="black",
             linewidth=1.2,
             alpha=0.85,
+            zorder=3,
         )
-        ax.annotate(SYSTEM_LABELS.get(system_name, system_name), (x, y), xytext=(6, 6), textcoords="offset points")
+        ax.annotate(
+            SYSTEM_LABELS.get(system_name, system_name),
+            (x, y),
+            xytext=(6, 6),
+            textcoords="offset points",
+            fontsize=10,
+        )
 
     if plotted == 0:
         plt.close(fig)
-        return
+        return False  # caller records as skipped
 
-    ax.set_xlabel("Average Cost per Turn (relative units)")
-    ax.set_ylabel("LAAJ Score (1-10)")
-    ax.set_title("Cost vs LAAJ Quality")
+    ax.set_xlabel("Average Cost per Turn (relative units)", fontsize=12)
+    ax.set_ylabel("LAAJ Score (1–10)", fontsize=12)
+    ax.set_title("Cost vs LAAJ Quality", fontsize=13)
     ax.grid(alpha=0.25)
-    ax.set_ylim(0.0, 10.5)
+    # y-axis is always [1, 10] when judge data is present — never starts at 0
+    ax.set_ylim(1.0, 10.0)
     fig.tight_layout()
     fig.savefig(dataset_dir / "cost_vs_quality.png", dpi=220)
     plt.close(fig)
+    return True
 
 
-def _plot_latency(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> None:
+def _plot_latency(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Bar chart of avg latency per turn. Returns True if written, False if skipped."""
     labels = []
     values = []
     colors = []
@@ -408,20 +588,22 @@ def _plot_latency(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> None:
         colors.append(SYSTEM_COLORS.get(system_name, "#888888"))
 
     if not values:
-        return
+        return False
 
     fig, ax = plt.subplots(figsize=(9, 6))
     ax.bar(labels, values, color=colors, alpha=0.9)
-    ax.set_ylabel("Avg Latency per Turn (s)")
-    ax.set_title("Latency Comparison")
+    ax.set_ylabel("Avg Latency per Turn (s)", fontsize=12)
+    ax.set_title("Latency Comparison", fontsize=13)
     ax.grid(axis="y", alpha=0.25)
     plt.xticks(rotation=20)
     fig.tight_layout()
     fig.savefig(dataset_dir / "latency_comparison.png", dpi=220)
     plt.close(fig)
+    return True
 
 
-def _plot_token_breakdown(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> None:
+def _plot_token_breakdown(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Stacked bar chart of avg tokens per turn by component. Returns True if written."""
     systems = []
     main_vals = []
     cur_vals = []
@@ -431,31 +613,130 @@ def _plot_token_breakdown(dataset_dir: Path, metrics_payload: Dict[str, Any]) ->
         row = metrics_payload["systems"].get(system_name)
         if not row:
             continue
+        # Use 0.0 only for chart rendering (a bar of 0 height is correct here);
+        # the underlying JSON stores None to distinguish missing from zero.
         systems.append(SYSTEM_LABELS.get(system_name, system_name))
-        main_vals.append(row.get("avg_main_tokens", 0.0) or 0.0)
-        cur_vals.append(row.get("avg_curator_tokens", 0.0) or 0.0)
-        emb_vals.append(row.get("avg_embedding_tokens", 0.0) or 0.0)
+        main_vals.append(float(row.get("avg_main_tokens") or 0.0))
+        cur_vals.append(float(row.get("avg_curator_tokens") or 0.0))
+        emb_vals.append(float(row.get("avg_embedding_tokens") or 0.0))
 
     if not systems:
-        return
+        return False
+
+    # If every bar would be 0, skip this chart and let visualization_status.json
+    # explain that token fields are missing for this dataset.
+    if all((m + c + e) <= 0 for m, c, e in zip(main_vals, cur_vals, emb_vals)):
+        return False
 
     x = np.arange(len(systems))
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(x, main_vals, label="Main")
-    ax.bar(x, cur_vals, bottom=main_vals, label="Curator")
-    ax.bar(x, emb_vals, bottom=np.array(main_vals) + np.array(cur_vals), label="Embedding")
+    ax.bar(x, main_vals, label="Main LLM", color="#3a86ff")
+    ax.bar(x, cur_vals, bottom=main_vals, label="Curator", color="#1f9d55")
+    ax.bar(x, emb_vals, bottom=np.array(main_vals) + np.array(cur_vals), label="Embedding", color="#ff9f1c")
     ax.set_xticks(x)
     ax.set_xticklabels(systems, rotation=20)
-    ax.set_ylabel("Avg Tokens per Turn")
-    ax.set_title("Token Composition by System")
+    ax.set_ylabel("Avg Tokens per Turn (estimated)", fontsize=12)
+    ax.set_title("Token Composition by System", fontsize=13)
     ax.legend()
     ax.grid(axis="y", alpha=0.25)
     fig.tight_layout()
     fig.savefig(dataset_dir / "token_composition.png", dpi=220)
     plt.close(fig)
+    return True
 
 
-def process_run(run_dir: Path, arch: Optional[str], judge_model: str) -> Path:
+def _write_visualization_status(
+    dataset_dir: Path,
+    metrics_payload: Dict[str, Any],
+    charts_written: List[str],
+    charts_skipped: List[str],
+) -> None:
+    """Write visualization_status.json explaining which charts exist and why others were skipped."""
+    skip_reasons: Dict[str, str] = {}
+    if "cost_vs_quality.png" in charts_skipped:
+        skip_reasons["cost_vs_quality.png"] = (
+            "No systems in this dataset had both a judge_score_avg and "
+            "avg_cost_per_turn_units. Fill laaj.json and re-run to generate."
+        )
+    if "latency_comparison.png" in charts_skipped:
+        skip_reasons["latency_comparison.png"] = (
+            "No avg_latency_seconds data found for any system in this dataset."
+        )
+    if "token_composition.png" in charts_skipped:
+        skip_reasons["token_composition.png"] = (
+            "Token fields were missing/zero for all systems, so composition would be empty."
+        )
+
+    payload = {
+        "dataset_status": metrics_payload.get("dataset_status", "unknown"),
+        "charts_written": sorted(charts_written),
+        "charts_skipped": sorted(charts_skipped),
+        "skip_reasons": skip_reasons,
+    }
+    (dataset_dir / "visualization_status.json").write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+def _build_arch_aggregation(
+    arch_name: str,
+    source_run_dir: str,
+    judge_model: str,
+    all_dataset_metrics: Dict[str, Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Aggregate per-dataset metrics into arch-level statistics per system.
+
+    For each system computes:
+      - datasets_included      : int, number of datasets where system appears
+      - mean_judge_score       : float | None, mean LAAJ score across datasets
+      - score_variance         : float | None, variance (None when <2 data points)
+      - mean_cost_per_turn     : float | None, mean cost per turn across datasets
+      - cost_variance          : float | None
+    """
+    system_scores: Dict[str, List[float]] = {}
+    system_costs: Dict[str, List[float]] = {}
+    system_dataset_count: Dict[str, int] = {}
+
+    for dataset_name, dmx in all_dataset_metrics.items():
+        for sys_name, row in dmx.get("systems", {}).items():
+            score = row.get("judge_score_avg")
+            cost = row.get("avg_cost_per_turn_units")
+            system_dataset_count[sys_name] = system_dataset_count.get(sys_name, 0) + 1
+            if score is not None:
+                system_scores.setdefault(sys_name, []).append(score)
+            if cost is not None:
+                system_costs.setdefault(sys_name, []).append(cost)
+
+    agg_systems: Dict[str, Any] = {}
+    all_sys = set(list(system_scores) + list(system_costs) + list(system_dataset_count))
+    for sys_name in all_sys:
+        scores = system_scores.get(sys_name, [])
+        costs = system_costs.get(sys_name, [])
+        agg_systems[sys_name] = {
+            "datasets_included": system_dataset_count.get(sys_name, 0),
+            "mean_judge_score": round(mean(scores), 4) if scores else None,
+            # variance() requires ≥2 points; guard explicitly
+            "score_variance": round(variance(scores), 6) if len(scores) > 1 else None,
+            "mean_cost_per_turn": round(mean(costs), 8) if costs else None,
+            "cost_variance": round(variance(costs), 10) if len(costs) > 1 else None,
+        }
+
+    return {
+        "metadata": {
+            "arch": arch_name,
+            "source_run_dir": source_run_dir,
+            "judge_model": judge_model,
+            "datasets_count": len(all_dataset_metrics),
+            "cost_units": COST_PER_1M_TOKENS,
+        },
+        "systems": agg_systems,
+        # Verbatim per-dataset breakdown nested here for one-stop reading
+        "datasets": all_dataset_metrics,
+    }
+
+
+def process_run(run_dir: Path, arch: Optional[str], judge_model: str, judge_results_path: Optional[Path]) -> Path:
+    """Main entry point. Reads results.json, writes dataset folders and arch JSON."""
     results = _load_results(run_dir)
     grouped = _group_by_dataset(results)
 
@@ -463,15 +744,7 @@ def process_run(run_dir: Path, arch: Optional[str], judge_model: str) -> Path:
     arch_root = run_dir.parent / arch_name
     arch_root.mkdir(parents=True, exist_ok=True)
 
-    all_metrics = {
-        "metadata": {
-            "arch": arch_name,
-            "source_run_dir": str(run_dir),
-            "judge_model": judge_model,
-            "cost_units": COST_PER_1M_TOKENS,
-        },
-        "datasets": {},
-    }
+    all_dataset_metrics: Dict[str, Dict[str, Any]] = {}
 
     for dataset_name, dataset_system_results in sorted(grouped.items()):
         dataset_dir = arch_root / _safe_name(dataset_name)
@@ -480,21 +753,50 @@ def process_run(run_dir: Path, arch: Optional[str], judge_model: str) -> Path:
         _write_dataset_payloads(dataset_dir, dataset_system_results)
         laaj_path = _ensure_laaj_template(dataset_dir, dataset_system_results, judge_model)
         laaj_scores = _load_laaj_scores(laaj_path)
+        external_scores = _load_external_judge_scores(judge_results_path)
+        # Local laaj.json entries should override external imports for iterative curation.
+        merged_scores = dict(external_scores)
+        merged_scores.update(laaj_scores)
 
-        metrics_payload = _build_metrics_for_dataset(dataset_name, dataset_system_results, laaj_scores)
+        metrics_payload = _build_metrics_for_dataset(dataset_name, dataset_system_results, merged_scores)
 
         with (dataset_dir / "metrics_research.json").open("w", encoding="utf-8") as f:
             json.dump(metrics_payload, f, ensure_ascii=False, indent=2)
 
         _write_summary_csv(dataset_dir, metrics_payload)
-        _plot_quality_cost(dataset_dir, metrics_payload)
-        _plot_latency(dataset_dir, metrics_payload)
-        _plot_token_breakdown(dataset_dir, metrics_payload)
 
-        all_metrics["datasets"][dataset_name] = metrics_payload
+        # Track which charts were written vs skipped so we can report honestly
+        charts_written: List[str] = []
+        charts_skipped: List[str] = []
 
+        def _record(name: str, wrote: bool) -> None:
+            (charts_written if wrote else charts_skipped).append(name)
+
+        _record("cost_vs_quality.png",    _plot_quality_cost(dataset_dir, metrics_payload))
+        _record("latency_comparison.png", _plot_latency(dataset_dir, metrics_payload))
+        _record("token_composition.png",  _plot_token_breakdown(dataset_dir, metrics_payload))
+
+        _write_visualization_status(dataset_dir, metrics_payload, charts_written, charts_skipped)
+
+        all_dataset_metrics[dataset_name] = metrics_payload
+
+        status = metrics_payload.get("dataset_status", "unknown")
+        written_str = ", ".join(charts_written) or "none"
+        skipped_str = ", ".join(charts_skipped) or "none"
+        print(
+            f"  [{status}] {dataset_name}: "
+            f"charts_written=[{written_str}]  skipped=[{skipped_str}]"
+        )
+
+    # Write arch-level aggregation
+    arch_agg = _build_arch_aggregation(
+        arch_name=arch_name,
+        source_run_dir=str(run_dir),
+        judge_model=judge_model,
+        all_dataset_metrics=all_dataset_metrics,
+    )
     with (arch_root / "arch_metrics_research.json").open("w", encoding="utf-8") as f:
-        json.dump(all_metrics, f, ensure_ascii=False, indent=2)
+        json.dump(arch_agg, f, ensure_ascii=False, indent=2)
 
     return arch_root
 
@@ -504,10 +806,21 @@ def main() -> None:
     parser.add_argument("--run-dir", required=True, help="Path to run directory containing results.json")
     parser.add_argument("--arch", default=None, help="Architecture output folder name (e.g., qwen14b_arch_b)")
     parser.add_argument("--judge-model", default="gpt-4.1", help="Judge model label stored in laaj metadata")
+    parser.add_argument(
+        "--judge-results",
+        default=None,
+        help="Optional path to external judge results (metrics.json or metrics_rescored_fixed.json)",
+    )
     args = parser.parse_args()
 
     run_dir = Path(args.run_dir)
-    arch_root = process_run(run_dir=run_dir, arch=args.arch, judge_model=args.judge_model)
+    judge_results_path = Path(args.judge_results) if args.judge_results else None
+    arch_root = process_run(
+        run_dir=run_dir,
+        arch=args.arch,
+        judge_model=args.judge_model,
+        judge_results_path=judge_results_path,
+    )
     print(f"Unified research outputs generated at: {arch_root}")
 
 

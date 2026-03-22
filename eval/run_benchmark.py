@@ -1,5 +1,17 @@
 """
 Benchmark Runner — Run all systems on all benchmarks with detailed logging.
+
+Canonical two-step workflow
+───────────────────────────
+Step 1 — Collect raw turn logs (no metrics, fast):
+  python -m eval.run_benchmark --benchmark <name> --run-dir results/raw/benchmarks/<arch>
+
+Step 2 — Post-process into paper-ready outputs after filling laaj.json:
+  python -m eval.research_metrics --run-dir results/raw/benchmarks/<arch> --arch <n>
+
+Use --auto-metrics only during quick local smoke-tests; it calls the legacy
+metrics pipeline (eval/metrics.py) and does NOT produce the research_metrics
+folder layout required for the paper. Run research_metrics separately.
 """
 
 import json
@@ -63,7 +75,15 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
     
     direct = datasets_dir / f"{benchmark_name}.json"
     if direct.exists():
-        return json.loads(direct.read_text(encoding="utf-8"))
+        data = json.loads(direct.read_text(encoding="utf-8"))
+        # Inject source_file so research_metrics._dataset_key() groups conversations
+        # by their source file stem rather than falling back to conversation_id.
+        # Without this, each conversation in a flat file becomes its own dataset folder.
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict) and "source_file" not in item:
+                    item["source_file"] = direct.name  # e.g. "constraint_bench.json"
+        return data
     
     raise FileNotFoundError(f"Benchmark '{benchmark_name}' not found in {datasets_dir}")
 
@@ -200,8 +220,14 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                     "zone_breakdown": result.assembled_context.zone_breakdown if result.assembled_context else {},
                     "warnings": result.warnings,
                 }
-            
-            # Raw LLM specific
+
+            # RAG / RAG-summary — forward pipeline_details from the result dataclass
+            # so _estimate_turn_cost() in research_metrics.py can read context_tokens_used,
+            # sources_used, and semantic_queries without falling back to zero.
+            elif hasattr(result, 'pipeline_details') and result.pipeline_details:
+                turn_log["pipeline_details"] = result.pipeline_details
+
+            # Raw LLM — carry top-level context_tokens count
             if hasattr(result, 'context_tokens'):
                 turn_log["context_tokens"] = result.context_tokens
             
