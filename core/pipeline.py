@@ -45,6 +45,21 @@ class TurnResult:
     assembled_context: Optional[AssembledContext]
     warnings: List[str] = field(default_factory=list)
     tokens_used: int = 0
+    pipeline_telemetry: dict = field(default_factory=dict)
+    """
+    pipeline_telemetry keys (all numeric unless noted):
+      passthrough_mode        bool   — True when history fit under threshold
+      history_tokens_at_turn  int    — estimated history size when decision was made
+      curator_input_tokens    int    — tokens the curator read (L0 + constraints + prompt)
+      curator_output_tokens   int    — tokens the curator generated (decision JSON)
+      curator_total_tokens    int    — sum of above two
+      postproc_summary_tokens int    — tokens used by summarizer LLM call
+      postproc_extract_tokens int    — tokens used by constraint extractor call
+      violation_retry_fired   bool   — True if a retry was triggered this turn
+      violation_retry_tokens  int    — tokens used by retry call (0 if not fired)
+      l0_entry_count          int    — segments in L0 directory at this turn
+      constraint_count        int    — active constraints at this turn
+    """
 
 
 class HierMemPipeline:
@@ -169,12 +184,30 @@ class HierMemPipeline:
         else:
             # --- Full HierMem pipeline ---
             # Step 1: Curator selects context
+            # Measure REAL curator input tokens before the call
+            _l0_text         = self.archive.get_l0_directory_text()
+            _constraints_text = self.constraint_store.get_display_text()
+            _curator_input_tokens = count_tokens(
+                _l0_text + _constraints_text + user_message
+            )
+
             curator_decision = self.curator.select_context(
                 user_prompt=user_message,
-                l0_directory_text=self.archive.get_l0_directory_text(),
-                constraints_text=self.constraint_store.get_display_text(),
+                l0_directory_text=_l0_text,
+                constraints_text=_constraints_text,
                 total_turns=self.turn_count
             )
+
+            # Measure REAL curator output tokens (the decision JSON it generated)
+            import json as _json
+            _curator_output_tokens = count_tokens(_json.dumps({
+                "retrieval_strategy": curator_decision.retrieval_strategy,
+                "segments_to_fetch":  curator_decision.segments_to_fetch,
+                "semantic_queries":   curator_decision.semantic_queries,
+                "peripheral_segments": curator_decision.peripheral_segments,
+                "fetch_full_turns":   curator_decision.fetch_full_turns,
+                "reasoning":          curator_decision.reasoning,
+            }))
 
             # Step 2: Retrieve based on curator's decision
             relevant_chunks, peripheral_summaries = self.retrieval_router.retrieve(
@@ -209,7 +242,7 @@ class HierMemPipeline:
         # Step 6: Post-process (always runs — keeps memory updated)
         # Pass retry info so post-processor can re-call on violation
         retry_context = context if use_passthrough else assembled.full_text
-        final_response, warnings = self.post_processor.process(
+        final_response, warnings, postproc_telemetry = self.post_processor.process(
             turn_number=turn_num,
             user_msg=user_message,
             assistant_msg=response,
@@ -219,8 +252,39 @@ class HierMemPipeline:
         )
 
         if use_passthrough:
-            warnings.append(f"passthrough_mode (history {history_tokens} < {config.PASSTHROUGH_THRESHOLD} threshold)")
+            warnings.append(f"passthrough_mode (history {history_tokens} < {self.passthrough_threshold} threshold)")
             warnings[-1] = f"passthrough_mode (history {history_tokens} < {self.passthrough_threshold} threshold)"
+
+        # Build enriched pipeline_telemetry dict for run_benchmark to log
+        # All fields here end up in turn_log["pipeline_details"]
+        if use_passthrough:
+            pipeline_telemetry = {
+                "passthrough_mode":        True,
+                "history_tokens_at_turn":  history_tokens,
+                "curator_input_tokens":    0,
+                "curator_output_tokens":   0,
+                "curator_total_tokens":    0,
+                "postproc_summary_tokens": postproc_telemetry.get("summary_tokens", 0),
+                "postproc_extract_tokens": postproc_telemetry.get("extract_tokens", 0),
+                "violation_retry_fired":   postproc_telemetry.get("retry_fired", False),
+                "violation_retry_tokens":  postproc_telemetry.get("retry_tokens", 0),
+                "l0_entry_count":          len(self.archive.l0_directory),
+                "constraint_count":        len(self.constraint_store),
+            }
+        else:
+            pipeline_telemetry = {
+                "passthrough_mode":        False,
+                "history_tokens_at_turn":  history_tokens,
+                "curator_input_tokens":    _curator_input_tokens,
+                "curator_output_tokens":   _curator_output_tokens,
+                "curator_total_tokens":    _curator_input_tokens + _curator_output_tokens,
+                "postproc_summary_tokens": postproc_telemetry.get("summary_tokens", 0),
+                "postproc_extract_tokens": postproc_telemetry.get("extract_tokens", 0),
+                "violation_retry_fired":   postproc_telemetry.get("retry_fired", False),
+                "violation_retry_tokens":  postproc_telemetry.get("retry_tokens", 0),
+                "l0_entry_count":          len(self.archive.l0_directory),
+                "constraint_count":        len(self.constraint_store),
+            }
 
         result = TurnResult(
             turn_number=turn_num,
@@ -229,7 +293,8 @@ class HierMemPipeline:
             curator_decision=curator_decision,
             assembled_context=assembled,
             warnings=warnings,
-            tokens_used=assembled.total_tokens_est
+            tokens_used=assembled.total_tokens_est,
+            pipeline_telemetry=pipeline_telemetry,
         )
         self.history.append(result)
         return result

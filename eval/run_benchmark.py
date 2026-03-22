@@ -1,17 +1,5 @@
 """
 Benchmark Runner — Run all systems on all benchmarks with detailed logging.
-
-Canonical two-step workflow
-───────────────────────────
-Step 1 — Collect raw turn logs (no metrics, fast):
-  python -m eval.run_benchmark --benchmark <name> --run-dir results/raw/benchmarks/<arch>
-
-Step 2 — Post-process into paper-ready outputs after filling laaj.json:
-  python -m eval.research_metrics --run-dir results/raw/benchmarks/<arch> --arch <n>
-
-Use --auto-metrics only during quick local smoke-tests; it calls the legacy
-metrics pipeline (eval/metrics.py) and does NOT produce the research_metrics
-folder layout required for the paper. Run research_metrics separately.
 """
 
 import json
@@ -75,15 +63,7 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
     
     direct = datasets_dir / f"{benchmark_name}.json"
     if direct.exists():
-        data = json.loads(direct.read_text(encoding="utf-8"))
-        # Inject source_file so research_metrics._dataset_key() groups conversations
-        # by their source file stem rather than falling back to conversation_id.
-        # Without this, each conversation in a flat file becomes its own dataset folder.
-        if isinstance(data, list):
-            for item in data:
-                if isinstance(item, dict) and "source_file" not in item:
-                    item["source_file"] = direct.name  # e.g. "constraint_bench.json"
-        return data
+        return json.loads(direct.read_text(encoding="utf-8"))
     
     raise FileNotFoundError(f"Benchmark '{benchmark_name}' not found in {datasets_dir}")
 
@@ -207,23 +187,38 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                 "latency_seconds": turn_elapsed,
             }
             
-            # HierMem-specific details
+            # HierMem-specific details — full telemetry for paper metrics
             if system_name == "hiermem" and hasattr(result, 'curator_decision'):
                 cd = result.curator_decision
+                pt = getattr(result, 'pipeline_telemetry', {})
                 turn_log["pipeline_details"] = {
-                    "curator_strategy": cd.retrieval_strategy if cd else None,
-                    "segments_fetched": cd.segments_to_fetch if cd else [],
-                    "semantic_queries": cd.semantic_queries if cd else [],
-                    "curator_reasoning": cd.reasoning if cd else "",
+                    # --- Existing fields ---
+                    "curator_strategy":    cd.retrieval_strategy if cd else None,
+                    "segments_fetched":    cd.segments_to_fetch if cd else [],
+                    "semantic_queries":    cd.semantic_queries if cd else [],
+                    "curator_reasoning":   cd.reasoning if cd else "",
                     "context_tokens_used": result.tokens_used,
-                    "sources_used": result.assembled_context.sources_used if result.assembled_context else [],
-                    "zone_breakdown": result.assembled_context.zone_breakdown if result.assembled_context else {},
-                    "warnings": result.warnings,
+                    "sources_used":        result.assembled_context.sources_used if result.assembled_context else [],
+                    "zone_breakdown":      result.assembled_context.zone_breakdown if result.assembled_context else {},
+                    "warnings":            result.warnings,
+                    # --- NEW: real curator token counts ---
+                    "curator_input_tokens":    pt.get("curator_input_tokens", 0),
+                    "curator_output_tokens":   pt.get("curator_output_tokens", 0),
+                    "curator_total_tokens":    pt.get("curator_total_tokens", 0),
+                    # --- NEW: post-processor overhead ---
+                    "postproc_summary_tokens": pt.get("postproc_summary_tokens", 0),
+                    "postproc_extract_tokens": pt.get("postproc_extract_tokens", 0),
+                    # --- NEW: violation retry ---
+                    "violation_retry_fired":   pt.get("violation_retry_fired", False),
+                    "violation_retry_tokens":  pt.get("violation_retry_tokens", 0),
+                    # --- NEW: mode and memory state ---
+                    "passthrough_mode":        pt.get("passthrough_mode", False),
+                    "history_tokens_at_turn":  pt.get("history_tokens_at_turn", 0),
+                    "l0_entry_count":          pt.get("l0_entry_count", 0),
+                    "constraint_count":        pt.get("constraint_count", 0),
                 }
 
-            # RAG / RAG-summary — forward pipeline_details from the result dataclass
-            # so _estimate_turn_cost() in research_metrics.py can read context_tokens_used,
-            # sources_used, and semantic_queries without falling back to zero.
+            # RAG / RAG-summary — forward pipeline_details from result dataclass
             elif hasattr(result, 'pipeline_details') and result.pipeline_details:
                 turn_log["pipeline_details"] = result.pipeline_details
 

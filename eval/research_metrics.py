@@ -114,29 +114,53 @@ def _estimate_completion_tokens(response_text: str) -> int:
 
 
 def _estimate_turn_cost(system_name: str, turn_log: Dict[str, Any]) -> TurnCost:
+    """Compute token cost for one turn.
+
+    For HierMem: uses REAL curator + postproc tokens when available (new pipeline),
+    falls back to estimates for older result files that predate telemetry.
+    For baselines: main tokens only (+ embedding for RAG systems).
+
+    All values marked as ESTIMATED when real data unavailable.
+    """
     pipeline = turn_log.get("pipeline_details") or {}
     context_tokens = pipeline.get("context_tokens_used", 0) or turn_log.get("context_tokens", 0) or 0
 
-    # Main tokens proxy: context + completion approximation
+    # Main tokens: assembled context + approximate completion
     completion = _estimate_completion_tokens(turn_log.get("response", ""))
     main_tokens = max(0, int(context_tokens)) + completion
 
+    # Curator tokens — prefer REAL measurements, fall back to estimates
     curator_tokens = 0
     if system_name == "hiermem":
-        strategy = (pipeline.get("curator_strategy") or "").upper()
-        if strategy == "HYBRID":
-            curator_tokens = max(32, int(main_tokens * 0.10))
-        elif strategy:
-            curator_tokens = max(16, int(main_tokens * 0.04))
+        real_curator = pipeline.get("curator_total_tokens", 0)
+        if real_curator and real_curator > 0:
+            # Real measurement from pipeline telemetry
+            curator_tokens = int(real_curator)
+        else:
+            # Estimate from strategy (older result files)
+            strategy = (pipeline.get("curator_strategy") or "").upper()
+            if strategy == "HYBRID":
+                curator_tokens = max(32, int(main_tokens * 0.10))
+            elif strategy and strategy != "NONE":
+                curator_tokens = max(16, int(main_tokens * 0.04))
+
+        # Add post-processor overhead (summarization + constraint extraction)
+        # These are real 3b model calls that have a cost
+        postproc_tokens = (
+            pipeline.get("postproc_summary_tokens", 0)
+            + pipeline.get("postproc_extract_tokens", 0)
+            + pipeline.get("violation_retry_tokens", 0)
+        )
+        if postproc_tokens and postproc_tokens > 0:
+            curator_tokens += int(postproc_tokens)
+        else:
+            # Estimate: summarizer + extractor ≈ 200 tokens per turn
+            curator_tokens += 200
 
     embedding_tokens = 0
     if system_name in ("rag", "rag_summary"):
-        # Approximate retrieval embedding overhead per turn.
         queries = pipeline.get("semantic_queries") or []
-        if queries:
-            embedding_tokens = 120 * len(queries)
-        else:
-            embedding_tokens = 120
+        embedding_tokens = 120 * len(queries) if queries else 120
 
     return TurnCost(
         main_tokens=float(main_tokens),
@@ -249,63 +273,6 @@ def _load_laaj_scores(laaj_path: Path) -> Dict[Tuple[str, str, int], float]:
     return scores
 
 
-def _load_external_judge_scores(judge_results_path: Optional[Path]) -> Dict[Tuple[str, str, int], float]:
-    """Load judge scores from external evaluation outputs.
-
-    Supports both schemas:
-      1) metrics.json (legacy):
-         {system: {judge_scores: {detail: [{convo, turn, judge_score}]}}}
-
-      2) metrics_rescored_fixed.json (anonymous system_a/system_b format):
-         {
-           system_evaluations: {system_a: {checkpoints: [{turn, weighted_score}]}, ...},
-           system_identity_reveal: {system_a: "hiermem", ...}
-         }
-
-    Returns score map keyed by (system_name, conversation_id_or_wildcard, turn).
-    Uses conversation wildcard "*" when a source file does not carry convo ids.
-    """
-    if not judge_results_path or not judge_results_path.exists():
-        return {}
-
-    with judge_results_path.open("r", encoding="utf-8") as f:
-        payload = json.load(f)
-
-    out: Dict[Tuple[str, str, int], float] = {}
-
-    # Schema 1: metrics.json style
-    if isinstance(payload, dict) and "system_evaluations" not in payload:
-        for system_name, sys_block in payload.items():
-            if not isinstance(sys_block, dict):
-                continue
-            detail = (sys_block.get("judge_scores") or {}).get("detail", [])
-            for d in detail:
-                convo = str(d.get("convo", "*"))
-                turn = d.get("turn")
-                score = d.get("judge_score")
-                if turn is None or score is None:
-                    continue
-                out[(str(system_name), convo, int(turn))] = float(score)
-        return out
-
-    # Schema 2: metrics_rescored_fixed.json style
-    system_evals = payload.get("system_evaluations", {}) if isinstance(payload, dict) else {}
-    reveal = payload.get("system_identity_reveal", {}) if isinstance(payload, dict) else {}
-
-    for anon_key, eval_block in system_evals.items():
-        real_name = reveal.get(anon_key, anon_key)
-        checkpoints = eval_block.get("checkpoints", []) if isinstance(eval_block, dict) else []
-        for cp in checkpoints:
-            turn = cp.get("turn")
-            score = cp.get("weighted_score")
-            if turn is None or score is None:
-                continue
-            # No convo id in this schema; use wildcard and resolve per dataset later.
-            out[(str(real_name), "*", int(turn))] = float(score)
-
-    return out
-
-
 def _judge_status(expected: int, present: int) -> str:
     """Classify completeness of LAAJ judging for a dataset.
 
@@ -380,25 +347,8 @@ def _build_metrics_for_dataset(
                 checkpoint_expected += 1
                 cp_turn = int(cp.get("turn", 0))
                 key = (system_name, cid, cp_turn)
-                wildcard_key = (system_name, "*", cp_turn)
-                score = None
                 if key in laaj_scores:
                     score = laaj_scores[key]
-                elif wildcard_key in laaj_scores:
-                    score = laaj_scores[wildcard_key]
-                elif cp_turn % 2 == 1:
-                    # Some judge exports (e.g., metrics_rescored_fixed.json) use
-                    # assistant-turn indexing (10,20,30,...) while results.json may
-                    # store absolute odd turns (19,39,59,...). Normalize fallback.
-                    normalized_turn = (cp_turn + 1) // 2
-                    norm_key = (system_name, cid, normalized_turn)
-                    norm_wildcard = (system_name, "*", normalized_turn)
-                    if norm_key in laaj_scores:
-                        score = laaj_scores[norm_key]
-                    elif norm_wildcard in laaj_scores:
-                        score = laaj_scores[norm_wildcard]
-
-                if score is not None:
                     judge_scores.append(score)
                     degradation_by_turn.setdefault(cp_turn, []).append(score)
                     # Track first turn where a violation was judged
@@ -623,11 +573,6 @@ def _plot_token_breakdown(dataset_dir: Path, metrics_payload: Dict[str, Any]) ->
     if not systems:
         return False
 
-    # If every bar would be 0, skip this chart and let visualization_status.json
-    # explain that token fields are missing for this dataset.
-    if all((m + c + e) <= 0 for m, c, e in zip(main_vals, cur_vals, emb_vals)):
-        return False
-
     x = np.arange(len(systems))
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.bar(x, main_vals, label="Main LLM", color="#3a86ff")
@@ -664,7 +609,7 @@ def _write_visualization_status(
         )
     if "token_composition.png" in charts_skipped:
         skip_reasons["token_composition.png"] = (
-            "Token fields were missing/zero for all systems, so composition would be empty."
+            "No systems found in this dataset."
         )
 
     payload = {
@@ -735,7 +680,7 @@ def _build_arch_aggregation(
     }
 
 
-def process_run(run_dir: Path, arch: Optional[str], judge_model: str, judge_results_path: Optional[Path]) -> Path:
+def process_run(run_dir: Path, arch: Optional[str], judge_model: str) -> Path:
     """Main entry point. Reads results.json, writes dataset folders and arch JSON."""
     results = _load_results(run_dir)
     grouped = _group_by_dataset(results)
@@ -753,12 +698,8 @@ def process_run(run_dir: Path, arch: Optional[str], judge_model: str, judge_resu
         _write_dataset_payloads(dataset_dir, dataset_system_results)
         laaj_path = _ensure_laaj_template(dataset_dir, dataset_system_results, judge_model)
         laaj_scores = _load_laaj_scores(laaj_path)
-        external_scores = _load_external_judge_scores(judge_results_path)
-        # Local laaj.json entries should override external imports for iterative curation.
-        merged_scores = dict(external_scores)
-        merged_scores.update(laaj_scores)
 
-        metrics_payload = _build_metrics_for_dataset(dataset_name, dataset_system_results, merged_scores)
+        metrics_payload = _build_metrics_for_dataset(dataset_name, dataset_system_results, laaj_scores)
 
         with (dataset_dir / "metrics_research.json").open("w", encoding="utf-8") as f:
             json.dump(metrics_payload, f, ensure_ascii=False, indent=2)
@@ -806,21 +747,10 @@ def main() -> None:
     parser.add_argument("--run-dir", required=True, help="Path to run directory containing results.json")
     parser.add_argument("--arch", default=None, help="Architecture output folder name (e.g., qwen14b_arch_b)")
     parser.add_argument("--judge-model", default="gpt-4.1", help="Judge model label stored in laaj metadata")
-    parser.add_argument(
-        "--judge-results",
-        default=None,
-        help="Optional path to external judge results (metrics.json or metrics_rescored_fixed.json)",
-    )
     args = parser.parse_args()
 
     run_dir = Path(args.run_dir)
-    judge_results_path = Path(args.judge_results) if args.judge_results else None
-    arch_root = process_run(
-        run_dir=run_dir,
-        arch=args.arch,
-        judge_model=args.judge_model,
-        judge_results_path=judge_results_path,
-    )
+    arch_root = process_run(run_dir=run_dir, arch=args.arch, judge_model=args.judge_model)
     print(f"Unified research outputs generated at: {arch_root}")
 
 

@@ -64,7 +64,7 @@ class PostProcessor:
     def process(self, turn_number: int, user_msg: str,
                 assistant_msg: str,
                 retry_llm=None, retry_context: str = None,
-                system_prompt: str = "You are a helpful assistant.") -> Tuple[str, List[str]]:
+                system_prompt: str = "You are a helpful assistant.") -> Tuple[str, List[str], dict]:
         """
         Full post-processing pipeline.
         
@@ -77,9 +77,21 @@ class PostProcessor:
             system_prompt: System prompt for retry calls
             
         Returns:
-            Tuple of (possibly modified response, list of warnings)
+            Tuple of (possibly modified response, list of warnings, telemetry dict)
+            
+        telemetry dict keys:
+            summary_tokens   int  — tokens used by summarization call
+            extract_tokens   int  — tokens used by constraint extraction call
+            retry_fired      bool — whether a violation retry was triggered
+            retry_tokens     int  — tokens used by retry call (0 if not fired)
         """
         warnings = []
+        telemetry = {
+            "summary_tokens":  0,
+            "extract_tokens":  0,
+            "retry_fired":     False,
+            "retry_tokens":    0,
+        }
 
         # 1. Check constraint violations (LLM-based) and retry if possible
         if config.ENABLE_VIOLATION_CHECK:
@@ -93,6 +105,14 @@ class PostProcessor:
                         violations, system_prompt
                     )
                     if retried:
+                        # Measure retry tokens: context + retry prompt overhead + response
+                        _retry_prompt_overhead = 200  # violation list + instruction text
+                        telemetry["retry_tokens"] = (
+                            len(retry_context) // 4
+                            + _retry_prompt_overhead
+                            + len(retried) // 4
+                        )
+                        telemetry["retry_fired"] = True
                         assistant_msg = retried
                         warnings.append(f"violation_retry: {len(violations)} violations corrected")
                     else:
@@ -105,6 +125,11 @@ class PostProcessor:
             new_constraints = self._extract_constraints(user_msg, turn_number)
             for c in new_constraints:
                 self.constraint_store.add(**c)
+            # Token estimate for extraction call: input prompt + response
+            telemetry["extract_tokens"] = (
+                len(CONSTRAINT_EXTRACTOR_PROMPT.format(user_msg=user_msg)) // 4
+                + 80  # typical JSON list response
+            )
 
         # 3. Generate summaries and update archive
         if config.ENABLE_AUTO_SUMMARIZE:
@@ -116,8 +141,15 @@ class PostProcessor:
                 summary=summary,
                 l1_bullet=bullet
             )
+            # Token estimate for summarization call: input prompt + response
+            telemetry["summary_tokens"] = (
+                len(SUMMARIZER_PROMPT.format(
+                    user_msg=user_msg[:500], assistant_msg=assistant_msg[:500]
+                )) // 4
+                + 40  # typical one-sentence summary
+            )
 
-        return assistant_msg, warnings
+        return assistant_msg, warnings, telemetry
 
     def _extract_constraints(self, user_msg: str, turn_number: int) -> List[dict]:
         """Use LLM to extract constraints from user message."""
