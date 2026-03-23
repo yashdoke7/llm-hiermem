@@ -1,0 +1,758 @@
+{
+    "conversation_id": "rust_systems_result_box_arc",
+    "domain": "software_engineering",
+    "domain_name": "Software Engineering / Rust",
+    "source": "chatgpt",
+    "num_turns": 50,
+    "num_checkpoints": 10,
+    "constraints": [
+        "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+        "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code."
+    ],
+    "turns": [
+        {
+            "turn": 1,
+            "role": "user",
+            "text": "I’ve been doing Python and C++ for years. Why is everyone suddenly obsessed with Rust? For a CLI tool I’m building, can’t I just stick with C++ and be done?",
+            "type": "topic"
+        },
+        {
+            "turn": 2,
+            "role": "assistant",
+            "text": "Totally fair question. You *can* use C++—Rust isn’t mandatory. The main difference is Rust enforces memory safety at compile time without a GC. For CLI tools, this means fewer runtime crashes, safer concurrency, and fewer UB bugs. Think of it as C++ with stricter compile-time guarantees—no dangling pointers, data races prevented by design, and better error handling conventions.",
+            "type": "response"
+        },
+        {
+            "turn": 3,
+            "role": "user",
+            "text": "Yeah but C++ smart pointers already solve most of that. unique_ptr, shared_ptr etc. What’s Rust adding beyond that?",
+            "type": "clarification"
+        },
+        {
+            "turn": 4,
+            "role": "assistant",
+            "text": "Good comparison. Rust goes further by making ownership *the default model*, not an opt-in pattern. In C++, you can still accidentally copy, alias, or misuse memory. Rust’s borrow checker enforces rules globally: one mutable reference OR many immutable ones. No silent violations. It’s not just tools—it’s a language-wide guarantee that eliminates whole bug classes.",
+            "type": "response"
+        },
+        {
+            "turn": 5,
+            "role": "user",
+            "text": "Okay but the ownership thing feels restrictive. Why can’t I just pass references freely like in C++?",
+            "type": "clarification"
+        },
+        {
+            "turn": 6,
+            "role": "assistant",
+            "text": "Because unrestricted references are exactly what cause bugs like data races or use-after-free. Rust forces you to express intent: either shared immutable access or exclusive mutable access. That constraint lets the compiler prove safety. It feels restrictive early on, but it replaces runtime debugging with compile-time guarantees—which is huge for reliability.",
+            "type": "response"
+        },
+        {
+            "turn": 7,
+            "role": "user",
+            "text": "Hmm. For my CLI tool I’ll be parsing configs and maybe building a tree structure. Does ownership make that harder?",
+            "type": "topic"
+        },
+        {
+            "turn": 8,
+            "role": "assistant",
+            "text": "Tree structures are actually where Rust shines *once you get the patterns*. You’ll typically use Box for recursive ownership, Rc for shared ownership, and sometimes Arc for threads. It’s explicit, yes—but also predictable. No hidden copies or leaks. The patterns feel mechanical after a while.",
+            "type": "response"
+        },
+        {
+            "turn": 9,
+            "role": "user",
+            "text": "hey so I read the Rust API guidelines — can we follow two rules: first, whenever we heap-allocate, use Box/Arc/Rc not raw pointers. second, all fallible functions should return Result<T,E> — no unwrap or panic in library code",
+            "type": "constraint_setup"
+        },
+        {
+            "turn": 10,
+            "role": "assistant",
+            "text": "Perfect—those are excellent constraints. Let’s follow them strictly.\n\nExample:\n`rust\nuse std::error::Error;\n\nstruct Node {\n    value: i32,\n    next: Option<Box<Node>>,\n}\n\nfn create_node(value: i32) -> Result<Box<Node>, Box<dyn Error>> {\n    Ok(Box::new(Node { value, next: None }))\n}\n`\n\nHere, heap allocation uses Box, and the function returns Result even though it’s simple. This keeps API consistency and avoids hidden panics later.",
+            "type": "response"
+        },
+        {
+            "turn": 11,
+            "role": "user",
+            "text": "Got it. So for recursive structs like trees, Box is the default?",
+            "type": "topic"
+        },
+        {
+            "turn": 12,
+            "role": "assistant",
+            "text": "Yes—recursive types need indirection because size must be known at compile time.\n\n`rust\nuse std::error::Error;\n\nstruct Tree {\n    value: i32,\n    left: Option<Box<Tree>>,\n    right: Option<Box<Tree>>,\n}\n\nfn new_tree(value: i32) -> Result<Box<Tree>, Box<dyn Error>> {\n    Ok(Box::new(Tree { value, left: None, right: None }))\n}\n`\n\nBox gives ownership of each node. No cycles, clean drop behavior, and predictable memory layout.",
+            "type": "response"
+        },
+        {
+            "turn": 13,
+            "role": "user",
+            "text": "What if I want parent pointers too? That creates cycles right?",
+            "type": "clarification"
+        },
+        {
+            "turn": 14,
+            "role": "assistant",
+            "text": "Exactly—that’s where Rc comes in for shared ownership.\n\n`rust\nuse std::rc::Rc;\nuse std::error::Error;\n\nstruct Node {\n    value: i32,\n    parent: Option<Rc<Node>>,\n}\n\nfn new_node(value: i32) -> Result<Rc<Node>, Box<dyn Error>> {\n    Ok(Rc::new(Node { value, parent: None }))\n}\n`\n\nRc enables multiple owners. For cycles, you’d combine with Weak to avoid leaks, but Rc is the base tool.",
+            "type": "response"
+        },
+        {
+            "turn": 15,
+            "role": "user",
+            "text": "When do I use Arc instead of Rc?",
+            "type": "topic"
+        },
+        {
+            "turn": 16,
+            "role": "assistant",
+            "text": "Arc is just thread-safe Rc. Use it when data is shared across threads.\n\n`rust\nuse std::sync::Arc;\nuse std::error::Error;\n\nstruct Config {\n    value: String,\n}\n\nfn load_config() -> Result<Arc<Config>, Box<dyn Error>> {\n    Ok(Arc::new(Config { value: \"ok\".into() }))\n}\n`\n\nArc adds atomic reference counting overhead, so prefer Rc in single-threaded contexts.",
+            "type": "response"
+        },
+        {
+            "turn": 17,
+            "role": "user",
+            "text": "Wait why can’t I just unwrap here, it’s obviously safe?",
+            "type": "clarification"
+        },
+        {
+            "turn": 18,
+            "role": "assistant",
+            "text": "It *feels* safe locally, but library code should never assume caller context. Using Result makes failures explicit and composable.\n\n`rust\nuse std::error::Error;\n\nfn parse_number(input: &str) -> Result<i32, Box<dyn Error>> {\n    let num: i32 = input.parse()?;\n    Ok(num)\n}\n`\n\nThe `?` operator propagates errors cleanly without panic paths.",
+            "type": "response"
+        },
+        {
+            "turn": 19,
+            "role": "user",
+            "text": "Okay makes sense. How do I define proper custom errors instead of Box<dyn Error> everywhere?",
+            "type": "topic"
+        },
+        {
+            "turn": 20,
+            "role": "assistant",
+            "text": "Use `thiserror` for structured errors.\n\n`rust\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum MyError {\n    #[error(\"parse error\")]\n    ParseError,\n}\n\nfn do_work() -> Result<Box<i32>, MyError> {\n    Ok(Box::new(42))\n}\n`\n\nThis gives strong typing and good error messages without boilerplate.",
+            "type": "response"
+        },
+        {
+            "turn": 21,
+            "role": "user",
+            "text": "like the pattern we used for the error type earlier — can we convert between errors automatically?",
+            "type": "back_reference"
+        },
+        {
+            "turn": 22,
+            "role": "assistant",
+            "text": "Yes, via `From`.\n\n`rust\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum MyError {\n    #[error(\"io error\")]\n    Io(#[from] std::io::Error),\n}\n\nfn read_file() -> Result<Box<String>, MyError> {\n    let data = std::fs::read_to_string(\"file.txt\")?;\n    Ok(Box::new(data))\n}\n`\n\n`?` now auto-converts io::Error into MyError.",
+            "type": "response"
+        },
+        {
+            "turn": 23,
+            "role": "user",
+            "text": "Nice. What about polymorphism? Like virtual functions in C++",
+            "type": "topic"
+        },
+        {
+            "turn": 24,
+            "role": "assistant",
+            "text": "Use trait objects with Box.\n\n`rust\ntrait Animal {\n    fn speak(&self) -> Result<String, Box<dyn std::error::Error>>;\n}\n\nstruct Dog;\n\nimpl Animal for Dog {\n    fn speak(&self) -> Result<String, Box<dyn std::error::Error>> {\n        Ok(\"woof\".into())\n    }\n}\n\nfn get_animal() -> Result<Box<dyn Animal>, Box<dyn std::error::Error>> {\n    Ok(Box::new(Dog))\n}\n`",
+            "type": "response"
+        },
+        {
+            "turn": 25,
+            "role": "user",
+            "text": "like the tree example earlier, can trait objects also be recursive?",
+            "type": "back_reference"
+        },
+        {
+            "turn": 26,
+            "role": "assistant",
+            "text": "Yes, but you still need Box for indirection.\n\n`rust\ntrait Node {\n    fn value(&self) -> Result<i32, Box<dyn std::error::Error>>;\n}\n\nstruct TreeNode {\n    left: Option<Box<dyn Node>>,\n}\n`\n\nBox ensures size is known. Trait objects are dynamically dispatched but still memory-safe.",
+            "type": "response"
+        },
+        {
+            "turn": 27,
+            "role": "user",
+            "text": "How do I structure a CLI app around this?",
+            "type": "topic"
+        },
+        {
+            "turn": 28,
+            "role": "assistant",
+            "text": "Split into lib + CLI using clap.\n\n`rust\nuse clap::Parser;\n\n#[derive(Parser)]\nstruct Args { input: String }\n\nfn run(args: Args) -> Result<Box<String>, Box<dyn std::error::Error>> {\n    Ok(Box::new(args.input))\n}\n`\n\nKeep logic in lib returning Result, CLI just wires inputs.",
+            "type": "response"
+        },
+        {
+            "turn": 29,
+            "role": "user",
+            "text": "like earlier where we separated logic and errors — same idea right?",
+            "type": "back_reference"
+        },
+        {
+            "turn": 30,
+            "role": "assistant",
+            "text": "Exactly. Library handles logic + Result, CLI just prints or logs.\n\n`rust\nfn main_run() -> Result<Box<()>, Box<dyn std::error::Error>> {\n    let args = Args::parse();\n    let _ = run(args)?;\n    Ok(Box::new(()))\n}\n`\n\nNo unwraps, everything bubbles up cleanly.",
+            "type": "response"
+        },
+        {
+            "turn": 31,
+            "role": "user",
+            "text": "How do async tasks fit in?",
+            "type": "topic"
+        },
+        {
+            "turn": 32,
+            "role": "assistant",
+            "text": "Use tokio with async returning Result.\n\n`rust\nasync fn fetch() -> Result<Box<String>, Box<dyn std::error::Error>> {\n    Ok(Box::new(\"data\".into()))\n}\n`\n\nAsync doesn’t change error handling—just adds await points.",
+            "type": "response"
+        },
+        {
+            "turn": 33,
+            "role": "user",
+            "text": "What about sharing config across async tasks?",
+            "type": "clarification"
+        },
+        {
+            "turn": 34,
+            "role": "assistant",
+            "text": "Use Arc.\n\n`rust\nuse std::sync::Arc;\n\nstruct Config { val: i32 }\n\nasync fn task(cfg: Arc<Config>) -> Result<Box<i32>, Box<dyn std::error::Error>> {\n    Ok(Box::new(cfg.val))\n}\n`\n\nArc ensures safe concurrent access.",
+            "type": "response"
+        },
+        {
+            "turn": 35,
+            "role": "user",
+            "text": "like earlier Rc vs Arc thing — so always Arc in async?",
+            "type": "back_reference"
+        },
+        {
+            "turn": 36,
+            "role": "assistant",
+            "text": "Yes, because async tasks may run on multiple threads. Rc isn’t Send/Sync.\n\nStick with Arc for safety unless you know execution is single-threaded.",
+            "type": "response"
+        },
+        {
+            "turn": 37,
+            "role": "user",
+            "text": "Testing in Rust—how do we avoid unwraps there?",
+            "type": "topic"
+        },
+        {
+            "turn": 38,
+            "role": "assistant",
+            "text": "Tests can return Result too.\n\n`rust\n#[test]\nfn test_parse() -> Result<(), Box<dyn std::error::Error>> {\n    let x = \"42\".parse::<i32>()?;\n    assert_eq!(x, 42);\n    Ok(())\n}\n`\n\nNo unwrap needed.",
+            "type": "response"
+        },
+        {
+            "turn": 39,
+            "role": "user",
+            "text": "Cool. Publishing a crate—anything special?",
+            "type": "topic"
+        },
+        {
+            "turn": 40,
+            "role": "assistant",
+            "text": "Ensure public API returns Result and avoids panics.\n\n`rust\npub fn api() -> Result<Box<String>, Box<dyn std::error::Error>> {\n    Ok(Box::new(\"ok\".into()))\n}\n`\n\nDocument errors clearly. Follow semantic versioning.",
+            "type": "response"
+        },
+        {
+            "turn": 41,
+            "role": "user",
+            "text": "like earlier error enum—should that be public?",
+            "type": "back_reference"
+        },
+        {
+            "turn": 42,
+            "role": "assistant",
+            "text": "Yes, if callers need to match errors.\n\n`rust\n#[derive(thiserror::Error, Debug)]\npub enum ApiError {\n    #[error(\"fail\")]\n    Fail,\n}\n`\n\nExpose only what’s useful.",
+            "type": "response"
+        },
+        {
+            "turn": 43,
+            "role": "user",
+            "text": "What about anyhow vs thiserror?",
+            "type": "topic"
+        },
+        {
+            "turn": 44,
+            "role": "assistant",
+            "text": "Use thiserror in libraries, anyhow in apps.\n\n`rust\nfn app() -> Result<Box<()>, anyhow::Error> {\n    Ok(Box::new(()))\n}\n`\n\nanyhow is flexible, thiserror is structured.",
+            "type": "response"
+        },
+        {
+            "turn": 45,
+            "role": "user",
+            "text": "like earlier CLI separation—we can use anyhow there right?",
+            "type": "back_reference"
+        },
+        {
+            "turn": 46,
+            "role": "assistant",
+            "text": "Exactly. CLI = anyhow, lib = thiserror.\n\nKeeps APIs clean and user-facing errors flexible.",
+            "type": "response"
+        },
+        {
+            "turn": 47,
+            "role": "user",
+            "text": "I think I’m getting it. Any final patterns I should internalize?",
+            "type": "topic"
+        },
+        {
+            "turn": 48,
+            "role": "assistant",
+            "text": "Yes: ownership clarity, Result everywhere, Box/Rc/Arc for heap, no unwrap discipline, and separation of concerns.\n\nThese patterns scale from CLI tools to large systems.",
+            "type": "response"
+        },
+        {
+            "turn": 49,
+            "role": "user",
+            "text": "Alright, feels like a mindset shift more than syntax.",
+            "type": "topic"
+        },
+        {
+            "turn": 50,
+            "role": "assistant",
+            "text": "Exactly. Rust is less about syntax and more about *making invalid states unrepresentable*. Once that clicks, everything becomes consistent.",
+            "type": "response"
+        },
+        {
+            "turn": 51,
+            "role": "user",
+            "text": "Thanks, this was actually super helpful.",
+            "type": "topic"
+        },
+        {
+            "turn": 52,
+            "role": "assistant",
+            "text": "Glad it helped—once you build a couple of projects, these patterns will feel second nature.",
+            "type": "response"
+        },
+        {
+            "turn": 53,
+            "role": "user",
+            "text": "I’ll try rewriting part of my CLI in Rust.",
+            "type": "topic"
+        },
+        {
+            "turn": 54,
+            "role": "assistant",
+            "text": "Great idea—start small, maybe config parsing and build up incrementally.",
+            "type": "response"
+        },
+        {
+            "turn": 55,
+            "role": "user",
+            "text": "Cool, will ping if I get stuck.",
+            "type": "topic"
+        },
+        {
+            "turn": 56,
+            "role": "assistant",
+            "text": "Sounds good—happy to help anytime.",
+            "type": "response"
+        },
+        {
+            "turn": 57,
+            "role": "user",
+            "text": "btw this no-unwrap rule is kinda annoying lol",
+            "type": "topic"
+        },
+        {
+            "turn": 58,
+            "role": "assistant",
+            "text": "It is at first—but it forces better API design. Over time, you’ll see fewer hidden failure paths.",
+            "type": "response"
+        },
+        {
+            "turn": 59,
+            "role": "user",
+            "text": "yeah fair enough",
+            "type": "topic"
+        },
+        {
+            "turn": 60,
+            "role": "assistant",
+            "text": "Consistency now saves debugging later—that’s the tradeoff Rust optimizes for.",
+            "type": "response"
+        },
+        {
+            "turn": 61,
+            "role": "user",
+            "text": "makes sense",
+            "type": "topic"
+        },
+        {
+            "turn": 62,
+            "role": "assistant",
+            "text": "Exactly—lean into the compiler, it’s your ally here.",
+            "type": "response"
+        },
+        {
+            "turn": 63,
+            "role": "user",
+            "text": "alright I’m sold enough to try it seriously",
+            "type": "topic"
+        },
+        {
+            "turn": 64,
+            "role": "assistant",
+            "text": "That’s all it takes—real usage is the best teacher.",
+            "type": "response"
+        },
+        {
+            "turn": 65,
+            "role": "user",
+            "text": "thanks again",
+            "type": "topic"
+        },
+        {
+            "turn": 66,
+            "role": "assistant",
+            "text": "Anytime 👍",
+            "type": "response"
+        },
+        {
+            "turn": 67,
+            "role": "user",
+            "text": "bye for now",
+            "type": "topic"
+        },
+        {
+            "turn": 68,
+            "role": "assistant",
+            "text": "See you!",
+            "type": "response"
+        },
+        {
+            "turn": 69,
+            "role": "user",
+            "text": "(end)",
+            "type": "topic"
+        },
+        {
+            "turn": 70,
+            "role": "assistant",
+            "text": "(end ack)",
+            "type": "response"
+        },
+        {
+            "turn": 71,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 72,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 73,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 74,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 75,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 76,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 77,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 78,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 79,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 80,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 81,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 82,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 83,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 84,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 85,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 86,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 87,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 88,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 89,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 90,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 91,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 92,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 93,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 94,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 95,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 96,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 97,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 98,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        },
+        {
+            "turn": 99,
+            "role": "user",
+            "text": "(padding)",
+            "type": "topic"
+        },
+        {
+            "turn": 100,
+            "role": "assistant",
+            "text": "(padding ack)",
+            "type": "response"
+        }
+    ],
+    "checkpoints": [
+        {
+            "turn": 19,
+            "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+            "test": "Does the response use Box<T>, Rc<T>, or Arc<T> for heap allocations?",
+            "answer": true,
+            "keywords": [
+                "Box<",
+                "Arc<",
+                "Rc<",
+                "Box::new(",
+                "Arc::new(",
+                "Rc::new("
+            ]
+        },
+        {
+            "turn": 19,
+            "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.",
+            "test": "Does the response use Result<T,E> for fallible functions without unwrap/panic?",
+            "answer": true,
+            "keywords": [
+                "Result<",
+                "-> Result",
+                "Err(",
+                "Ok(",
+                "? ",
+                "thiserror",
+                "anyhow"
+            ]
+        },
+        {
+            "turn": 39,
+            "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+            "test": "Does the code use Box, Rc, or Arc for heap allocations?",
+            "answer": true,
+            "keywords": [
+                "Box<",
+                "Arc<",
+                "Rc<",
+                "Box::new",
+                "Arc::new",
+                "Rc::new"
+            ]
+        },
+        {
+            "turn": 39,
+            "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.",
+            "test": "Does the response return Result<T,E> for fallible functions?",
+            "answer": true,
+            "keywords": [
+                "Result<",
+                "-> Result",
+                "Err(",
+                "? ",
+                "thiserror",
+                "#[error"
+            ]
+        },
+        {
+            "turn": 59,
+            "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+            "test": "Does the code demonstrate Box/Arc/Rc usage for heap allocation?",
+            "answer": true,
+            "keywords": [
+                "Box<",
+                "Arc<",
+                "Rc<",
+                "Box::new",
+                "Arc::new"
+            ]
+        },
+        {
+            "turn": 59,
+            "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.",
+            "test": "Does the response use Result and ? operator rather than unwrap?",
+            "answer": true,
+            "keywords": [
+                "Result<",
+                "-> Result",
+                "Err(",
+                "Ok(",
+                "? ",
+                "anyhow",
+                "thiserror"
+            ]
+        },
+        {
+            "turn": 79,
+            "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+            "test": "Does the response use smart pointers for all heap allocations?",
+            "answer": true,
+            "keywords": [
+                "Box<",
+                "Arc<",
+                "Rc<",
+                "Box::new",
+                "Arc::new",
+                "Rc::new"
+            ]
+        },
+        {
+            "turn": 79,
+            "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.",
+            "test": "Does every fallible function in the response return Result<T,E>?",
+            "answer": true,
+            "keywords": [
+                "Result<",
+                "-> Result",
+                "Err(",
+                "? ",
+                "thiserror",
+                "#[error"
+            ]
+        },
+        {
+            "turn": 99,
+            "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+            "test": "Does the final code use Box<T>/Rc<T>/Arc<T> for all heap allocations?",
+            "answer": true,
+            "keywords": [
+                "Box<",
+                "Arc<",
+                "Rc<",
+                "Box::new(",
+                "Arc::new(",
+                "Rc::new("
+            ]
+        },
+        {
+            "turn": 99,
+            "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.",
+            "test": "Does the final response use Result<T,E> for all fallible operations?",
+            "answer": true,
+            "keywords": [
+                "Result<",
+                "-> Result",
+                "Err(",
+                "Ok(",
+                "? ",
+                "thiserror",
+                "anyhow"
+            ]
+        }
+    ]
+}

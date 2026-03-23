@@ -1,0 +1,360 @@
+========================================================================
+DATASET GENERATION PROMPTS — 9 individual prompts, one per new chat
+========================================================================
+Use these in separate chats. Each prompt is self-contained.
+Recommended model: Claude Sonnet (claude-sonnet-4-6) or GPT-4o.
+Generate one dataset per chat, verify the JSON count before saving.
+
+After generation, verify with this command (Windows CMD):
+python -c "import json; d=json.load(open('dataset_14_employment_law.json')); turns=d.get('turns',d[0]['turns'] if isinstance(d,list) else []); print('turns:', len(turns), '| user:', sum(1 for t in turns if t['role']=='user'), '| checkpoints:', len(d.get('checkpoints',d[0].get('checkpoints',[]) if isinstance(d,list) else [])))"
+
+========================================================================
+PROMPT 1 — dataset_14_employment_law.json  [30-TURN / 60 objects]
+========================================================================
+
+Generate a realistic 30-turn conversation between a user and an AI assistant about employment law for a small business owner in California.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list must contain EXACTLY 60 objects total (30 user + 30 assistant, strictly alternating)
+- Turn IDs: user turns have ODD IDs (1,3,5,...59), assistant turns have EVEN IDs (2,4,6,...60)
+- "num_turns": 30
+- "checkpoints": EXACTLY 10 entries — 2 per position at turns 11, 23, 35, 47, 59 (these are USER turn IDs)
+- COUNT YOUR OBJECTS BEFORE OUTPUTTING. Must be exactly 60.
+
+OUTPUT FORMAT — single JSON object:
+{
+  "conversation_id": "employment_law_small_business",
+  "domain": "Legal / Employment",
+  "num_turns": 30,
+  "constraints": [
+    "Always specify if rules differ for companies under 15 employees.",
+    "Use markdown bullet points for all legal definitions."
+  ],
+  "turns": [
+    {"turn": 1, "role": "user", "text": "...", "type": "topic"},
+    {"turn": 2, "role": "assistant", "text": "...", "type": "response"},
+    ...
+    {"turn": 59, "role": "user", "text": "...", "type": "topic"},
+    {"turn": 60, "role": "assistant", "text": "...", "type": "response"}
+  ],
+  "checkpoints": [
+    {"turn": 11, "constraint_tested": "Always specify if rules differ for companies under 15 employees.", "test": "Does the response specify if the rule differs for companies under 15 employees?", "answer": true, "keywords": ["under 15", "fewer than 15", "15 employees", "small employer", "15-employee"]},
+    {"turn": 11, "constraint_tested": "Use markdown bullet points for all legal definitions.", "test": "Does the response use markdown bullet points for legal definitions?", "answer": true, "keywords": ["- **", "**Definition", "- ", "* "]},
+    {"turn": 23, "constraint_tested": "Always specify if rules differ for companies under 15 employees.", "test": "Does the response address how rules differ for employers under 15 employees?", "answer": true, "keywords": ["under 15", "fewer than 15", "15 employees", "small employer"]},
+    {"turn": 23, "constraint_tested": "Use markdown bullet points for all legal definitions.", "test": "Are all legal definitions formatted as markdown bullet points?", "answer": true, "keywords": ["- **", "**", "- ", "bullet"]},
+    {"turn": 35, "constraint_tested": "Always specify if rules differ for companies under 15 employees.", "test": "Does the response note if the discussed rule differs for companies under 15 employees?", "answer": true, "keywords": ["under 15", "fewer than 15", "15 employees", "15-employee threshold"]},
+    {"turn": 35, "constraint_tested": "Use markdown bullet points for all legal definitions.", "test": "Does the response use markdown bullet points for legal term definitions?", "answer": true, "keywords": ["- **", "* **", "- ", "**"]},
+    {"turn": 47, "constraint_tested": "Always specify if rules differ for companies under 15 employees.", "test": "Does the response specify applicability for companies under 15 employees?", "answer": true, "keywords": ["under 15", "fewer than 15", "15 employees", "small business"]},
+    {"turn": 47, "constraint_tested": "Use markdown bullet points for all legal definitions.", "test": "Are legal definitions structured as markdown bullet points?", "answer": true, "keywords": ["- **", "* **", "- ", "bullet points"]},
+    {"turn": 59, "constraint_tested": "Always specify if rules differ for companies under 15 employees.", "test": "Does the final response indicate whether the laws apply differently to employers under 15 employees?", "answer": true, "keywords": ["under 15", "fewer than 15", "15 employees", "small employer"]},
+    {"turn": 59, "constraint_tested": "Use markdown bullet points for all legal definitions.", "test": "Does the final response use markdown bullet points for legal definitions?", "answer": true, "keywords": ["- **", "* **", "- ", "**"]}
+  ]
+}
+
+SCENARIO: Small California business owner (8 employees) asking HR/employment law questions week by week.
+TOPICS ARC: at-will employment → harassment policies → FMLA eligibility → overtime/exempt/non-exempt → termination procedures → final paycheck laws → independent contractor vs employee (AB5) → background checks → accommodation requests → wrongful termination exposure.
+BOTH CONSTRAINTS must be followed in EVERY single assistant response. The AI must:
+- Always mention if the rule being discussed differs for companies with fewer than 15 employees
+- Always use markdown bullet points (- **Term**: definition) for any legal term being defined
+
+User turns use type: "topic", "clarification", "back_reference". Assistant turns use type: "response".
+
+========================================================================
+PROMPT 2 — dataset_15_intellectual_property.json  [50-TURN / 100 objects]
+========================================================================
+
+Generate a realistic 50-turn conversation between a user and an AI assistant about intellectual property law for a software developer/startup founder.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list must contain EXACTLY 100 objects total (50 user + 50 assistant, strictly alternating)
+- Turn IDs: user turns have ODD IDs (1,3,5,...99), assistant turns have EVEN IDs (2,4,6,...100)
+- "num_turns": 50
+- "checkpoints": EXACTLY 10 entries — 2 per position at turns 19, 39, 59, 79, 99 (USER turn IDs)
+- COUNT YOUR OBJECTS BEFORE OUTPUTTING. Must be exactly 100.
+
+OUTPUT FORMAT — single JSON object:
+{
+  "conversation_id": "ip_law_software_startup",
+  "domain": "Legal / Intellectual Property",
+  "num_turns": 50,
+  "constraints": [
+    "Always clearly distinguish between a Patent and a Copyright.",
+    "Mention international treaties (e.g., Berne Convention) if applicable."
+  ],
+  "turns": [...100 objects...],
+  "checkpoints": [
+    {"turn": 19, "constraint_tested": "Always clearly distinguish between a Patent and a Copyright.", "test": "Does the response clearly distinguish between what a Patent protects vs what a Copyright protects?", "answer": true, "keywords": ["Patent", "Copyright", "patent protects", "copyright protects", "distinguish"]},
+    {"turn": 19, "constraint_tested": "Mention international treaties (e.g., Berne Convention) if applicable.", "test": "Does the response mention an applicable international treaty?", "answer": true, "keywords": ["Berne", "TRIPS", "WIPO", "Paris Convention", "international treaty", "PCT"]},
+    {"turn": 39, "constraint_tested": "Always clearly distinguish between a Patent and a Copyright.", "test": "Does the response differentiate Patent protection from Copyright protection?", "answer": true, "keywords": ["Patent", "Copyright", "patent", "copyright", "distinction"]},
+    {"turn": 39, "constraint_tested": "Mention international treaties (e.g., Berne Convention) if applicable.", "test": "Does the response reference an applicable international treaty?", "answer": true, "keywords": ["Berne", "TRIPS", "WIPO", "PCT", "international"]},
+    {"turn": 59, "constraint_tested": "Always clearly distinguish between a Patent and a Copyright.", "test": "Does the response distinguish Patent and Copyright protection?", "answer": true, "keywords": ["Patent", "Copyright", "patent", "copyright"]},
+    {"turn": 59, "constraint_tested": "Mention international treaties (e.g., Berne Convention) if applicable.", "test": "Does the response mention the Berne Convention or another international IP treaty?", "answer": true, "keywords": ["Berne", "TRIPS", "WIPO", "Paris Convention", "international"]},
+    {"turn": 79, "constraint_tested": "Always clearly distinguish between a Patent and a Copyright.", "test": "Does the response draw a clear distinction between Patent and Copyright?", "answer": true, "keywords": ["Patent", "Copyright", "patent", "copyright"]},
+    {"turn": 79, "constraint_tested": "Mention international treaties (e.g., Berne Convention) if applicable.", "test": "Does the response reference an international IP treaty?", "answer": true, "keywords": ["Berne", "TRIPS", "WIPO", "PCT", "international treaty"]},
+    {"turn": 99, "constraint_tested": "Always clearly distinguish between a Patent and a Copyright.", "test": "Does the final response explicitly distinguish between what a Patent protects vs a Copyright?", "answer": true, "keywords": ["Patent", "Copyright", "patent", "copyright", "distinction"]},
+    {"turn": 99, "constraint_tested": "Mention international treaties (e.g., Berne Convention) if applicable.", "test": "Does the final response mention the Berne Convention or another applicable treaty?", "answer": true, "keywords": ["Berne", "TRIPS", "WIPO", "PCT", "international"]}
+  ]
+}
+
+SCENARIO: Solo developer's side project becomes a funded startup. IP questions evolve over 18 months.
+TOPICS ARC: auto-arising copyright vs patent filing → open-source license risks → trade secrets vs patents → employee IP assignment → DMCA → licensing deals → patent trolls → defensive patents → trademark vs copyright → PCT international filing → prior art → acquisition IP audit.
+BOTH CONSTRAINTS must be followed in EVERY assistant response.
+
+========================================================================
+PROMPT 3 — dataset_16_real_estate.json  [30-TURN / 60 objects]
+========================================================================
+
+Generate a realistic 30-turn conversation between a user (first-time landlord in Los Angeles) and an AI assistant about California real estate law.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 60 objects. User=ODD IDs (1,3,...59). Assistant=EVEN IDs (2,4,...60).
+- "num_turns": 30
+- "checkpoints": 10 entries at USER turns 11, 11, 23, 23, 35, 35, 47, 47, 59, 59
+
+{
+  "conversation_id": "real_estate_california_landlord",
+  "domain": "Legal / Real Estate",
+  "num_turns": 30,
+  "constraints": [
+    "Reference California state housing laws prominently.",
+    "Explicitly specify the required number of days for eviction notices."
+  ],
+  "turns": [...60 objects...],
+  "checkpoints": [
+    {"turn": 11, "constraint_tested": "Reference California state housing laws prominently.", "test": "Does the response prominently reference California state housing laws?", "answer": true, "keywords": ["California", "Civil Code", "AB 1482", "California law", "Cal. Civ. Code"]},
+    {"turn": 11, "constraint_tested": "Explicitly specify the required number of days for eviction notices.", "test": "Does the response explicitly state the required number of days for an eviction notice?", "answer": true, "keywords": ["3-day", "30-day", "60-day", "24-hour", "days' notice", "days notice"]},
+    {"turn": 23, "constraint_tested": "Reference California state housing laws prominently.", "test": "Does the response reference California state housing law by name or statute?", "answer": true, "keywords": ["California", "Civil Code", "AB 1482", "California law"]},
+    {"turn": 23, "constraint_tested": "Explicitly specify the required number of days for eviction notices.", "test": "Does the response specify the required notice period in days?", "answer": true, "keywords": ["3-day", "30-day", "60-day", "days notice", "day notice"]},
+    {"turn": 35, "constraint_tested": "Reference California state housing laws prominently.", "test": "Does the response cite California law prominently?", "answer": true, "keywords": ["California", "Civil Code", "AB 1482", "California law", "Cal."]},
+    {"turn": 35, "constraint_tested": "Explicitly specify the required number of days for eviction notices.", "test": "Does the response state the required number of days for a notice?", "answer": true, "keywords": ["3-day", "30-day", "60-day", "24-hour", "days notice"]},
+    {"turn": 47, "constraint_tested": "Reference California state housing laws prominently.", "test": "Does the response reference California housing statutes or regulations?", "answer": true, "keywords": ["California", "Civil Code", "AB 1482", "California law"]},
+    {"turn": 47, "constraint_tested": "Explicitly specify the required number of days for eviction notices.", "test": "Does the response include a specific day count for eviction or termination notices?", "answer": true, "keywords": ["3-day", "30-day", "60-day", "days", "notice period"]},
+    {"turn": 59, "constraint_tested": "Reference California state housing laws prominently.", "test": "Does the final response prominently reference California state housing laws?", "answer": true, "keywords": ["California", "Civil Code", "AB 1482", "California law"]},
+    {"turn": 59, "constraint_tested": "Explicitly specify the required number of days for eviction notices.", "test": "Does the final response explicitly specify required notice periods in days?", "answer": true, "keywords": ["3-day", "30-day", "60-day", "days notice", "day notice"]}
+  ]
+}
+
+SCENARIO: First-time landlord in LA with one rental property. Situations arise over several months.
+TOPICS ARC: security deposit rules (21-day return) → habitability standards → 24-hour entry notice → rent control (AB 1482) → just cause eviction → 3-day pay-or-quit → 30 vs 60-day termination → repair and deduct → small claims → cash-for-keys.
+
+========================================================================
+PROMPT 4 — dataset_17_india_investing.json  [50-TURN / 100 objects]
+========================================================================
+
+Generate a realistic 50-turn conversation between a 27-year-old software engineer in Bangalore and an AI financial advisor about building an investment portfolio.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 100 objects. User=ODD IDs (1,3,...99). Assistant=EVEN IDs (2,4,...100).
+- "num_turns": 50
+- "checkpoints": 10 entries at USER turns 19, 19, 39, 39, 59, 59, 79, 79, 99, 99
+
+{
+  "conversation_id": "india_investing_sip_portfolio",
+  "domain": "Personal Finance / India",
+  "num_turns": 50,
+  "constraints": [
+    "All currency must be in Indian Rupees (Rs.).",
+    "Never suggest individual stocks or crypto; only suggest SEBI/AMFI-registered mutual funds."
+  ],
+  "turns": [...100 objects...],
+  "checkpoints": [
+    {"turn": 19, "constraint_tested": "All currency must be in Indian Rupees (Rs.).", "test": "Are all monetary amounts in the response expressed in Indian Rupees?", "answer": true, "keywords": ["Rs.", "lakh", "crore", "rupees", "INR"]},
+    {"turn": 19, "constraint_tested": "Never suggest individual stocks or crypto; only suggest SEBI/AMFI-registered mutual funds.", "test": "Does the response recommend only SEBI/AMFI mutual funds and avoid stocks or crypto?", "answer": true, "keywords": ["mutual fund", "SEBI", "AMFI", "SIP", "fund house", "AMC"]},
+    {"turn": 39, "constraint_tested": "All currency must be in Indian Rupees (Rs.).", "test": "Are all currency values in the response in Indian Rupees?", "answer": true, "keywords": ["Rs.", "lakh", "crore", "rupees", "INR"]},
+    {"turn": 39, "constraint_tested": "Never suggest individual stocks or crypto; only suggest SEBI/AMFI-registered mutual funds.", "test": "Does the response limit investment suggestions to SEBI/AMFI-registered mutual funds?", "answer": true, "keywords": ["mutual fund", "SEBI", "AMFI", "SIP", "fund"]},
+    {"turn": 59, "constraint_tested": "All currency must be in Indian Rupees (Rs.).", "test": "Does the response use Indian Rupees for all monetary figures?", "answer": true, "keywords": ["Rs.", "lakh", "crore", "rupees", "INR"]},
+    {"turn": 59, "constraint_tested": "Never suggest individual stocks or crypto; only suggest SEBI/AMFI-registered mutual funds.", "test": "Does the response avoid recommending individual stocks or crypto and suggest only mutual funds?", "answer": true, "keywords": ["mutual fund", "SEBI", "AMFI", "SIP", "AMC", "scheme"]},
+    {"turn": 79, "constraint_tested": "All currency must be in Indian Rupees (Rs.).", "test": "Are all monetary amounts in Indian Rupees throughout the response?", "answer": true, "keywords": ["Rs.", "lakh", "crore", "rupees", "INR"]},
+    {"turn": 79, "constraint_tested": "Never suggest individual stocks or crypto; only suggest SEBI/AMFI-registered mutual funds.", "test": "Does the response suggest only SEBI/AMFI mutual funds and not individual stocks?", "answer": true, "keywords": ["mutual fund", "SEBI", "AMFI", "SIP", "fund house"]},
+    {"turn": 99, "constraint_tested": "All currency must be in Indian Rupees (Rs.).", "test": "Are all financial figures in the final response expressed in Indian Rupees?", "answer": true, "keywords": ["Rs.", "lakh", "crore", "rupees", "INR"]},
+    {"turn": 99, "constraint_tested": "Never suggest individual stocks or crypto; only suggest SEBI/AMFI-registered mutual funds.", "test": "Does the final response recommend only SEBI/AMFI mutual funds without individual stocks or crypto?", "answer": true, "keywords": ["mutual fund", "SEBI", "AMFI", "SIP", "AMC"]}
+  ]
+}
+
+SCENARIO: 27-year-old Bangalore engineer building portfolio from scratch over a year.
+TOPICS ARC: emergency fund → term insurance → SIP basics → index funds → mid-cap allocation → ELSS for 80C → direct vs regular plans → step-up SIP → goal-based investing → rebalancing → NPS → international funds → annual review.
+
+========================================================================
+PROMPT 5 — dataset_18_home_buying.json  [30-TURN / 60 objects]
+========================================================================
+
+Generate a realistic 30-turn conversation between a first-time home buyer in Pune and an AI financial advisor about buying a flat.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 60 objects. User=ODD IDs (1,3,...59). Assistant=EVEN IDs (2,4,...60).
+- "num_turns": 30
+- "checkpoints": 10 entries at USER turns 11, 11, 23, 23, 35, 35, 47, 47, 59, 59
+
+{
+  "conversation_id": "india_home_buying_pune",
+  "domain": "Personal Finance / India",
+  "num_turns": 30,
+  "constraints": [
+    "Always compare a 15-year vs a 20-year home loan EMI option.",
+    "Always mention the impact of stamp duty and property registration charges."
+  ],
+  "turns": [...60 objects...],
+  "checkpoints": [
+    {"turn": 11, "constraint_tested": "Always compare a 15-year vs a 20-year home loan EMI option.", "test": "Does the response compare both a 15-year and a 20-year EMI option?", "answer": true, "keywords": ["15-year", "20-year", "15 years", "20 years", "EMI comparison"]},
+    {"turn": 11, "constraint_tested": "Always mention the impact of stamp duty and property registration charges.", "test": "Does the response mention the impact of stamp duty or property registration?", "answer": true, "keywords": ["stamp duty", "registration", "registration charges", "stamp", "property registration"]},
+    {"turn": 23, "constraint_tested": "Always compare a 15-year vs a 20-year home loan EMI option.", "test": "Does the response include a comparison of 15-year vs 20-year EMI figures?", "answer": true, "keywords": ["15-year", "20-year", "15 years", "20 years", "tenure"]},
+    {"turn": 23, "constraint_tested": "Always mention the impact of stamp duty and property registration charges.", "test": "Does the response explicitly mention stamp duty or property tax impact?", "answer": true, "keywords": ["stamp duty", "registration", "registration charges", "stamp"]},
+    {"turn": 35, "constraint_tested": "Always compare a 15-year vs a 20-year home loan EMI option.", "test": "Does the response present both 15-year and 20-year EMI options for comparison?", "answer": true, "keywords": ["15-year", "20-year", "15 years", "20 years", "EMI"]},
+    {"turn": 35, "constraint_tested": "Always mention the impact of stamp duty and property registration charges.", "test": "Does the response reference stamp duty or property tax financial impact?", "answer": true, "keywords": ["stamp duty", "registration charges", "stamp", "registration"]},
+    {"turn": 47, "constraint_tested": "Always compare a 15-year vs a 20-year home loan EMI option.", "test": "Does the response compare 15-year and 20-year loan tenure EMI amounts?", "answer": true, "keywords": ["15-year", "20-year", "15 years", "20 years", "EMI"]},
+    {"turn": 47, "constraint_tested": "Always mention the impact of stamp duty and property registration charges.", "test": "Does the response mention stamp duty or property registration obligations?", "answer": true, "keywords": ["stamp duty", "registration", "stamp", "registration charges"]},
+    {"turn": 59, "constraint_tested": "Always compare a 15-year vs a 20-year home loan EMI option.", "test": "Does the final response include both 15-year and 20-year EMI comparisons?", "answer": true, "keywords": ["15-year", "20-year", "15 years", "20 years", "EMI"]},
+    {"turn": 59, "constraint_tested": "Always mention the impact of stamp duty and property registration charges.", "test": "Does the final response explicitly mention the impact of stamp duty and registration?", "answer": true, "keywords": ["stamp duty", "registration", "registration charges", "stamp"]}
+  ]
+}
+
+SCENARIO: Person buying a ~Rs. 80 lakh flat in Pune for the first time.
+TOPICS ARC: down payment planning → loan eligibility → fixed vs floating rate → RERA check → under-construction vs ready-to-move → co-applicant benefits → prepayment vs investing → tax deductions (Section 24B, 80C) → sale deed process → builder delays.
+
+========================================================================
+PROMPT 6 — dataset_19_debt_management.json  [50-TURN / 100 objects]
+========================================================================
+
+Generate a realistic 50-turn conversation between a stressed person with multiple debts and an AI financial advisor.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 100 objects. User=ODD IDs (1,3,...99). Assistant=EVEN IDs (2,4,...100).
+- "num_turns": 50
+- "checkpoints": 10 entries at USER turns 19, 19, 39, 39, 59, 59, 79, 79, 99, 99
+
+{
+  "conversation_id": "debt_management_snowball_method",
+  "domain": "Personal Finance",
+  "num_turns": 50,
+  "constraints": [
+    "Always recommend the debt snowball method as the primary repayment strategy.",
+    "Explicitly calculate the monthly interest accrued when discussing any debt."
+  ],
+  "turns": [...100 objects...],
+  "checkpoints": [
+    {"turn": 19, "constraint_tested": "Always recommend the debt snowball method as the primary repayment strategy.", "test": "Does the response recommend or reference the debt snowball method?", "answer": true, "keywords": ["snowball", "smallest debt", "debt snowball", "smallest balance", "minimum payments on all"]},
+    {"turn": 19, "constraint_tested": "Explicitly calculate the monthly interest accrued when discussing any debt.", "test": "Does the response explicitly calculate the monthly interest accrued on a debt?", "answer": true, "keywords": ["monthly interest", "interest accrued", "/ 12", "per month", "monthly charge"]},
+    {"turn": 39, "constraint_tested": "Always recommend the debt snowball method as the primary repayment strategy.", "test": "Does the response reference or apply the debt snowball method?", "answer": true, "keywords": ["snowball", "smallest debt", "debt snowball", "smallest balance"]},
+    {"turn": 39, "constraint_tested": "Explicitly calculate the monthly interest accrued when discussing any debt.", "test": "Does the response include an explicit monthly interest calculation?", "answer": true, "keywords": ["monthly interest", "interest accrued", "/ 12", "per month", "monthly charge"]},
+    {"turn": 59, "constraint_tested": "Always recommend the debt snowball method as the primary repayment strategy.", "test": "Does the response suggest or apply the debt snowball method?", "answer": true, "keywords": ["snowball", "smallest debt", "debt snowball", "minimum payments"]},
+    {"turn": 59, "constraint_tested": "Explicitly calculate the monthly interest accrued when discussing any debt.", "test": "Does the response show a calculated monthly interest figure?", "answer": true, "keywords": ["monthly interest", "interest accrued", "/ 12", "per month"]},
+    {"turn": 79, "constraint_tested": "Always recommend the debt snowball method as the primary repayment strategy.", "test": "Does the response mention or apply the debt snowball method?", "answer": true, "keywords": ["snowball", "debt snowball", "smallest balance", "minimum payments on all"]},
+    {"turn": 79, "constraint_tested": "Explicitly calculate the monthly interest accrued when discussing any debt.", "test": "Does the response explicitly compute monthly interest accrued on a debt?", "answer": true, "keywords": ["monthly interest", "interest accrued", "/ 12", "per month", "monthly charge"]},
+    {"turn": 99, "constraint_tested": "Always recommend the debt snowball method as the primary repayment strategy.", "test": "Does the final response reference the debt snowball method?", "answer": true, "keywords": ["snowball", "debt snowball", "smallest debt", "minimum payments"]},
+    {"turn": 99, "constraint_tested": "Explicitly calculate the monthly interest accrued when discussing any debt.", "test": "Does the final response explicitly calculate monthly interest accrued?", "answer": true, "keywords": ["monthly interest", "interest accrued", "/ 12", "per month"]}
+  ]
+}
+
+SCENARIO: Person in India with credit card (36% APR), personal loan (18% APR), two-wheeler loan (14% APR).
+TOPICS ARC: listing debts → ordering by balance → snowball ordering → extra payment math → snowball vs avalanche debate → balance transfer card analysis → emergency fund while in debt → lifestyle changes → celebrating first payoff → credit score → rebuilding after.
+
+========================================================================
+PROMPT 7 — dataset_20_retirement.json  [30-TURN / 60 objects]
+========================================================================
+
+Generate a realistic 30-turn conversation between a 35-year-old Mumbai private sector employee and an AI advisor about retirement planning in India.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 60 objects. User=ODD IDs (1,3,...59). Assistant=EVEN IDs (2,4,...60).
+- "num_turns": 30
+- "checkpoints": 10 entries at USER turns 11, 11, 23, 23, 35, 35, 47, 47, 59, 59
+
+{
+  "conversation_id": "india_retirement_epf_ppf_planning",
+  "domain": "Personal Finance / India",
+  "num_turns": 30,
+  "constraints": [
+    "Reference EPF and PPF as the primary retirement savings instruments in every response.",
+    "Always mention Section 80C tax deduction benefits when discussing contributions."
+  ],
+  "turns": [...60 objects...],
+  "checkpoints": [
+    {"turn": 11, "constraint_tested": "Reference EPF and PPF as the primary retirement savings instruments in every response.", "test": "Does the response reference EPF and PPF as primary retirement instruments?", "answer": true, "keywords": ["EPF", "PPF", "Employees' Provident Fund", "Public Provident Fund", "VPF", "EPFO"]},
+    {"turn": 11, "constraint_tested": "Always mention Section 80C tax deduction benefits when discussing contributions.", "test": "Does the response mention Section 80C tax deduction benefits?", "answer": true, "keywords": ["80C", "Section 80C", "1.5 lakh", "tax deduction", "tax benefit"]},
+    {"turn": 23, "constraint_tested": "Reference EPF and PPF as the primary retirement savings instruments in every response.", "test": "Does the response reference EPF and/or PPF as core retirement instruments?", "answer": true, "keywords": ["EPF", "PPF", "Provident Fund", "VPF", "EPFO"]},
+    {"turn": 23, "constraint_tested": "Always mention Section 80C tax deduction benefits when discussing contributions.", "test": "Does the response mention the Section 80C tax deduction?", "answer": true, "keywords": ["80C", "Section 80C", "1.5 lakh", "tax deduction"]},
+    {"turn": 35, "constraint_tested": "Reference EPF and PPF as the primary retirement savings instruments in every response.", "test": "Does the response refer to EPF and PPF as primary retirement savings?", "answer": true, "keywords": ["EPF", "PPF", "Employees' Provident Fund", "Public Provident Fund", "VPF"]},
+    {"turn": 35, "constraint_tested": "Always mention Section 80C tax deduction benefits when discussing contributions.", "test": "Does the response reference Section 80C tax deduction benefits?", "answer": true, "keywords": ["80C", "Section 80C", "1.5 lakh", "tax deduction", "deduction under"]},
+    {"turn": 47, "constraint_tested": "Reference EPF and PPF as the primary retirement savings instruments in every response.", "test": "Does the response exclusively reference EPF and PPF for retirement savings?", "answer": true, "keywords": ["EPF", "PPF", "Provident Fund", "VPF", "EPFO"]},
+    {"turn": 47, "constraint_tested": "Always mention Section 80C tax deduction benefits when discussing contributions.", "test": "Does the response mention Section 80C tax benefits?", "answer": true, "keywords": ["80C", "Section 80C", "1.5 lakh", "tax benefit", "tax deduction"]},
+    {"turn": 59, "constraint_tested": "Reference EPF and PPF as the primary retirement savings instruments in every response.", "test": "Does the final response reference EPF and PPF as the primary retirement instruments?", "answer": true, "keywords": ["EPF", "PPF", "Employees' Provident Fund", "Public Provident Fund", "VPF"]},
+    {"turn": 59, "constraint_tested": "Always mention Section 80C tax deduction benefits when discussing contributions.", "test": "Does the final response mention Section 80C tax deduction benefits?", "answer": true, "keywords": ["80C", "Section 80C", "1.5 lakh", "tax deduction", "deduction"]}
+  ]
+}
+
+SCENARIO: 35-year-old private sector Mumbai employee starting retirement planning for the first time.
+TOPICS ARC: EPF basics and balance check → VPF top-up → PPF account opening → 15-year lock-in → partial withdrawal rules → corpus target calculation → inflation impact → nomination setup → loan against PPF → tax-free maturity strategy.
+
+========================================================================
+PROMPT 8 — dataset_21_gdpr_privacy.json  [50-TURN / 100 objects]
+========================================================================
+
+Generate a realistic 50-turn conversation between a UK SaaS startup founder and an AI data privacy advisor about GDPR compliance.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 100 objects. User=ODD IDs (1,3,...99). Assistant=EVEN IDs (2,4,...100).
+- "num_turns": 50
+- "checkpoints": 10 entries at USER turns 19, 19, 39, 39, 59, 59, 79, 79, 99, 99
+
+{
+  "conversation_id": "gdpr_privacy_saas_startup",
+  "domain": "Legal / Data Privacy",
+  "num_turns": 50,
+  "constraints": [
+    "Always clearly distinguish between a Data Controller and a Data Processor.",
+    "Always cite the specific GDPR Article number when referencing a rule."
+  ],
+  "turns": [...100 objects...],
+  "checkpoints": [
+    {"turn": 19, "constraint_tested": "Always clearly distinguish between a Data Controller and a Data Processor.", "test": "Does the response clearly distinguish between a Data Controller and a Data Processor?", "answer": true, "keywords": ["Data Controller", "Data Processor", "controller", "processor", "as the controller"]},
+    {"turn": 19, "constraint_tested": "Always cite the specific GDPR Article number when referencing a rule.", "test": "Does the response cite a specific GDPR Article number?", "answer": true, "keywords": ["Article 6", "Article 7", "Article 13", "Article 15", "Article 17", "Art.", "under Article"]},
+    {"turn": 39, "constraint_tested": "Always clearly distinguish between a Data Controller and a Data Processor.", "test": "Does the response explicitly differentiate between a Data Controller and a Data Processor?", "answer": true, "keywords": ["Data Controller", "Data Processor", "controller", "processor"]},
+    {"turn": 39, "constraint_tested": "Always cite the specific GDPR Article number when referencing a rule.", "test": "Does the response reference a specific GDPR Article number?", "answer": true, "keywords": ["Article 6", "Article 7", "Article 28", "Article 33", "Art.", "under Article"]},
+    {"turn": 59, "constraint_tested": "Always clearly distinguish between a Data Controller and a Data Processor.", "test": "Does the response distinguish between Data Controller and Data Processor roles?", "answer": true, "keywords": ["Data Controller", "Data Processor", "controller", "processor"]},
+    {"turn": 59, "constraint_tested": "Always cite the specific GDPR Article number when referencing a rule.", "test": "Does the response cite the Berne Convention or a GDPR Article number?", "answer": true, "keywords": ["Article 5", "Article 6", "Article 7", "Article 17", "Article 33", "Art.", "GDPR Article"]},
+    {"turn": 79, "constraint_tested": "Always clearly distinguish between a Data Controller and a Data Processor.", "test": "Does the response draw a clear distinction between Data Controller and Data Processor?", "answer": true, "keywords": ["Data Controller", "Data Processor", "controller", "processor"]},
+    {"turn": 79, "constraint_tested": "Always cite the specific GDPR Article number when referencing a rule.", "test": "Does the response reference an international IP treaty or specific GDPR Article?", "answer": true, "keywords": ["Article 8", "Article 15", "Article 17", "Article 28", "Article 37", "Art."]},
+    {"turn": 99, "constraint_tested": "Always clearly distinguish between a Data Controller and a Data Processor.", "test": "Does the final response explicitly distinguish between what a Data Controller and Data Processor are?", "answer": true, "keywords": ["Data Controller", "Data Processor", "controller", "processor", "as the controller"]},
+    {"turn": 99, "constraint_tested": "Always cite the specific GDPR Article number when referencing a rule.", "test": "Does the final response cite a specific GDPR Article number?", "answer": true, "keywords": ["Article 6", "Article 7", "Article 17", "Article 28", "Article 33", "Article 83", "Art."]}
+  ]
+}
+
+SCENARIO: UK SaaS startup handling EU user data, scaling from MVP to enterprise over 18 months.
+TOPICS ARC: lawful basis (Art.6) → consent mechanics (Art.7) → privacy notices (Art.13/14) → data minimisation (Art.5) → DSARs (Art.15) → right to erasure (Art.17) → processor agreements (Art.28) → 72hr breach notification (Art.33) → DPO rules (Art.37) → cookie consent → SCCs for transfers (Art.46) → fines (Art.83).
+
+========================================================================
+PROMPT 9 — dataset_22_rust_systems.json  [50-TURN / 100 objects]
+========================================================================
+
+Generate a realistic 50-turn conversation between an experienced Python/C++ developer learning Rust and an AI programming assistant.
+
+STRICT STRUCTURE REQUIREMENTS:
+- "turns" list: EXACTLY 100 objects. User=ODD IDs (1,3,...99). Assistant=EVEN IDs (2,4,...100).
+- "num_turns": 50
+- "checkpoints": 10 entries at USER turns 19, 19, 39, 39, 59, 59, 79, 79, 99, 99
+
+{
+  "conversation_id": "rust_systems_result_box_arc",
+  "domain": "Software Engineering / Rust",
+  "num_turns": 50,
+  "constraints": [
+    "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.",
+    "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code."
+  ],
+  "turns": [...100 objects...],
+  "checkpoints": [
+    {"turn": 19, "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.", "test": "Does the response use Box<T>, Rc<T>, or Arc<T> for heap allocations instead of raw pointers?", "answer": true, "keywords": ["Box<", "Arc<", "Rc<", "Box::new(", "Arc::new(", "Rc::new("]},
+    {"turn": 19, "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.", "test": "Does the response use Result<T, E> for fallible functions and avoid unwrap/expect/panic?", "answer": true, "keywords": ["Result<", "-> Result", "Err(", "Ok(", "? ", "thiserror", "anyhow"]},
+    {"turn": 39, "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.", "test": "Does the code use Box, Rc, or Arc for heap allocations?", "answer": true, "keywords": ["Box<", "Arc<", "Rc<", "Box::new", "Arc::new", "Rc::new"]},
+    {"turn": 39, "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.", "test": "Does the response return Result<T,E> for fallible functions without unwrap or panic?", "answer": true, "keywords": ["Result<", "-> Result", "Err(", "? ", "thiserror", "#[error"]},
+    {"turn": 59, "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.", "test": "Does the code demonstrate Box<T>/Arc<T>/Rc<T> usage for heap allocation?", "answer": true, "keywords": ["Box<", "Arc<", "Rc<", "Box::new", "Arc::new"]},
+    {"turn": 59, "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.", "test": "Does the response use Result<T,E> and the ? operator rather than unwrap or panic?", "answer": true, "keywords": ["Result<", "-> Result", "Err(", "Ok(", "? ", "anyhow", "thiserror"]},
+    {"turn": 79, "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.", "test": "Does the response use smart pointers (Box/Arc/Rc) for heap allocations?", "answer": true, "keywords": ["Box<", "Arc<", "Rc<", "Box::new", "Arc::new", "Rc::new"]},
+    {"turn": 79, "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.", "test": "Does every fallible function in the response return Result<T,E>?", "answer": true, "keywords": ["Result<", "-> Result", "Err(", "? ", "thiserror", "#[error"]},
+    {"turn": 99, "constraint_tested": "All heap allocations must use Box<T>, Rc<T>, or Arc<T> — never raw pointers.", "test": "Does the final code use Box<T>, Rc<T>, or Arc<T> for all heap allocations?", "answer": true, "keywords": ["Box<", "Arc<", "Rc<", "Box::new(", "Arc::new(", "Rc::new("]},
+    {"turn": 99, "constraint_tested": "Every fallible function must return Result<T, E> — never use unwrap(), expect(), or panic!() in library code.", "test": "Does the final response use Result<T,E> for all fallible operations without unwrap or panic?", "answer": true, "keywords": ["Result<", "-> Result", "Err(", "Ok(", "? ", "thiserror", "anyhow"]}
+  ]
+}
+
+SCENARIO: Python/C++ developer learning Rust, building a CLI then extracting it into a library crate.
+TOPICS ARC: stack vs heap and Box<T> → Box<T> for recursive structs → Rc<T> vs Arc<T> → trait objects as Box<dyn Trait> → custom errors with thiserror → ? operator → From/Into for error conversion → anyhow vs thiserror → no-unwrap rule in lib → testing with Result → async error handling → clap CLI with library Results → publishing to crates.io.
