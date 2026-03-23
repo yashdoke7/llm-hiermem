@@ -200,56 +200,92 @@ def _collect_checkpoints(conv: Dict[str, Any]) -> List[Dict[str, Any]]:
     return [dedup[t] for t in sorted(dedup.keys())]
 
 
-def _ensure_laaj_template(dataset_dir: Path, dataset_system_results: Dict[str, List[Dict[str, Any]]], judge_model: str) -> Path:
-    laaj_path = dataset_dir / "laaj.json"
-    if laaj_path.exists():
-        return laaj_path
-
-    judgments = []
-    for system_name, convos in dataset_system_results.items():
-        for conv in convos:
-            cid = conv.get("conversation_id", "unknown")
-            for cp in _collect_checkpoints(conv):
-                judgments.append(
-                    {
-                        "system": system_name,
-                        "conversation_id": cid,
-                        "turn": cp.get("turn"),
-                        "constraint_tested": cp.get("constraint_tested", ""),
-                        "prompt": cp.get("test", ""),
-                        "assistant_response": "",
-                        "constraint_adherence": None,
-                        "response_quality": None,
-                        "conversational_coherence": None,
-                        "weighted_score": None,
-                        "reasoning": "",
-                    }
-                )
-
-    template = {
-        "metadata": {
-            "judge_model": judge_model,
-            "instructions": (
-                "Fill each judgment with scores in [1,10]. "
-                "weighted_score = 0.5*constraint_adherence + 0.3*response_quality + 0.2*conversational_coherence"
-            ),
-        },
-        "judgments": judgments,
-    }
-
-    with laaj_path.open("w", encoding="utf-8") as f:
-        json.dump(template, f, ensure_ascii=False, indent=2)
-    return laaj_path
-
-
 def _load_laaj_scores(laaj_path: Path) -> Dict[Tuple[str, str, int], float]:
+    """Load judge scores from a laaj.json file.
+
+    Accepts TWO schemas:
+
+    Schema A — flat template (produced by _ensure_laaj_template):
+        { "judgments": [{ "system": "hiermem", "conversation_id": "...",
+                          "turn": 19, "weighted_score": 9.85, ... }] }
+
+    Schema B — LAAJ prompt output (produced by GPT-4.1 with the evaluation prompt):
+        { "system_evaluations": { "system_a": { "checkpoints": [...] } },
+          "system_identity_reveal": { "system_a": "hiermem", ... },
+          "evaluation_metadata": { "benchmark": "sql_databases_parameterized_orm" } }
+
+    For Schema B, checkpoint turns are normalized using the formula:
+        dataset_turn = 2 * normalized_turn - 1
+    where normalized_turn is the Nth exchange number (10, 20, 30...).
+    This maps exchange 10 -> turn 19, exchange 20 -> turn 39, etc.
+
+    Returns dict keyed by (system_name, conversation_id, dataset_turn) -> weighted_score.
+    """
     if not laaj_path.exists():
         return {}
     with laaj_path.open("r", encoding="utf-8") as f:
         payload = json.load(f)
 
-    judgments = payload.get("judgments", []) if isinstance(payload, dict) else []
+    if not isinstance(payload, dict):
+        return {}
+
     scores: Dict[Tuple[str, str, int], float] = {}
+
+    # ── Schema B: LAAJ prompt output (system_evaluations + system_identity_reveal) ──
+    if "system_evaluations" in payload and "system_identity_reveal" in payload:
+        identity: Dict[str, str] = {
+            k: v for k, v in payload["system_identity_reveal"].items()
+            if k != "ranked_reveal"
+        }
+        meta = payload.get("evaluation_metadata", {})
+        # conversation_id comes from benchmark field in metadata
+        conversation_id = str(meta.get("benchmark", "unknown"))
+        sys_evals = payload["system_evaluations"]
+
+        for sys_key, sys_data in sys_evals.items():
+            real_name = identity.get(sys_key, sys_key)
+            for cp in sys_data.get("checkpoints", []):
+                # LAAJ prompt stores exchange number in "turn" (10, 20, 30...)
+                # normalized_turn may also be present — use whichever gives an integer
+                raw_turn = cp.get("turn")
+                norm_turn = cp.get("normalized_turn")
+
+                # Convert exchange number -> dataset user turn ID (odd number)
+                # If normalized_turn is present and raw_turn looks like an exchange number
+                # (i.e., it's small relative to conversation length), convert it.
+                # Rule: if raw_turn is even and <= conversation_length, treat as exchange number.
+                conv_len = int(meta.get("conversation_length", 50))
+                if raw_turn is not None and raw_turn % 2 == 0 and raw_turn <= conv_len:
+                    # Exchange N -> dataset user turn ID = 2N - 1
+                    dataset_turn = 2 * raw_turn - 1
+                elif raw_turn is not None and raw_turn % 2 == 1:
+                    # Already an odd dataset turn ID (shouldn't happen with this prompt, but safe)
+                    dataset_turn = raw_turn
+                elif norm_turn is not None:
+                    # Fall back to normalized_turn if raw is ambiguous
+                    dataset_turn = 2 * norm_turn - 1
+                else:
+                    continue
+
+                # Extract weighted_score — prefer direct field, compute from sub-scores if absent
+                ws = cp.get("weighted_score")
+                if ws is None:
+                    sub = cp.get("sub_scores", {})
+                    ca = sub.get("constraint_adherence")
+                    rq = sub.get("response_quality")
+                    cc = sub.get("conversational_coherence")
+                    if ca is not None and rq is not None and cc is not None:
+                        ws = round(0.5 * float(ca) + 0.3 * float(rq) + 0.2 * float(cc), 4)
+
+                if ws is None:
+                    continue
+
+                scores[(real_name, conversation_id, int(dataset_turn))] = float(ws)
+
+        return scores
+
+    # ── Schema A: flat template (judgments list) ──
+    judgments = payload.get("judgments", [])
     for j in judgments:
         try:
             system = str(j.get("system"))
@@ -626,7 +662,6 @@ def _write_visualization_status(
 def _build_arch_aggregation(
     arch_name: str,
     source_run_dir: str,
-    judge_model: str,
     all_dataset_metrics: Dict[str, Dict[str, Any]],
 ) -> Dict[str, Any]:
     """Aggregate per-dataset metrics into arch-level statistics per system.
@@ -670,7 +705,6 @@ def _build_arch_aggregation(
         "metadata": {
             "arch": arch_name,
             "source_run_dir": source_run_dir,
-            "judge_model": judge_model,
             "datasets_count": len(all_dataset_metrics),
             "cost_units": COST_PER_1M_TOKENS,
         },
@@ -680,78 +714,158 @@ def _build_arch_aggregation(
     }
 
 
-def process_run(run_dir: Path, arch: Optional[str], judge_model: str) -> Path:
-    """Main entry point. Reads results.json, writes dataset folders and arch JSON."""
+def process_single_dataset(run_dir: Path) -> Path:
+    """Process one dataset folder containing results.json + optional laaj.json.
+
+    All outputs are written INTO run_dir itself — no nested subfolder is created.
+
+    Expected layout:
+        run_dir/
+          results.json               <- benchmark output (required)
+          hiermem_detailed.json      <- written by run_benchmark, already there
+          raw_llm_detailed.json
+          rag_detailed.json
+          rag_summary_detailed.json
+          laaj.json                  <- you place this after GPT-4.1 judging (optional)
+
+    Outputs written into run_dir:
+          metrics_research.json
+          metrics_summary.csv
+          latency_comparison.png
+          token_composition.png
+          cost_vs_quality.png        <- only when laaj.json has scores
+          visualization_status.json
+    """
     results = _load_results(run_dir)
     grouped = _group_by_dataset(results)
 
-    arch_name = arch or run_dir.name
-    arch_root = run_dir.parent / arch_name
-    arch_root.mkdir(parents=True, exist_ok=True)
+    # Merge all conversations across groups (single-dataset folder has one group)
+    all_system_results: Dict[str, List[Dict[str, Any]]] = {}
+    dataset_name = run_dir.name
+    for dkey, sys_results in grouped.items():
+        for sys_name, convos in sys_results.items():
+            all_system_results.setdefault(sys_name, []).extend(convos)
+        dataset_name = dkey  # use the key derived from conversation_id / source_file
 
+    laaj_path = run_dir / "laaj.json"
+    laaj_scores = _load_laaj_scores(laaj_path)
+
+    metrics_payload = _build_metrics_for_dataset(dataset_name, all_system_results, laaj_scores)
+
+    with (run_dir / "metrics_research.json").open("w", encoding="utf-8") as f:
+        json.dump(metrics_payload, f, ensure_ascii=False, indent=2)
+
+    _write_summary_csv(run_dir, metrics_payload)
+
+    charts_written: List[str] = []
+    charts_skipped: List[str] = []
+
+    def _record(name: str, wrote: bool) -> None:
+        (charts_written if wrote else charts_skipped).append(name)
+
+    _record("cost_vs_quality.png",    _plot_quality_cost(run_dir, metrics_payload))
+    _record("latency_comparison.png", _plot_latency(run_dir, metrics_payload))
+    _record("token_composition.png",  _plot_token_breakdown(run_dir, metrics_payload))
+
+    _write_visualization_status(run_dir, metrics_payload, charts_written, charts_skipped)
+
+    status = metrics_payload.get("dataset_status", "unknown")
+    print(f"[{status}] {dataset_name}")
+    print(f"  charts written : {', '.join(charts_written) or 'none'}")
+    print(f"  charts skipped : {', '.join(charts_skipped) or 'none'}")
+    if laaj_scores:
+        for sys_name, row in metrics_payload["systems"].items():
+            print(f"  {sys_name:<14} judge={row.get('judge_score_avg')}  "
+                  f"cost/turn={row.get('avg_cost_per_turn_units')}")
+    else:
+        print("  No laaj.json found — place it here and re-run to get judge metrics.")
+
+    return run_dir
+
+
+def process_aggregate(arch_dir: Path) -> Path:
+    """Aggregate metrics_research.json from all dataset sub-folders into arch_metrics_research.json.
+
+    Call this after all individual datasets have been processed.
+
+    Layout:
+        arch_dir/
+          dataset_03_sql_databases/
+            metrics_research.json    <- must exist first
+          dataset_01_js_utils_final/
+            metrics_research.json
+          ...
+          arch_metrics_research.json <- written here by this function
+    """
     all_dataset_metrics: Dict[str, Dict[str, Any]] = {}
 
-    for dataset_name, dataset_system_results in sorted(grouped.items()):
-        dataset_dir = arch_root / _safe_name(dataset_name)
-        dataset_dir.mkdir(parents=True, exist_ok=True)
+    for sub in sorted(arch_dir.iterdir()):
+        if not sub.is_dir():
+            continue
+        mf = sub / "metrics_research.json"
+        if not mf.exists():
+            continue
+        payload = json.loads(mf.read_text(encoding="utf-8"))
+        dname = payload.get("dataset", sub.name)
+        all_dataset_metrics[dname] = payload
+        status = payload.get("dataset_status", "unknown")
+        scores = {s: r.get("judge_score_avg") for s, r in payload.get("systems", {}).items()}
+        print(f"  [{status}] {dname}: {scores}")
 
-        _write_dataset_payloads(dataset_dir, dataset_system_results)
-        laaj_path = _ensure_laaj_template(dataset_dir, dataset_system_results, judge_model)
-        laaj_scores = _load_laaj_scores(laaj_path)
+    if not all_dataset_metrics:
+        print(f"No metrics_research.json files found in sub-folders of {arch_dir}")
+        print("Run --run-dir on each dataset folder first.")
+        return arch_dir
 
-        metrics_payload = _build_metrics_for_dataset(dataset_name, dataset_system_results, laaj_scores)
-
-        with (dataset_dir / "metrics_research.json").open("w", encoding="utf-8") as f:
-            json.dump(metrics_payload, f, ensure_ascii=False, indent=2)
-
-        _write_summary_csv(dataset_dir, metrics_payload)
-
-        # Track which charts were written vs skipped so we can report honestly
-        charts_written: List[str] = []
-        charts_skipped: List[str] = []
-
-        def _record(name: str, wrote: bool) -> None:
-            (charts_written if wrote else charts_skipped).append(name)
-
-        _record("cost_vs_quality.png",    _plot_quality_cost(dataset_dir, metrics_payload))
-        _record("latency_comparison.png", _plot_latency(dataset_dir, metrics_payload))
-        _record("token_composition.png",  _plot_token_breakdown(dataset_dir, metrics_payload))
-
-        _write_visualization_status(dataset_dir, metrics_payload, charts_written, charts_skipped)
-
-        all_dataset_metrics[dataset_name] = metrics_payload
-
-        status = metrics_payload.get("dataset_status", "unknown")
-        written_str = ", ".join(charts_written) or "none"
-        skipped_str = ", ".join(charts_skipped) or "none"
-        print(
-            f"  [{status}] {dataset_name}: "
-            f"charts_written=[{written_str}]  skipped=[{skipped_str}]"
-        )
-
-    # Write arch-level aggregation
     arch_agg = _build_arch_aggregation(
-        arch_name=arch_name,
-        source_run_dir=str(run_dir),
-        judge_model=judge_model,
+        arch_name=arch_dir.name,
+        source_run_dir=str(arch_dir),
         all_dataset_metrics=all_dataset_metrics,
     )
-    with (arch_root / "arch_metrics_research.json").open("w", encoding="utf-8") as f:
+    out_path = arch_dir / "arch_metrics_research.json"
+    with out_path.open("w", encoding="utf-8") as f:
         json.dump(arch_agg, f, ensure_ascii=False, indent=2)
 
-    return arch_root
+    print(f"\nArch aggregation: {out_path}")
+    print(f"Datasets included: {len(all_dataset_metrics)}")
+    for sys_name, row in arch_agg["systems"].items():
+        print(f"  {sys_name:<14} mean_score={row['mean_judge_score']}  "
+              f"mean_cost={row['mean_cost_per_turn']}")
+
+    return arch_dir
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Unified research metrics post-processor")
-    parser.add_argument("--run-dir", required=True, help="Path to run directory containing results.json")
-    parser.add_argument("--arch", default=None, help="Architecture output folder name (e.g., qwen14b_arch_b)")
-    parser.add_argument("--judge-model", default="gpt-4.1", help="Judge model label stored in laaj metadata")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Research metrics post-processor.\n\n"
+            "MODE 1 — Per-dataset (run after each dataset finishes):\n"
+            "  python -m eval.research_metrics \\\n"
+            "    --run-dir results/raw/benchmarks/qwen14b_arch_c/dataset_03_sql_databases\n\n"
+            "  Place laaj.json in that folder first, then run to get all charts + metrics.\n\n"
+            "MODE 2 — Aggregate (run after ALL datasets are done):\n"
+            "  python -m eval.research_metrics \\\n"
+            "    --aggregate results/raw/benchmarks/qwen14b_arch_c\n\n"
+            "  Reads metrics_research.json from each sub-folder and writes arch_metrics_research.json."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        "--run-dir",
+        help="Dataset folder containing results.json (and optionally laaj.json). "
+             "Outputs written into this same folder."
+    )
+    group.add_argument(
+        "--aggregate",
+        help="Arch folder containing dataset sub-folders with metrics_research.json files."
+    )
     args = parser.parse_args()
 
-    run_dir = Path(args.run_dir)
-    arch_root = process_run(run_dir=run_dir, arch=args.arch, judge_model=args.judge_model)
-    print(f"Unified research outputs generated at: {arch_root}")
+    if args.run_dir:
+        process_single_dataset(Path(args.run_dir))
+    else:
+        process_aggregate(Path(args.aggregate))
 
 
 if __name__ == "__main__":
