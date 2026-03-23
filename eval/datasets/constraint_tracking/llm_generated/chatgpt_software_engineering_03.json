@@ -4,169 +4,145 @@
   "domain_name": "Software Engineering",
   "source": "chatgpt",
   "constraints": [
-    "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts"
+    "Use Polars instead of Pandas for all dataframe operations.",
+    "Use Python dataclasses for all structured pipeline objects, never raw dicts."
   ],
   "num_turns": 50,
   "num_checkpoints": 10,
   "checkpoints": [
     {
       "turn": 19,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use polars instead of pandas?",
+      "constraint_tested": "Use Polars instead of Pandas for all dataframe operations.",
+      "test": "Does the response use Polars instead of Pandas?",
       "answer": true,
       "keywords": [
-        "pl.",
         "polars",
-        "import polars",
-        "pl.read_csv",
+        "pl.",
         "pl.DataFrame",
-        "pl.LazyFrame",
-        "scan_csv",
-        "collect()"
+        "pl.read_csv",
+        "import polars",
+        "pl.LazyFrame"
       ]
     },
     {
       "turn": 19,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use Python dataclasses for structured objects?",
+      "constraint_tested": "Use Python dataclasses for all structured pipeline objects, never raw dicts.",
+      "test": "Does the response use Python dataclasses instead of raw dicts for structured objects?",
       "answer": true,
       "keywords": [
         "@dataclass",
         "dataclass",
         "from dataclasses import",
-        "dataclasses",
-        "field(",
-        ": str",
-        ": int",
-        ": List"
+        "DataClass",
+        "dataclasses"
       ]
     },
     {
       "turn": 39,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use polars instead of pandas?",
+      "constraint_tested": "Use Polars instead of Pandas for all dataframe operations.",
+      "test": "Does the response use Polars instead of Pandas?",
       "answer": true,
       "keywords": [
-        "pl.",
         "polars",
-        "import polars",
-        "pl.read_csv",
+        "pl.",
         "pl.DataFrame",
-        "pl.LazyFrame",
-        "scan_csv",
-        "collect()"
+        "pl.read_csv",
+        "import polars",
+        "pl.LazyFrame"
       ]
     },
     {
       "turn": 39,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use Python dataclasses for structured objects?",
+      "constraint_tested": "Use Python dataclasses for all structured pipeline objects, never raw dicts.",
+      "test": "Does the response use Python dataclasses instead of raw dicts for structured objects?",
       "answer": true,
       "keywords": [
         "@dataclass",
         "dataclass",
         "from dataclasses import",
-        "dataclasses",
-        "field(",
-        ": str",
-        ": int",
-        ": List"
+        "DataClass",
+        "dataclasses"
       ]
     },
     {
       "turn": 59,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use polars instead of pandas?",
+      "constraint_tested": "Use Polars instead of Pandas for all dataframe operations.",
+      "test": "Does the response use Polars instead of Pandas?",
       "answer": true,
       "keywords": [
-        "pl.",
         "polars",
-        "import polars",
-        "pl.read_csv",
+        "pl.",
         "pl.DataFrame",
-        "pl.LazyFrame",
-        "scan_csv",
-        "collect()"
+        "pl.read_csv",
+        "import polars",
+        "pl.LazyFrame"
       ]
     },
     {
       "turn": 59,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use Python dataclasses for structured objects?",
+      "constraint_tested": "Use Python dataclasses for all structured pipeline objects, never raw dicts.",
+      "test": "Does the response use Python dataclasses instead of raw dicts for structured objects?",
       "answer": true,
       "keywords": [
         "@dataclass",
         "dataclass",
         "from dataclasses import",
-        "dataclasses",
-        "field(",
-        ": str",
-        ": int",
-        ": List"
+        "DataClass",
+        "dataclasses"
       ]
     },
     {
       "turn": 79,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use polars instead of pandas?",
+      "constraint_tested": "Use Polars instead of Pandas for all dataframe operations.",
+      "test": "Does the response use Polars instead of Pandas?",
       "answer": true,
       "keywords": [
-        "pl.",
         "polars",
-        "import polars",
-        "pl.read_csv",
+        "pl.",
         "pl.DataFrame",
-        "pl.LazyFrame",
-        "scan_csv",
-        "collect()"
+        "pl.read_csv",
+        "import polars",
+        "pl.LazyFrame"
       ]
     },
     {
       "turn": 79,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use Python dataclasses for structured objects?",
+      "constraint_tested": "Use Python dataclasses for all structured pipeline objects, never raw dicts.",
+      "test": "Does the response use Python dataclasses instead of raw dicts for structured objects?",
       "answer": true,
       "keywords": [
         "@dataclass",
         "dataclass",
         "from dataclasses import",
-        "dataclasses",
-        "field(",
-        ": str",
-        ": int",
-        ": List"
+        "DataClass",
+        "dataclasses"
       ]
     },
     {
       "turn": 99,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use polars instead of pandas?",
+      "constraint_tested": "Use Polars instead of Pandas for all dataframe operations.",
+      "test": "Does the response use Polars instead of Pandas?",
       "answer": true,
       "keywords": [
-        "pl.",
         "polars",
-        "import polars",
-        "pl.read_csv",
+        "pl.",
         "pl.DataFrame",
-        "pl.LazyFrame",
-        "scan_csv",
-        "collect()"
+        "pl.read_csv",
+        "import polars",
+        "pl.LazyFrame"
       ]
     },
     {
       "turn": 99,
-      "constraint_tested": "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts",
-      "test": "Does response use Python dataclasses for structured objects?",
+      "constraint_tested": "Use Python dataclasses for all structured pipeline objects, never raw dicts.",
+      "test": "Does the response use Python dataclasses instead of raw dicts for structured objects?",
       "answer": true,
       "keywords": [
         "@dataclass",
         "dataclass",
         "from dataclasses import",
-        "dataclasses",
-        "field(",
-        ": str",
-        ": int",
-        ": List"
+        "DataClass",
+        "dataclasses"
       ]
     }
   ],

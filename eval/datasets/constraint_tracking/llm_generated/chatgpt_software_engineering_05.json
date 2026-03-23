@@ -4,199 +4,165 @@
   "domain_name": "Software Engineering",
   "source": "chatgpt",
   "constraints": [
-    "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands"
+    "Use Python logging module instead of print() statements.",
+    "Use consistent exit codes (0=success, 1=error) and include --verbose/-v flag in all subcommands."
   ],
   "num_turns": 50,
   "num_checkpoints": 10,
   "checkpoints": [
     {
       "turn": 19,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use logging module instead of print statements?",
+      "constraint_tested": "Use Python logging module instead of print() statements.",
+      "test": "Does the response use the logging module instead of print statements?",
       "answer": true,
       "keywords": [
         "logging",
-        "getLogger",
         "logger.",
-        "log.",
+        "getLogger",
         ".info(",
         ".debug(",
         ".warning(",
         ".error(",
-        "logging.config",
-        "logging.getLogger",
-        "logging.basicConfig",
-        "logger ="
+        "logging.basicConfig"
       ]
     },
     {
       "turn": 19,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?",
+      "constraint_tested": "Use consistent exit codes (0=success, 1=error) and include --verbose/-v flag in all subcommands.",
+      "test": "Does the response use consistent exit codes (0/1) and include a --verbose/-v flag?",
       "answer": true,
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "sys.exit(",
         "exit(0)",
         "exit(1)",
-        "exit_code",
-        "SystemExit",
-        "raise SystemExit",
-        "return 0",
-        "return 1"
+        "--verbose",
+        "-v,",
+        "-v "
       ]
     },
     {
       "turn": 39,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use logging module instead of print statements?",
+      "constraint_tested": "Use Python logging module instead of print() statements.",
+      "test": "Does the response use the logging module instead of print statements?",
       "answer": true,
       "keywords": [
         "logging",
-        "getLogger",
         "logger.",
-        "log.",
+        "getLogger",
         ".info(",
         ".debug(",
         ".warning(",
         ".error(",
-        "logging.config",
-        "logging.getLogger",
-        "logging.basicConfig",
-        "logger ="
+        "logging.basicConfig"
       ]
     },
     {
       "turn": 39,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?",
+      "constraint_tested": "Use consistent exit codes (0=success, 1=error) and include --verbose/-v flag in all subcommands.",
+      "test": "Does the response use consistent exit codes (0/1) and include a --verbose/-v flag?",
       "answer": true,
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "sys.exit(",
         "exit(0)",
         "exit(1)",
-        "exit_code",
-        "SystemExit",
-        "raise SystemExit",
-        "return 0",
-        "return 1"
+        "--verbose",
+        "-v,",
+        "-v "
       ]
     },
     {
       "turn": 59,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use logging module instead of print statements?",
+      "constraint_tested": "Use Python logging module instead of print() statements.",
+      "test": "Does the response use the logging module instead of print statements?",
       "answer": true,
       "keywords": [
         "logging",
-        "getLogger",
         "logger.",
-        "log.",
+        "getLogger",
         ".info(",
         ".debug(",
         ".warning(",
         ".error(",
-        "logging.config",
-        "logging.getLogger",
-        "logging.basicConfig",
-        "logger ="
+        "logging.basicConfig"
       ]
     },
     {
       "turn": 59,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?",
+      "constraint_tested": "Use consistent exit codes (0=success, 1=error) and include --verbose/-v flag in all subcommands.",
+      "test": "Does the response use consistent exit codes (0/1) and include a --verbose/-v flag?",
       "answer": true,
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "sys.exit(",
         "exit(0)",
         "exit(1)",
-        "exit_code",
-        "SystemExit",
-        "raise SystemExit",
-        "return 0",
-        "return 1"
+        "--verbose",
+        "-v,",
+        "-v "
       ]
     },
     {
       "turn": 79,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use logging module instead of print statements?",
+      "constraint_tested": "Use Python logging module instead of print() statements.",
+      "test": "Does the response use the logging module instead of print statements?",
       "answer": true,
       "keywords": [
         "logging",
-        "getLogger",
         "logger.",
-        "log.",
+        "getLogger",
         ".info(",
         ".debug(",
         ".warning(",
         ".error(",
-        "logging.config",
-        "logging.getLogger",
-        "logging.basicConfig",
-        "logger ="
+        "logging.basicConfig"
       ]
     },
     {
       "turn": 79,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?",
+      "constraint_tested": "Use consistent exit codes (0=success, 1=error) and include --verbose/-v flag in all subcommands.",
+      "test": "Does the response use consistent exit codes (0/1) and include a --verbose/-v flag?",
       "answer": true,
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "sys.exit(",
         "exit(0)",
         "exit(1)",
-        "exit_code",
-        "SystemExit",
-        "raise SystemExit",
-        "return 0",
-        "return 1"
+        "--verbose",
+        "-v,",
+        "-v "
       ]
     },
     {
       "turn": 99,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use logging module instead of print statements?",
+      "constraint_tested": "Use Python logging module instead of print() statements.",
+      "test": "Does the response use the logging module instead of print statements?",
       "answer": true,
       "keywords": [
         "logging",
-        "getLogger",
         "logger.",
-        "log.",
+        "getLogger",
         ".info(",
         ".debug(",
         ".warning(",
         ".error(",
-        "logging.config",
-        "logging.getLogger",
-        "logging.basicConfig",
-        "logger ="
+        "logging.basicConfig"
       ]
     },
     {
       "turn": 99,
-      "constraint_tested": "use Python logging module not print(); consistent exit codes (0=success, 1=error); --verbose/-v flag in subcommands",
-      "test": "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?",
+      "constraint_tested": "Use consistent exit codes (0=success, 1=error) and include --verbose/-v flag in all subcommands.",
+      "test": "Does the response use consistent exit codes (0/1) and include a --verbose/-v flag?",
       "answer": true,
       "keywords": [
         "sys.exit(0)",
         "sys.exit(1)",
-        "sys.exit(",
         "exit(0)",
         "exit(1)",
-        "exit_code",
-        "SystemExit",
-        "raise SystemExit",
-        "return 0",
-        "return 1"
+        "--verbose",
+        "-v,",
+        "-v "
       ]
     }
   ],

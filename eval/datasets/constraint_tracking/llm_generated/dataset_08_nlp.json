@@ -1,375 +1,373 @@
-[
-  {
-    "conversation_id": "nlp_spacy_lowercase",
-    "constraints": [
-      "Use the spaCy library, never NLTK.",
-      "Always lowercase all text data before tokenizing."
-    ],
-    "num_turns": 30,
-    "turns": [
-      {
-        "turn_id": 1,
-        "role": "user",
-        "content": "hey, starting an NLP project \u2014 got a bunch of customer reviews I want to analyze. can you show me how to just tokenize some text to begin with?"
-      },
-      {
-        "turn_id": 2,
-        "role": "assistant",
-        "content": "Here's basic tokenization with spaCy:\n\n```python\nimport spacy\n\n# Load the English model\nnlp = spacy.load(\"en_core_web_sm\")\n\nraw_text = \"Customer service was AMAZING but shipping took forever!\"\n\n# Always lowercase before tokenizing\ntext = raw_text.lower()\ndoc = nlp(text)\n\ntokens = [token.text for token in doc if not token.is_space]\nprint(tokens)\n# ['customer', 'service', 'was', 'amazing', 'but', 'shipping', 'took', 'forever', '!']\n```\n\nWe use spaCy's `nlp()` pipeline to tokenize. Lowercasing first with `.lower()` ensures consistent token forms \u2014 'AMAZING' and 'amazing' become the same token, which is critical for downstream tasks like vocabulary building or frequency counting."
-      },
-      {
-        "turn_id": 3,
-        "role": "user",
-        "content": "cool. now can i remove stopwords and punctuation from those tokens?"
-      },
-      {
-        "turn_id": 4,
-        "role": "assistant",
-        "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nraw_text = \"Customer service was AMAZING but shipping took forever!\"\ntext = raw_text.lower()  # lowercase before tokenizing\n\ndoc = nlp(text)\n\nclean_tokens = [\n    token.text\n    for token in doc\n    if not token.is_stop        # remove stopwords\n    and not token.is_punct      # remove punctuation\n    and not token.is_space      # remove whitespace tokens\n]\n\nprint(clean_tokens)\n# ['customer', 'service', 'amazing', 'shipping', 'took', 'forever']\n```\n\nspaCy's `token.is_stop` uses its built-in stopword list (about 326 English words). Since we lowercased before tokenizing, the stopword comparison is reliable \u2014 spaCy's stopword list is all lowercase. No NLTK stopword lists needed."
-      },
-      {
-        "turn_id": 5,
-        "role": "user",
-        "content": "can i also do lemmatization? i want 'running' and 'runs' to map to the same root"
-      },
-      {
-        "turn_id": 6,
-        "role": "assistant",
-        "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nraw_text = \"The runners were running fast while the sprinter runs even faster.\"\ntext = raw_text.lower()  # lowercase before tokenizing\n\ndoc = nlp(text)\n\nlemmas = [\n    token.lemma_\n    for token in doc\n    if not token.is_stop\n    and not token.is_punct\n    and not token.is_space\n]\n\nprint(lemmas)\n# ['runner', 'run', 'fast', 'sprinter', 'run', 'fast']\n```\n\n`token.lemma_` gives the dictionary base form. spaCy's lemmatizer is rule-based + lookup, so it handles irregular forms well ('was' \u2192 'be', 'better' \u2192 'good'). Lowercasing before tokenizing ensures the lemmatizer receives consistent casing \u2014 'Running' and 'running' both lemmatize to 'run'."
-      },
-      {
-        "turn_id": 7,
-        "role": "user",
-        "content": "what about named entity recognition? i want to pull out product names and locations from reviews"
-      },
-      {
-        "turn_id": 8,
-        "role": "assistant",
-        "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nreviews = [\n    \"I ordered from Amazon and it arrived in New York within two days.\",\n    \"The Apple iPhone 15 Pro I got from Best Buy was fantastic.\",\n    \"Shipped from Los Angeles to Chicago in three days \u2014 impressive!\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    entities = [(ent.text, ent.label_) for ent in doc.ents]\n    print(f\"Review : {raw[:60]}\")\n    print(f\"Entities: {entities}\")\n    print()\n```\n\nspaCy's NER model detects `GPE` (geopolitical entities like cities/countries), `ORG` (organisations), `PRODUCT`, `PERSON`, and more out of the box. Note: lowercasing can reduce NER accuracy for proper nouns (the model was trained on mixed-case text), but it's applied consistently here as required before every tokenization step."
-      },
-      {
-        "turn_id": 9,
-        "role": "user",
-        "content": "can i build a simple bag of words from my reviews corpus?"
-      },
-      {
-        "turn_id": 10,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom collections import Counter\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Customer service was AMAZING and very helpful.\",\n    \"Shipping took FOREVER, terrible experience overall.\",\n    \"The product quality is Great but packaging was poor.\",\n    \"Fast shipping and Excellent customer support!\",\n]\n\ndef extract_tokens(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n    ]\n\nall_tokens = []\ndoc_token_lists = []\nfor raw in corpus:\n    tokens = extract_tokens(raw)\n    doc_token_lists.append(tokens)\n    all_tokens.extend(tokens)\n\n# Vocabulary\nvocab = sorted(set(all_tokens))\nprint(\"Vocabulary:\", vocab)\n\n# Bag of words per document\nbow = [Counter(tokens) for tokens in doc_token_lists]\nfor i, bag in enumerate(bow):\n    print(f\"Doc {i+1}: {dict(bag)}\")\n```\n\nLowercasing before tokenizing ensures 'AMAZING' and 'amazing' are the same vocabulary entry. spaCy handles tokenization and lemmatization; no NLTK needed anywhere in the pipeline."
-      },
-      {
-        "turn_id": 11,
-        "role": "user",
-        "content": "how do i compute TF-IDF scores for my corpus using spacy tokenization?"
-      },
-      {
-        "turn_id": 12,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom sklearn.feature_extraction.text import TfidfVectorizer\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Customer service was AMAZING and very helpful.\",\n    \"Shipping took FOREVER, terrible experience overall.\",\n    \"The product quality is Great but packaging was poor.\",\n    \"Fast shipping and Excellent customer support!\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    \"\"\"Lowercases and lemmatizes using spaCy \u2014 no NLTK.\"\"\"\n    text = raw.lower()  # always lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n    ]\n\n# Plug spaCy tokenizer into sklearn's TfidfVectorizer\nvectorizer = TfidfVectorizer(\n    tokenizer=spacy_tokenizer,\n    lowercase=False,   # we handle lowercasing inside spacy_tokenizer\n    token_pattern=None,\n)\n\ntfidf_matrix = vectorizer.fit_transform(corpus)\nfeature_names = vectorizer.get_feature_names_out()\n\nimport pandas as pd\ndf_tfidf = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)\nprint(df_tfidf.round(3).to_string())\n```\n\nThe custom `spacy_tokenizer` lowercases before tokenizing and uses spaCy for lemmatization. `lowercase=False` in `TfidfVectorizer` prevents double-lowercasing. No NLTK involved."
-      },
-      {
-        "turn_id": 13,
-        "role": "user",
-        "content": "can i do sentiment analysis on the reviews? like positive vs negative classification"
-      },
-      {
-        "turn_id": 14,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import classification_report\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Example labelled reviews\nreviews = [\n    (\"Amazing product, super fast shipping!\", 1),\n    (\"Terrible quality, fell apart in a week.\", 0),\n    (\"Great value for money, very happy.\", 1),\n    (\"Customer service ignored my complaint.\", 0),\n    (\"Arrived on time and works perfectly.\", 1),\n    (\"Broke after one use, very disappointed.\", 0),\n    (\"Excellent packaging and product quality.\", 1),\n    (\"Worst purchase I have ever made.\", 0),\n]\n\ntexts, labels = zip(*reviews)\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\npipeline = Pipeline([\n    (\"tfidf\", TfidfVectorizer(tokenizer=spacy_tokenizer,\n                              lowercase=False, token_pattern=None)),\n    (\"clf\",   LogisticRegression(max_iter=500, random_state=42)),\n])\n\nX_train, X_test, y_train, y_test = train_test_split(\n    texts, labels, test_size=0.25, random_state=42\n)\n\npipeline.fit(X_train, y_train)\ny_pred = pipeline.predict(X_test)\nprint(classification_report(y_test, y_pred, target_names=[\"Negative\", \"Positive\"]))\n```\n\nspaCy handles tokenization and lemmatization; sklearn handles vectorization and classification. All text lowercased inside `spacy_tokenizer` before tokenizing. No NLTK anywhere."
-      },
-      {
-        "turn_id": 15,
-        "role": "user",
-        "content": "can i extract noun phrases from the reviews? would help me find what customers talk about most"
-      },
-      {
-        "turn_id": 16,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom collections import Counter\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"The battery life of this phone is absolutely incredible.\",\n    \"Customer service team was helpful and very responsive.\",\n    \"The delivery time was way too long and packaging was damaged.\",\n    \"Screen quality and camera performance exceeded my expectations.\",\n    \"The return process was confusing and took three weeks.\",\n]\n\nnoun_phrase_counts = Counter()\n\nfor raw in corpus:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    for chunk in doc.noun_chunks:\n        # Clean: strip determiners like 'the', 'a'\n        clean_chunk = \" \".join(\n            token.text for token in chunk\n            if not token.is_stop or token == chunk.root\n        ).strip()\n        if clean_chunk:\n            noun_phrase_counts[clean_chunk] += 1\n\nprint(\"Top noun phrases:\")\nfor phrase, count in noun_phrase_counts.most_common(10):\n    print(f\"  {phrase!r}: {count}\")\n```\n\n`doc.noun_chunks` is a spaCy generator that yields base noun phrases using the dependency parse \u2014 things like 'battery life', 'delivery time', 'customer service team'. Text is lowercased before tokenizing so phrases are consistently cased. No NLTK chunkers needed."
-      },
-      {
-        "turn_id": 17,
-        "role": "user",
-        "content": "what about dependency parsing? can i extract subject-verb-object triples from reviews?"
-      },
-      {
-        "turn_id": 18,
-        "role": "assistant",
-        "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nsentences = [\n    \"The courier damaged the package.\",\n    \"Customers love the new packaging.\",\n    \"The support team resolved my issue quickly.\",\n]\n\ndef extract_svo(raw: str) -> list[tuple]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    triples = []\n    for token in doc:\n        if token.dep_ == \"ROOT\" and token.pos_ == \"VERB\":\n            verb = token.lemma_\n            subjects = [\n                child.text for child in token.children\n                if child.dep_ in (\"nsubj\", \"nsubjpass\")\n            ]\n            objects = [\n                child.text for child in token.children\n                if child.dep_ in (\"dobj\", \"pobj\", \"attr\")\n            ]\n            for subj in subjects:\n                for obj in objects:\n                    triples.append((subj, verb, obj))\n    return triples\n\nfor raw in sentences:\n    triples = extract_svo(raw)\n    print(f\"Text   : {raw}\")\n    print(f\"SVO    : {triples}\")\n    print()\n```\n\nspaCy's dependency parser labels arcs with `nsubj` (nominal subject), `dobj` (direct object), `ROOT` (the main verb). Text is lowercased before tokenizing so token texts in the triples are lowercase. No NLTK parser used."
-      },
-      {
-        "turn_id": 19,
-        "role": "user",
-        "content": "can i use spacy's word vectors for semantic similarity between reviews?"
-      },
-      {
-        "turn_id": 20,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nimport numpy as np\n\n# en_core_web_md or en_core_web_lg for word vectors (sm has none)\nnlp = spacy.load(\"en_core_web_md\")\n\nreferences = [\n    \"Fast delivery and excellent packaging.\",\n    \"Terrible customer support, waited weeks.\",\n    \"Product quality exceeded my expectations.\",\n]\n\nquery = \"Shipping arrived quickly and the box was undamaged.\"\n\n# Lowercase before tokenizing for all texts\nquery_doc = nlp(query.lower())\n\nprint(f\"Query: {query}\\n\")\nfor raw in references:\n    ref_doc = nlp(raw.lower())  # lowercase before tokenizing\n    similarity = query_doc.similarity(ref_doc)\n    print(f\"  Similarity to '{raw[:50]}': {similarity:.4f}\")\n\n# Token-level vector\nword = \"packaging\"\nword_doc = nlp(word.lower())  # lowercase before tokenizing\nprint(f\"\\nVector for '{word}' (first 5 dims): {word_doc.vector[:5].round(4)}\")\n```\n\nspaCy's `doc.similarity()` computes cosine similarity over averaged word vectors. Requires `en_core_web_md` or `en_core_web_lg` \u2014 the small model has no vectors. All text is lowercased before tokenizing. No NLTK word2vec wrappers involved."
-      },
-      {
-        "turn_id": 21,
-        "role": "user",
-        "content": "how do i build a text classification pipeline with spacy's built in training? not sklearn"
-      },
-      {
-        "turn_id": 22,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.training import Example\nimport random\n\nnlp = spacy.blank(\"en\")  # blank English model\n\n# Add text categorizer component\ntextcat = nlp.add_pipe(\"textcat\", last=True)\ntextcat.add_label(\"POSITIVE\")\ntextcat.add_label(\"NEGATIVE\")\n\n# Training data\nraw_train_data = [\n    (\"amazing product loved it\", {\"cats\": {\"POSITIVE\": 1.0, \"NEGATIVE\": 0.0}}),\n    (\"terrible quality broke immediately\", {\"cats\": {\"POSITIVE\": 0.0, \"NEGATIVE\": 1.0}}),\n    (\"fast shipping great packaging\", {\"cats\": {\"POSITIVE\": 1.0, \"NEGATIVE\": 0.0}}),\n    (\"worst purchase ever very disappointed\", {\"cats\": {\"POSITIVE\": 0.0, \"NEGATIVE\": 1.0}}),\n    (\"excellent customer service highly recommend\", {\"cats\": {\"POSITIVE\": 1.0, \"NEGATIVE\": 0.0}}),\n    (\"damaged on arrival poor response from seller\", {\"cats\": {\"POSITIVE\": 0.0, \"NEGATIVE\": 1.0}}),\n]\n\n# Always lowercase before tokenizing\ntrain_data = [\n    (text.lower(), annot) for text, annot in raw_train_data\n]\n\n# Initialize weights\nnlp.initialize(lambda: [\n    Example.from_dict(nlp.make_doc(text), annot)\n    for text, annot in train_data\n])\n\noptimizer = nlp.resume_training()\n\nfor epoch in range(20):\n    random.shuffle(train_data)\n    losses = {}\n    for text, annot in train_data:\n        doc = nlp.make_doc(text)  # already lowercased\n        example = Example.from_dict(doc, annot)\n        nlp.update([example], sgd=optimizer, losses=losses)\n    if (epoch + 1) % 5 == 0:\n        print(f\"Epoch {epoch+1:2d} \u2014 Loss: {losses['textcat']:.4f}\")\n\n# Predict\ntest_text = \"Product arrived quickly and works perfectly.\"\ntest_doc = nlp(test_text.lower())  # lowercase before tokenizing\nprint(f\"\\nPrediction: {test_doc.cats}\")\n```\n\nPure spaCy training loop \u2014 no NLTK, no sklearn. All text is lowercased before every `nlp()` call."
-      },
-      {
-        "turn_id": 23,
-        "role": "user",
-        "content": "can i do keyword extraction \u2014 like find the most important terms in each review?"
-      },
-      {
-        "turn_id": 24,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom collections import Counter\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Battery life on this phone is extraordinary, lasts two full days easily.\",\n    \"The camera quality is stunning especially in low light conditions.\",\n    \"Delivery was fast but the packaging was crushed and damaged on arrival.\",\n    \"Customer support team responded within an hour and solved my problem.\",\n    \"Build quality feels premium, the aluminum frame is very solid and sturdy.\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n        and len(token.text) > 2\n    ]\n\nvectorizer = TfidfVectorizer(\n    tokenizer=spacy_tokenizer,\n    lowercase=False,\n    token_pattern=None,\n)\n\ntfidf_matrix = vectorizer.fit_transform(corpus)\nfeature_names = vectorizer.get_feature_names_out()\n\nprint(\"Top keywords per document:\")\nfor i, raw in enumerate(corpus):\n    row = tfidf_matrix[i].toarray().ravel()\n    top_indices = np.argsort(row)[::-1][:5]\n    keywords = [(feature_names[j], round(row[j], 3)) for j in top_indices if row[j] > 0]\n    print(f\"  Doc {i+1}: {keywords}\")\n```\n\nspaCy handles tokenization and lemmatization (lowercasing first); TF-IDF scores the importance of each lemma relative to the corpus. No NLTK used."
-      },
-      {
-        "turn_id": 25,
-        "role": "user",
-        "content": "can i identify sentences that contain a complaint vs a compliment using rule based matching?"
-      },
-      {
-        "turn_id": 26,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.matcher import Matcher\n\nnlp = spacy.load(\"en_core_web_sm\")\nmatcher = Matcher(nlp.vocab)\n\n# Complaint patterns (tokens already lowercase after .lower())\ncomplaint_patterns = [\n    [{\"LEMMA\": {\"IN\": [\"break\", \"damage\", \"disappoint\", \"terrible\", \"worst\",\n                       \"awful\", \"refuse\", \"ignore\", \"delay\", \"wait\"]}}],\n    [{\"LOWER\": \"never\"}, {\"LOWER\": \"again\"}],\n    [{\"LOWER\": \"waste\"}, {\"LOWER\": \"of\"}, {\"LOWER\": \"money\"}],\n    [{\"LOWER\": \"not\"}, {\"LOWER\": \"recommend\"}],\n]\n\n# Compliment patterns\ncompliment_patterns = [\n    [{\"LEMMA\": {\"IN\": [\"love\", \"amazing\", \"excellent\", \"fantastic\",\n                       \"perfect\", \"outstanding\", \"recommend\", \"impress\"]}}],\n    [{\"LOWER\": \"highly\"}, {\"LOWER\": \"recommend\"}],\n    [{\"LOWER\": \"worth\"}, {\"LOWER\": \"every\"}, {\"LOWER\": \"penny\"}],\n]\n\nmatcher.add(\"COMPLAINT\",  complaint_patterns)\nmatcher.add(\"COMPLIMENT\", compliment_patterns)\n\nreviews = [\n    \"The product broke after two days \u2014 absolutely terrible.\",\n    \"Highly recommend this, totally worth every penny.\",\n    \"I never again order from this store, very disappointing.\",\n    \"Amazing quality, fantastic packaging, love it!\",\n    \"They refused to refund me, waste of money.\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    matches = matcher(doc)\n    labels = list({nlp.vocab.strings[match_id] for match_id, _, _ in matches})\n    print(f\"  [{', '.join(labels) or 'NEUTRAL'}] {raw}\")\n```\n\nspaCy's `Matcher` does token-level rule matching. Patterns use `LEMMA` and `LOWER` attributes \u2014 both work correctly because we lowercased before tokenizing. No NLTK rule-based tools used."
-      },
-      {
-        "turn_id": 27,
-        "role": "user",
-        "content": "can i cluster reviews by topic using LDA or similar?"
-      },
-      {
-        "turn_id": 28,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom sklearn.feature_extraction.text import CountVectorizer\nfrom sklearn.decomposition import LatentDirichletAllocation\nimport numpy as np\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Battery life lasts all day, great performance.\",\n    \"Camera quality is stunning, excellent photos in low light.\",\n    \"Delivery was damaged, packaging completely crushed.\",\n    \"Customer support resolved my issue within hours.\",\n    \"Screen display is vibrant and very sharp.\",\n    \"Shipping took three weeks, arrived late.\",\n    \"Support team ignored my refund request twice.\",\n    \"Photo quality rivals professional cameras, impressive.\",\n    \"Battery drains quickly in cold weather though.\",\n    \"Box was torn, item scratched inside.\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n        and len(token.text) > 2\n    ]\n\nvectorizer = CountVectorizer(\n    tokenizer=spacy_tokenizer,\n    lowercase=False,\n    token_pattern=None,\n)\n\ndoc_term_matrix = vectorizer.fit_transform(corpus)\nfeature_names = vectorizer.get_feature_names_out()\n\nlda = LatentDirichletAllocation(\n    n_components=3, random_state=42, max_iter=20\n)\nlda.fit(doc_term_matrix)\n\nprint(\"Top words per topic:\")\nfor topic_idx, topic in enumerate(lda.components_):\n    top_words = [feature_names[i] for i in topic.argsort()[:-6:-1]]\n    print(f\"  Topic {topic_idx+1}: {top_words}\")\n\n# Assign dominant topic per review\ntopic_assignments = lda.transform(doc_term_matrix).argmax(axis=1)\nfor i, raw in enumerate(corpus):\n    print(f\"  [{topic_assignments[i]+1}] {raw[:60]}\")\n```\n\nspaCy tokenizes and lemmatizes (lowercasing first); sklearn's `CountVectorizer` builds the document-term matrix; LDA discovers topics. No NLTK anywhere in the pipeline."
-      },
-      {
-        "turn_id": 29,
-        "role": "user",
-        "content": "how do i process a large batch of reviews efficiently with spacy?"
-      },
-      {
-        "turn_id": 30,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom typing import Iterator\n\nnlp = spacy.load(\"en_core_web_sm\")\n# Disable unneeded pipeline components for speed\nnlp.select_pipes(enable=[\"tok2vec\", \"tagger\", \"lemmatizer\"])\n\ncorpus = [\n    \"Amazing product, super fast shipping!\",\n    \"Terrible quality, broke after one use.\",\n    \"Great value, will definitely order again.\",\n    # ... imagine thousands of reviews here\n]\n\ndef preprocess_batch(\n    texts: list[str],\n    batch_size: int = 256,\n    n_process: int = 1,\n) -> list[list[str]]:\n    \"\"\"\n    Processes texts in batches via nlp.pipe.\n    Lowercases before tokenizing, returns lemmatized token lists.\n    \"\"\"\n    # Lowercase all texts before passing to nlp.pipe\n    lowercased = [text.lower() for text in texts]\n\n    results = []\n    for doc in nlp.pipe(lowercased, batch_size=batch_size, n_process=n_process):\n        tokens = [\n            token.lemma_\n            for token in doc\n            if not token.is_stop\n            and not token.is_punct\n            and not token.is_space\n            and token.is_alpha\n        ]\n        results.append(tokens)\n    return results\n\nprocessed = preprocess_batch(corpus, batch_size=128)\n\nfor i, tokens in enumerate(processed):\n    print(f\"Review {i+1}: {tokens}\")\n```\n\n`nlp.pipe()` processes documents in batches, which is dramatically faster than calling `nlp()` in a loop \u2014 10\u201350x speedup on large corpora. All texts are lowercased before passing to `nlp.pipe`. `select_pipes` disables the parser and NER for pure tokenization/lemmatization tasks, saving memory and time. No NLTK used."
-      },
-      {
-        "turn_id": 31,
-        "role": "user",
-        "content": "can i fine tune a spacy model on my own labelled data?"
-      },
-      {
-        "turn_id": 32,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.training import Example\nfrom spacy.util import minibatch, compounding\nimport random\n\n# Start from the pretrained small model\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Add textcat if not present\nif \"textcat\" not in nlp.pipe_names:\n    textcat = nlp.add_pipe(\"textcat\", last=True)\nelse:\n    textcat = nlp.get_pipe(\"textcat\")\n\ntextcat.add_label(\"COMPLAINT\")\ntextcat.add_label(\"COMPLIMENT\")\n\nraw_data = [\n    (\"The product broke immediately, very disappointed.\",\n     {\"cats\": {\"COMPLAINT\": 1.0, \"COMPLIMENT\": 0.0}}),\n    (\"Absolutely love it, fast shipping and great quality.\",\n     {\"cats\": {\"COMPLAINT\": 0.0, \"COMPLIMENT\": 1.0}}),\n    (\"Damaged on arrival, seller refused to help.\",\n     {\"cats\": {\"COMPLAINT\": 1.0, \"COMPLIMENT\": 0.0}}),\n    (\"Outstanding packaging and excellent customer service.\",\n     {\"cats\": {\"COMPLAINT\": 0.0, \"COMPLIMENT\": 1.0}}),\n    (\"Worst experience ever, do not buy.\",\n     {\"cats\": {\"COMPLAINT\": 1.0, \"COMPLIMENT\": 0.0}}),\n    (\"Perfect product, highly recommend to everyone.\",\n     {\"cats\": {\"COMPLAINT\": 0.0, \"COMPLIMENT\": 1.0}}),\n]\n\n# Lowercase all texts before tokenizing\ntrain_data = [\n    (text.lower(), annot) for text, annot in raw_data\n]\n\noptimizer = nlp.initialize(lambda: [\n    Example.from_dict(nlp.make_doc(t), a) for t, a in train_data\n])\n\nfor epoch in range(15):\n    random.shuffle(train_data)\n    losses = {}\n    batches = minibatch(train_data, size=compounding(2.0, 8.0, 1.001))\n    for batch in batches:\n        examples = [\n            Example.from_dict(nlp.make_doc(text), annot)\n            for text, annot in batch\n        ]\n        nlp.update(examples, sgd=optimizer, drop=0.2, losses=losses)\n    if (epoch + 1) % 5 == 0:\n        print(f\"Epoch {epoch+1:2d} loss: {losses.get('textcat', 0):.4f}\")\n\nnlp.to_disk(\"fine_tuned_review_model\")\nprint(\"Model saved.\")\n\n# Inference\ntest = \"Shipping was fast but item was scratched.\"\ndoc = nlp(test.lower())  # lowercase before tokenizing\nprint(f\"Prediction: {doc.cats}\")\n```\n\n`minibatch` + `compounding` is spaCy's recommended batch size schedule for training. All texts are lowercased before every `nlp.make_doc()` and `nlp()` call. No NLTK used anywhere."
-      },
-      {
-        "turn_id": 33,
-        "role": "user",
-        "content": "can i evaluate my model with precision recall and f1?"
-      },
-      {
-        "turn_id": 34,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.training import Example\nfrom sklearn.metrics import classification_report\nimport numpy as np\n\nnlp = spacy.load(\"fine_tuned_review_model\")\n\nraw_test_data = [\n    (\"Fantastic quality, arrived early!\",           \"COMPLIMENT\"),\n    (\"Completely broken on arrival.\",               \"COMPLAINT\"),\n    (\"Love the design, very impressed.\",            \"COMPLIMENT\"),\n    (\"Wrong item sent, terrible service.\",          \"COMPLAINT\"),\n    (\"Exceeded expectations, will buy again.\",      \"COMPLIMENT\"),\n    (\"Packaging was torn and item was damaged.\",    \"COMPLAINT\"),\n]\n\ny_true = []\ny_pred = []\n\nfor raw_text, true_label in raw_test_data:\n    text = raw_text.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    pred_label = max(doc.cats, key=doc.cats.get)\n    y_true.append(true_label)\n    y_pred.append(pred_label)\n\nprint(classification_report(\n    y_true, y_pred,\n    target_names=[\"COMPLAINT\", \"COMPLIMENT\"],\n))\n```\n\nAll test texts are lowercased before every `nlp()` call \u2014 matching the preprocessing applied during training. spaCy's `doc.cats` gives label probability scores; `max(doc.cats, key=doc.cats.get)` picks the predicted class. No NLTK used."
-      },
-      {
-        "turn_id": 35,
-        "role": "user",
-        "content": "can i add custom entities to spacy's NER \u2014 like recognizing product model names?"
-      },
-      {
-        "turn_id": 36,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.tokens import Span\nfrom spacy.matcher import PhraseMatcher\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Custom product model names\nproduct_models = [\n    \"iphone 15 pro\",\n    \"samsung galaxy s24\",\n    \"macbook air m3\",\n    \"sony wh-1000xm5\",\n    \"pixel 8 pro\",\n]\n\n# PhraseMatcher \u2014 efficient multi-token entity matching\nmatcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\n\n# All patterns lowercased before creating phrase docs\npatterns = [nlp.make_doc(model.lower()) for model in product_models]\nmatcher.add(\"PRODUCT_MODEL\", patterns)\n\nreviews = [\n    \"I bought the iPhone 15 Pro last month and it's incredible.\",\n    \"Samsung Galaxy S24 camera beats the Pixel 8 Pro easily.\",\n    \"My MacBook Air M3 arrived damaged, very disappointed.\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    matches = matcher(doc)\n    entities = [\n        Span(doc, start, end, label=\"PRODUCT_MODEL\")\n        for _, start, end in matches\n    ]\n\n    # Merge with existing NER entities\n    filtered = spacy.util.filter_spans(doc.ents + tuple(entities))\n    doc.ents = filtered\n\n    print(f\"Text    : {raw}\")\n    print(f\"Entities: {[(e.text, e.label_) for e in doc.ents]}\")\n    print()\n```\n\n`PhraseMatcher` with `attr=\"LOWER\"` matches regardless of input casing. All text and patterns are explicitly lowercased before processing. No NLTK entity ruler used."
-      },
-      {
-        "turn_id": 37,
-        "role": "user",
-        "content": "can i pipeline all of these steps \u2014 cleaning, tokenizing, lemmatizing, entity extraction \u2014 into one reusable function?"
-      },
-      {
-        "turn_id": 38,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.matcher import PhraseMatcher, Matcher\nfrom spacy.tokens import Span\nfrom dataclasses import dataclass, field\nfrom typing import Optional\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Setup matchers\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nproduct_models = [\"iphone 15 pro\", \"samsung galaxy s24\", \"pixel 8 pro\"]\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\n\n@dataclass\nclass ProcessedReview:\n    raw_text: str\n    clean_tokens: list[str] = field(default_factory=list)\n    lemmas: list[str] = field(default_factory=list)\n    noun_phrases: list[str] = field(default_factory=list)\n    entities: list[tuple] = field(default_factory=list)\n    product_models: list[str] = field(default_factory=list)\n\n\ndef process_review(raw: str) -> ProcessedReview:\n    \"\"\"Full NLP pipeline: lowercase \u2192 tokenize \u2192 lemmatize \u2192 extract entities.\"\"\"\n    text = raw.lower()  # always lowercase before tokenizing\n    doc = nlp(text)\n\n    # Custom product entities\n    matches = phrase_matcher(doc)\n    custom_ents = [\n        Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches\n    ]\n    doc.ents = spacy.util.filter_spans(doc.ents + tuple(custom_ents))\n\n    clean_tokens = [\n        token.text for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n    lemmas = [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n    noun_phrases = [chunk.text for chunk in doc.noun_chunks]\n    entities = [(ent.text, ent.label_) for ent in doc.ents]\n    products = [ent.text for ent in doc.ents if ent.label_ == \"PRODUCT_MODEL\"]\n\n    return ProcessedReview(\n        raw_text=raw,\n        clean_tokens=clean_tokens,\n        lemmas=lemmas,\n        noun_phrases=noun_phrases,\n        entities=entities,\n        product_models=products,\n    )\n\n\nreviews = [\n    \"The iPhone 15 Pro camera is absolutely incredible!\",\n    \"Samsung Galaxy S24 arrived damaged \u2014 very disappointing.\",\n]\n\nfor review in reviews:\n    result = process_review(review)\n    print(f\"Raw      : {result.raw_text}\")\n    print(f\"Lemmas   : {result.lemmas}\")\n    print(f\"Entities : {result.entities}\")\n    print(f\"Products : {result.product_models}\")\n    print()\n```\n\nAll text lowercased inside `process_review` before any `nlp()` call. spaCy handles every NLP step. No NLTK anywhere."
-      },
-      {
-        "turn_id": 39,
-        "role": "user",
-        "content": "can i export the processed reviews to a dataframe for further analysis?"
-      },
-      {
-        "turn_id": 40,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nimport pandas as pd\nfrom spacy.matcher import PhraseMatcher\nfrom spacy.tokens import Span\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nproduct_models = [\"iphone 15 pro\", \"samsung galaxy s24\", \"pixel 8 pro\"]\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\ncorpus = [\n    \"Absolutely love the iPhone 15 Pro, fast shipping too!\",\n    \"Samsung Galaxy S24 arrived damaged \u2014 terrible experience.\",\n    \"Great customer service, resolved my issue quickly.\",\n    \"The product broke after a week, very disappointed.\",\n]\n\nrows = []\nfor raw in corpus:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    matches = phrase_matcher(doc)\n    custom_ents = [Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches]\n    doc.ents = spacy.util.filter_spans(doc.ents + tuple(custom_ents))\n\n    lemmas = [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\n    rows.append({\n        \"raw_text\":     raw,\n        \"lemmas\":       \" \".join(lemmas),\n        \"token_count\":  len(lemmas),\n        \"entities\":     [(e.text, e.label_) for e in doc.ents],\n        \"products\":     [e.text for e in doc.ents if e.label_ == \"PRODUCT_MODEL\"],\n        \"noun_phrases\": [chunk.text for chunk in doc.noun_chunks],\n    })\n\ndf = pd.DataFrame(rows)\nprint(df[[\"raw_text\", \"lemmas\", \"token_count\"]].to_string())\nprint(\"\\nProducts column:\")\nprint(df[\"products\"].to_list())\n```\n\nEach review is lowercased before tokenizing, processed with spaCy, and assembled into a DataFrame row. No NLTK used. The `lemmas` column is a single space-joined string \u2014 useful as input to TF-IDF or other vectorizers downstream."
-      },
-      {
-        "turn_id": 41,
-        "role": "user",
-        "content": "can i detect language of a review before processing it? some reviews might be in other languages"
-      },
-      {
-        "turn_id": 42,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom langdetect import detect, LangDetectException\n\nnlp_en = spacy.load(\"en_core_web_sm\")\nnlp_de = spacy.load(\"de_core_news_sm\")  # German model example\n\nreviews = [\n    \"Amazing product, very fast delivery!\",\n    \"Das Produkt ist ausgezeichnet, sehr schnelle Lieferung!\",\n    \"Produit excellent, livraison rapide.\",\n    \"Terrible quality, completely broken.\",\n]\n\ndef process_multilingual(raw: str) -> dict:\n    try:\n        lang = detect(raw.lower())  # lowercase before language detection\n    except LangDetectException:\n        lang = \"unknown\"\n\n    # Select spaCy model based on language\n    if lang == \"de\":\n        nlp = nlp_de\n    else:\n        nlp = nlp_en  # default to English for all others\n\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    lemmas = [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n    ]\n\n    return {\"raw\": raw, \"lang\": lang, \"lemmas\": lemmas}\n\nfor review in reviews:\n    result = process_multilingual(review)\n    print(f\"[{result['lang'].upper()}] {result['raw'][:50]}\")\n    print(f\"  Lemmas: {result['lemmas']}\")\n```\n\n`langdetect` detects language before routing to the appropriate spaCy model. Text is lowercased before both language detection and tokenization. No NLTK used \u2014 spaCy models exist for 70+ languages."
-      },
-      {
-        "turn_id": 43,
-        "role": "user",
-        "content": "can i use spacy transformers for better NER and classification?"
-      },
-      {
-        "turn_id": 44,
-        "role": "assistant",
-        "content": "```python\nimport spacy\n\n# Install: pip install spacy-transformers\n# Download: python -m spacy download en_core_web_trf\n\nnlp = spacy.load(\"en_core_web_trf\")  # BERT-based transformer model\n\nreviews = [\n    \"Apple released the iPhone 15 Pro in California last September.\",\n    \"I ordered from Amazon UK and it arrived in Manchester within two days.\",\n    \"The Sony WH-1000XM5 headphones are the best I have ever used.\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    print(f\"Review: {raw}\")\n    print(f\"Entities:\")\n    for ent in doc.ents:\n        print(f\"  {ent.text!r:30s} [{ent.label_}]\")\n    print()\n\n# Batch processing for efficiency\nprint(\"Batch processing:\")\nlowercased = [raw.lower() for raw in reviews]  # lowercase all before tokenizing\nfor doc in nlp.pipe(lowercased, batch_size=8):\n    entities = [(e.text, e.label_) for e in doc.ents]\n    print(f\"  {entities}\")\n```\n\n`en_core_web_trf` uses `roberta-base` under the hood \u2014 much higher NER and dependency accuracy than the statistical models, especially for domain-specific entities. Text is still lowercased before every `nlp()` and `nlp.pipe()` call. No NLTK used. Note: transformer models require a GPU or will be slow on CPU for large corpora."
-      },
-      {
-        "turn_id": 45,
-        "role": "user",
-        "content": "how do i write unit tests for my spacy nlp pipeline?"
-      },
-      {
-        "turn_id": 46,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nimport pytest\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n\ndef tokenize(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.text for token in doc\n        if not token.is_space and not token.is_punct\n    ]\n\n\ndef lemmatize(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\n\ndef extract_entities(raw: str) -> list[tuple]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [(ent.text, ent.label_) for ent in doc.ents]\n\n\nclass TestNLPPipeline:\n\n    def test_tokenize_lowercases(self):\n        tokens = tokenize(\"AMAZING Quality PRODUCT\")\n        assert all(t == t.lower() for t in tokens), \"Tokens should be lowercase\"\n\n    def test_tokenize_removes_punctuation(self):\n        tokens = tokenize(\"great product! worth every penny.\")\n        assert \"!\" not in tokens and \".\" not in tokens\n\n    def test_lemmatize_reduces_inflections(self):\n        lemmas = lemmatize(\"The runners were running faster.\")\n        assert \"run\" in lemmas\n        assert \"runner\" in lemmas\n\n    def test_lemmatize_removes_stopwords(self):\n        lemmas = lemmatize(\"The product is very good.\")\n        assert \"the\" not in lemmas\n        assert \"is\" not in lemmas\n\n    def test_mixed_case_input_normalized(self):\n        lemmas_upper = lemmatize(\"FAST SHIPPING\")\n        lemmas_lower = lemmatize(\"fast shipping\")\n        assert lemmas_upper == lemmas_lower, \"Case should not affect output\"\n\n    def test_entity_extraction_returns_tuples(self):\n        entities = extract_entities(\"Amazon delivered to New York.\")\n        assert isinstance(entities, list)\n        assert all(isinstance(e, tuple) and len(e) == 2 for e in entities)\n\n\nif __name__ == \"__main__\":\n    pytest.main([\"-v\", __file__])\n```\n\nEach test calls the pipeline functions which all lowercase before tokenizing \u2014 the `test_mixed_case_input_normalized` test explicitly asserts this invariant. No NLTK used anywhere."
-      },
-      {
-        "turn_id": 47,
-        "role": "user",
-        "content": "can i add a coreference resolution step? like resolving 'it' and 'they' back to the product or company they refer to?"
-      },
-      {
-        "turn_id": 48,
-        "role": "assistant",
-        "content": "```python\nimport spacy\n\n# Install: pip install spacy[transformers] fastcoref\n# spaCy 3.x coref via experimental component\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Add the experimental coref component\nnlp.add_pipe(\"fastcoref\")  # requires: pip install fastcoref\n\nreviews = [\n    \"The iPhone 15 Pro arrived yesterday. It has an incredible camera.\",\n    \"I contacted Amazon support. They resolved my issue within an hour.\",\n    \"I ordered the headphones last week. They were damaged in transit.\",\n]\n\ndef resolve_coreferences(raw: str) -> str:\n    \"\"\"\n    Replaces pronouns with their antecedents for cleaner downstream NLP.\n    \"\"\"\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    resolved_tokens = [token.text for token in doc]\n\n    if doc.has_extension(\"coref_clusters\") and doc._.coref_clusters:\n        for cluster in doc._.coref_clusters:\n            main_mention = cluster[0].text  # first mention = antecedent\n            for mention in cluster[1:]:\n                for i in range(mention.start, mention.end):\n                    resolved_tokens[i] = main_mention\n\n    return \" \".join(resolved_tokens)\n\n\nfor raw in reviews:\n    resolved = resolve_coreferences(raw)\n    print(f\"Original : {raw}\")\n    print(f\"Resolved : {resolved}\")\n    print()\n```\n\n`fastcoref` integrates with spaCy's pipeline and populates `doc._.coref_clusters`. Text is lowercased before every `nlp()` call. Resolved text can then be fed into the full lemmatization/entity pipeline for cleaner analysis. No NLTK used."
-      },
-      {
-        "turn_id": 49,
-        "role": "user",
-        "content": "can i generate a summary report of the full analysis \u2014 like a printable overview of all NLP metrics on the corpus?"
-      },
-      {
-        "turn_id": 50,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nimport pandas as pd\nfrom collections import Counter\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Amazing product, fast shipping, highly recommend!\",\n    \"Terrible quality, broke after one day, very disappointed.\",\n    \"Great customer service resolved my issue within hours.\",\n    \"Delivery was damaged, seller refused to help.\",\n    \"Battery life is incredible, camera is stunning.\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\ndef analyze_corpus(texts: list[str]) -> dict:\n    all_lemmas = []\n    all_entities = []\n    all_noun_phrases = []\n    token_counts = []\n\n    for raw in texts:\n        text = raw.lower()  # lowercase before tokenizing\n        doc = nlp(text)\n\n        lemmas = [\n            token.lemma_ for token in doc\n            if not token.is_stop and not token.is_punct\n            and not token.is_space and token.is_alpha\n        ]\n        all_lemmas.extend(lemmas)\n        token_counts.append(len(lemmas))\n        all_entities.extend([(ent.text, ent.label_) for ent in doc.ents])\n        all_noun_phrases.extend([chunk.text for chunk in doc.noun_chunks])\n\n    vectorizer = TfidfVectorizer(\n        tokenizer=spacy_tokenizer, lowercase=False, token_pattern=None\n    )\n    tfidf = vectorizer.fit_transform(texts)\n    feature_names = vectorizer.get_feature_names_out()\n    mean_tfidf = np.asarray(tfidf.mean(axis=0)).ravel()\n    top_tfidf = sorted(\n        zip(feature_names, mean_tfidf), key=lambda x: x[1], reverse=True\n    )[:10]\n\n    return {\n        \"total_documents\":   len(texts),\n        \"vocab_size\":        len(set(all_lemmas)),\n        \"avg_tokens_per_doc\": round(np.mean(token_counts), 2),\n        \"top_lemmas\":        Counter(all_lemmas).most_common(10),\n        \"top_tfidf_terms\":   top_tfidf,\n        \"entity_counts\":     Counter(label for _, label in all_entities).most_common(),\n        \"top_noun_phrases\":  Counter(all_noun_phrases).most_common(5),\n    }\n\nreport = analyze_corpus(corpus)\n\nprint(\"=\" * 50)\nprint(\"CORPUS NLP SUMMARY REPORT\")\nprint(\"=\" * 50)\nprint(f\"Documents       : {report['total_documents']}\")\nprint(f\"Vocabulary size : {report['vocab_size']}\")\nprint(f\"Avg tokens/doc  : {report['avg_tokens_per_doc']}\")\nprint(f\"\\nTop Lemmas      : {report['top_lemmas'][:5]}\")\nprint(f\"Top TF-IDF Terms: {[(t, round(s,3)) for t,s in report['top_tfidf_terms'][:5]]}\")\nprint(f\"Entity types    : {report['entity_counts']}\")\nprint(f\"Top noun phrases: {report['top_noun_phrases']}\")\n```\n\nEvery `nlp()` call in the pipeline receives lowercased text. All NLP operations \u2014 tokenization, lemmatization, NER, noun chunks, TF-IDF \u2014 use spaCy exclusively. No NLTK anywhere."
-      },
-      {
-        "turn_id": 51,
-        "role": "user",
-        "content": "awesome. can you give me a full summary of everything we covered?"
-      },
-      {
-        "turn_id": 52,
-        "role": "assistant",
-        "content": "Here's the complete reference for everything we built:\n\n**Core Pipeline (spaCy, no NLTK)**\n- `nlp = spacy.load(\"en_core_web_sm\")` \u2014 statistical model\n- `nlp = spacy.load(\"en_core_web_md/lg\")` \u2014 + word vectors\n- `nlp = spacy.load(\"en_core_web_trf\")` \u2014 BERT-based transformer model\n- Always: `text = raw.lower()` before every `nlp()` or `nlp.pipe()` call\n\n**Text Processing**\n- Tokenization: `[token.text for token in doc]`\n- Stopword + punctuation removal: `token.is_stop`, `token.is_punct`\n- Lemmatization: `token.lemma_`\n- Noun chunks: `doc.noun_chunks`\n- Dependency parse + SVO triples: `token.dep_`, `token.children`\n\n**Entity Extraction**\n- Built-in NER: `doc.ents` (GPE, ORG, PERSON, PRODUCT, ...)\n- Custom entities: `PhraseMatcher` + `Span` injection\n- Custom rules: `Matcher` with token pattern dicts\n\n**Vectorization & ML**\n- spaCy tokenizer plugged into `TfidfVectorizer(tokenizer=..., lowercase=False)`\n- Bag of words with `CountVectorizer` + LDA topic modelling\n- Semantic similarity: `doc.similarity()` (requires md/lg model)\n- Native spaCy text classifier: `textcat` component + training loop\n- Fine-tuning: `Example`, `minibatch`, `compounding`, `nlp.update()`\n\n**Advanced**\n- Batch processing: `nlp.pipe(lowercased, batch_size=256)` \u2014 10\u201350x speedup\n- `select_pipes` to disable unused components\n- Multilingual: `langdetect` + language-specific spaCy models\n- Coreference resolution: `fastcoref` spaCy component\n- Unit testing: pytest with explicit lowercase-invariance assertions\n\n**Two rules upheld everywhere: spaCy for all NLP (no NLTK); every text lowercased before tokenizing.**"
-      },
-      {
-        "turn_id": 53,
-        "role": "user",
-        "content": "one more \u2014 how do i save and reload the full spacy pipeline including custom matchers?"
-      },
-      {
-        "turn_id": 54,
-        "role": "assistant",
-        "content": "```python\nimport spacy\nfrom spacy.matcher import PhraseMatcher\nfrom spacy.tokens import Span\nimport json\nfrom pathlib import Path\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Build custom phrase matcher\nproduct_models = [\"iphone 15 pro\", \"samsung galaxy s24\", \"pixel 8 pro\"]\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\n# Save spaCy model\nsave_dir = Path(\"review_pipeline\")\nnlp.to_disk(save_dir)\n\n# Save custom product list separately (PhraseMatcher not serialized by to_disk)\nwith open(save_dir / \"product_models.json\", \"w\") as f:\n    json.dump(product_models, f)\n\nprint(f\"Pipeline saved to {save_dir}\")\n\n# --- Reload ---\n\nnlp_loaded = spacy.load(save_dir)\n\nwith open(save_dir / \"product_models.json\") as f:\n    loaded_products = json.load(f)\n\n# Rebuild PhraseMatcher from saved product list\nreloaded_matcher = PhraseMatcher(nlp_loaded.vocab, attr=\"LOWER\")\nreloaded_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp_loaded.make_doc(p.lower()) for p in loaded_products],  # lowercase\n)\n\n# Inference with reloaded pipeline\ntest = \"I just bought the iPhone 15 Pro and love it.\"\ntext = test.lower()  # lowercase before tokenizing\ndoc = nlp_loaded(text)\n\nmatches = reloaded_matcher(doc)\nentities = [\n    Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches\n]\nprint(f\"Entities: {[(e.text, e.label_) for e in entities]}\")\n```\n\n`nlp.to_disk()` serializes the full spaCy pipeline including weights and vocab. `PhraseMatcher` must be saved separately (JSON product list) and rebuilt on load. Text is lowercased before every `nlp()` call. No NLTK used."
-      },
-      {
-        "turn_id": 55,
-        "role": "user",
-        "content": "can i also version control my nlp pipeline with dvc or similar?"
-      },
-      {
-        "turn_id": 56,
-        "role": "assistant",
-        "content": "```yaml\n# dvc.yaml \u2014 DVC pipeline definition\nstages:\n  preprocess:\n    cmd: python src/preprocess.py\n    deps:\n      - src/preprocess.py\n      - data/raw_reviews.csv\n    outs:\n      - data/processed_reviews.parquet\n    params:\n      - params.yaml:\n          - spacy_model\n          - batch_size\n\n  train:\n    cmd: python src/train.py\n    deps:\n      - src/train.py\n      - data/processed_reviews.parquet\n    outs:\n      - models/review_pipeline/\n      - models/product_models.json\n    metrics:\n      - metrics/train_metrics.json:\n          cache: false\n    params:\n      - params.yaml:\n          - n_epochs\n          - dropout\n```\n\n```yaml\n# params.yaml\nspacy_model: en_core_web_sm\nbatch_size: 128\nn_epochs: 15\ndropout: 0.2\n```\n\n```python\n# src/preprocess.py\nimport spacy\nimport pandas as pd\nfrom pathlib import Path\nimport yaml\n\nparams = yaml.safe_load(open(\"params.yaml\"))\nnlp = spacy.load(params[\"spacy_model\"])\n\ndf = pd.read_csv(\"data/raw_reviews.csv\")\n\ndef preprocess(raw: str) -> str:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return \" \".join(\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    )\n\ndf[\"processed\"] = df[\"review\"].apply(preprocess)\ndf.to_parquet(\"data/processed_reviews.parquet\", index=False)\nprint(f\"Preprocessed {len(df)} reviews.\")\n```\n\nDVC tracks data files, model artifacts, and metrics with Git. `dvc repro` reruns only changed stages. `dvc push/pull` syncs large files to remote storage (S3, GCS). Text is lowercased before tokenizing in every pipeline stage. spaCy used throughout \u2014 no NLTK."
-      },
-      {
-        "turn_id": 57,
-        "role": "user",
-        "content": "can i serve this pipeline as a REST API?"
-      },
-      {
-        "turn_id": 58,
-        "role": "assistant",
-        "content": "```python\n# app.py\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\nfrom typing import Optional\nimport spacy\nfrom spacy.matcher import PhraseMatcher\nfrom spacy.tokens import Span\nimport json\nfrom pathlib import Path\n\napp = FastAPI(title=\"Review NLP API\")\n\n# Load pipeline once at startup\nnlp = spacy.load(\"review_pipeline\")\n\nwith open(\"models/product_models.json\") as f:\n    product_models = json.load(f)\n\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\n\nclass ReviewRequest(BaseModel):\n    text: str\n    include_entities: bool = True\n    include_lemmas: bool = True\n\n\nclass ReviewResponse(BaseModel):\n    original: str\n    lemmas: Optional[list[str]] = None\n    entities: Optional[list[dict]] = None\n    sentiment: Optional[str] = None\n\n\n@app.post(\"/analyze\", response_model=ReviewResponse)\ndef analyze_review(req: ReviewRequest):\n    if not req.text.strip():\n        raise HTTPException(status_code=400, detail=\"Text cannot be empty.\")\n\n    text = req.text.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    matches = phrase_matcher(doc)\n    custom_ents = [Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches]\n    doc.ents = spacy.util.filter_spans(doc.ents + tuple(custom_ents))\n\n    lemmas = None\n    if req.include_lemmas:\n        lemmas = [\n            token.lemma_ for token in doc\n            if not token.is_stop and not token.is_punct\n            and not token.is_space and token.is_alpha\n        ]\n\n    entities = None\n    if req.include_entities:\n        entities = [{\"text\": e.text, \"label\": e.label_} for e in doc.ents]\n\n    # Sentiment from textcat component if available\n    sentiment = None\n    if doc.cats:\n        sentiment = max(doc.cats, key=doc.cats.get)\n\n    return ReviewResponse(\n        original=req.text,\n        lemmas=lemmas,\n        entities=entities,\n        sentiment=sentiment,\n    )\n\n\n@app.get(\"/health\")\ndef health():\n    return {\"status\": \"ok\", \"model\": \"review_pipeline\"}\n```\n\nThe pipeline is loaded once at startup \u2014 not per request. Text is lowercased before every `nlp()` call. spaCy used for all NLP; no NLTK. Run with: `uvicorn app:app --host 0.0.0.0 --port 8000`."
-      },
-      {
-        "turn_id": 59,
-        "role": "user",
-        "content": "amazing workflow. can you give me a final end-to-end production checklist?"
-      },
-      {
-        "turn_id": 60,
-        "role": "assistant",
-        "content": "Here's the complete production checklist for the spaCy NLP pipeline:\n\n**Model Selection**\n- `en_core_web_sm` \u2014 fast, no vectors, good for token/lemma/NER\n- `en_core_web_md/lg` \u2014 adds 300-dim word vectors for similarity tasks\n- `en_core_web_trf` \u2014 transformer-based, highest accuracy, GPU recommended\n- Match model choice to accuracy vs. latency requirements\n\n**Preprocessing Contract (must never break)**\n- `text = raw.lower()` before every single `nlp()` or `nlp.pipe()` call\n- `lowercase=False` in `TfidfVectorizer`/`CountVectorizer` when using a custom spaCy tokenizer\n- Unit test: assert that `process(\"AMAZING\") == process(\"amazing\")`\n\n**Performance**\n- Batch with `nlp.pipe(lowercased_texts, batch_size=256)` \u2014 never loop with `nlp()`\n- `nlp.select_pipes(enable=[...])` \u2014 disable NER/parser if not needed\n- Use `en_core_web_trf` on GPU only; fall back to `lg` on CPU for production\n\n**Persistence**\n- `nlp.to_disk(path)` \u2014 saves full pipeline\n- Custom matchers saved as JSON alongside the model directory\n- Version both with DVC; commit `dvc.lock` to Git\n\n**Serving**\n- FastAPI + `uvicorn` \u2014 load model once at startup\n- `/health` endpoint for readiness probe\n- Validate input with Pydantic before passing to `nlp()`\n\n**Monitoring**\n- Log per-request latency and entity counts\n- Monthly: rerun TF-IDF vocabulary distribution check \u2014 alerts if top terms shift\n- Refit when vocabulary drift or accuracy regression detected\n\n**Two rules held in every step: spaCy for all NLP (never NLTK); every raw text lowercased before tokenizing.**"
-      }
-    ],
-    "checkpoints": [
-      {
-        "test": "Does the TF-IDF code use spaCy inside the custom tokenizer function rather than NLTK?",
-        "answer": true,
-        "turn": 11,
-        "constraint_tested": "A"
-      },
-      {
-        "test": "Does the TF-IDF tokenizer function lowercase the raw text before calling nlp()?",
-        "answer": true,
-        "turn": 11,
-        "constraint_tested": "B"
-      },
-      {
-        "test": "Does the keyword extraction code use spaCy's lemmatizer inside the tokenizer rather than any NLTK component?",
-        "answer": true,
-        "turn": 23,
-        "constraint_tested": "A"
-      },
-      {
-        "test": "Does the keyword extraction tokenizer apply .lower() to the raw text before passing it to the spaCy nlp() call?",
-        "answer": true,
-        "turn": 23,
-        "constraint_tested": "B"
-      },
-      {
-        "test": "Does the custom NER code use spaCy's PhraseMatcher rather than NLTK's entity chunker?",
-        "answer": true,
-        "turn": 35,
-        "constraint_tested": "A"
-      },
-      {
-        "test": "Does the custom NER code lowercase the raw review text before passing it to nlp()?",
-        "answer": true,
-        "turn": 35,
-        "constraint_tested": "B"
-      },
-      {
-        "test": "Does the coreference resolution code use a spaCy pipeline component rather than NLTK?",
-        "answer": true,
-        "turn": 47,
-        "constraint_tested": "A"
-      },
-      {
-        "test": "Does the coreference resolution function apply .lower() to the raw text before tokenizing with nlp()?",
-        "answer": true,
-        "turn": 47,
-        "constraint_tested": "B"
-      },
-      {
-        "test": "Does the production checklist explicitly state that spaCy is used for all NLP with no NLTK?",
-        "answer": true,
-        "turn": 59,
-        "constraint_tested": "A"
-      },
-      {
-        "test": "Does the production checklist explicitly state that every raw text must be lowercased before every nlp() call?",
-        "answer": true,
-        "turn": 59,
-        "constraint_tested": "B"
-      }
-    ],
-    "domain": "General"
-  }
-]
+{
+  "conversation_id": "nlp_spacy_lowercase",
+  "constraints": [
+    "Use the spaCy library, never NLTK.",
+    "Always lowercase all text data before tokenizing."
+  ],
+  "num_turns": 30,
+  "turns": [
+    {
+      "turn_id": 1,
+      "role": "user",
+      "content": "hey, starting an NLP project — got a bunch of customer reviews I want to analyze. can you show me how to just tokenize some text to begin with?"
+    },
+    {
+      "turn_id": 2,
+      "role": "assistant",
+      "content": "Here's basic tokenization with spaCy:\n\n```python\nimport spacy\n\n# Load the English model\nnlp = spacy.load(\"en_core_web_sm\")\n\nraw_text = \"Customer service was AMAZING but shipping took forever!\"\n\n# Always lowercase before tokenizing\ntext = raw_text.lower()\ndoc = nlp(text)\n\ntokens = [token.text for token in doc if not token.is_space]\nprint(tokens)\n# ['customer', 'service', 'was', 'amazing', 'but', 'shipping', 'took', 'forever', '!']\n```\n\nWe use spaCy's `nlp()` pipeline to tokenize. Lowercasing first with `.lower()` ensures consistent token forms — 'AMAZING' and 'amazing' become the same token, which is critical for downstream tasks like vocabulary building or frequency counting."
+    },
+    {
+      "turn_id": 3,
+      "role": "user",
+      "content": "cool. now can i remove stopwords and punctuation from those tokens?"
+    },
+    {
+      "turn_id": 4,
+      "role": "assistant",
+      "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nraw_text = \"Customer service was AMAZING but shipping took forever!\"\ntext = raw_text.lower()  # lowercase before tokenizing\n\ndoc = nlp(text)\n\nclean_tokens = [\n    token.text\n    for token in doc\n    if not token.is_stop        # remove stopwords\n    and not token.is_punct      # remove punctuation\n    and not token.is_space      # remove whitespace tokens\n]\n\nprint(clean_tokens)\n# ['customer', 'service', 'amazing', 'shipping', 'took', 'forever']\n```\n\nspaCy's `token.is_stop` uses its built-in stopword list (about 326 English words). Since we lowercased before tokenizing, the stopword comparison is reliable — spaCy's stopword list is all lowercase. No NLTK stopword lists needed."
+    },
+    {
+      "turn_id": 5,
+      "role": "user",
+      "content": "can i also do lemmatization? i want 'running' and 'runs' to map to the same root"
+    },
+    {
+      "turn_id": 6,
+      "role": "assistant",
+      "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nraw_text = \"The runners were running fast while the sprinter runs even faster.\"\ntext = raw_text.lower()  # lowercase before tokenizing\n\ndoc = nlp(text)\n\nlemmas = [\n    token.lemma_\n    for token in doc\n    if not token.is_stop\n    and not token.is_punct\n    and not token.is_space\n]\n\nprint(lemmas)\n# ['runner', 'run', 'fast', 'sprinter', 'run', 'fast']\n```\n\n`token.lemma_` gives the dictionary base form. spaCy's lemmatizer is rule-based + lookup, so it handles irregular forms well ('was' → 'be', 'better' → 'good'). Lowercasing before tokenizing ensures the lemmatizer receives consistent casing — 'Running' and 'running' both lemmatize to 'run'."
+    },
+    {
+      "turn_id": 7,
+      "role": "user",
+      "content": "what about named entity recognition? i want to pull out product names and locations from reviews"
+    },
+    {
+      "turn_id": 8,
+      "role": "assistant",
+      "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nreviews = [\n    \"I ordered from Amazon and it arrived in New York within two days.\",\n    \"The Apple iPhone 15 Pro I got from Best Buy was fantastic.\",\n    \"Shipped from Los Angeles to Chicago in three days — impressive!\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    entities = [(ent.text, ent.label_) for ent in doc.ents]\n    print(f\"Review : {raw[:60]}\")\n    print(f\"Entities: {entities}\")\n    print()\n```\n\nspaCy's NER model detects `GPE` (geopolitical entities like cities/countries), `ORG` (organisations), `PRODUCT`, `PERSON`, and more out of the box. Note: lowercasing can reduce NER accuracy for proper nouns (the model was trained on mixed-case text), but it's applied consistently here as required before every tokenization step."
+    },
+    {
+      "turn_id": 9,
+      "role": "user",
+      "content": "can i build a simple bag of words from my reviews corpus?"
+    },
+    {
+      "turn_id": 10,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom collections import Counter\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Customer service was AMAZING and very helpful.\",\n    \"Shipping took FOREVER, terrible experience overall.\",\n    \"The product quality is Great but packaging was poor.\",\n    \"Fast shipping and Excellent customer support!\",\n]\n\ndef extract_tokens(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n    ]\n\nall_tokens = []\ndoc_token_lists = []\nfor raw in corpus:\n    tokens = extract_tokens(raw)\n    doc_token_lists.append(tokens)\n    all_tokens.extend(tokens)\n\n# Vocabulary\nvocab = sorted(set(all_tokens))\nprint(\"Vocabulary:\", vocab)\n\n# Bag of words per document\nbow = [Counter(tokens) for tokens in doc_token_lists]\nfor i, bag in enumerate(bow):\n    print(f\"Doc {i+1}: {dict(bag)}\")\n```\n\nLowercasing before tokenizing ensures 'AMAZING' and 'amazing' are the same vocabulary entry. spaCy handles tokenization and lemmatization; no NLTK needed anywhere in the pipeline."
+    },
+    {
+      "turn_id": 11,
+      "role": "user",
+      "content": "how do i compute TF-IDF scores for my corpus using spacy tokenization?"
+    },
+    {
+      "turn_id": 12,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom sklearn.feature_extraction.text import TfidfVectorizer\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Customer service was AMAZING and very helpful.\",\n    \"Shipping took FOREVER, terrible experience overall.\",\n    \"The product quality is Great but packaging was poor.\",\n    \"Fast shipping and Excellent customer support!\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    \"\"\"Lowercases and lemmatizes using spaCy — no NLTK.\"\"\"\n    text = raw.lower()  # always lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n    ]\n\n# Plug spaCy tokenizer into sklearn's TfidfVectorizer\nvectorizer = TfidfVectorizer(\n    tokenizer=spacy_tokenizer,\n    lowercase=False,   # we handle lowercasing inside spacy_tokenizer\n    token_pattern=None,\n)\n\ntfidf_matrix = vectorizer.fit_transform(corpus)\nfeature_names = vectorizer.get_feature_names_out()\n\nimport pandas as pd\ndf_tfidf = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)\nprint(df_tfidf.round(3).to_string())\n```\n\nThe custom `spacy_tokenizer` lowercases before tokenizing and uses spaCy for lemmatization. `lowercase=False` in `TfidfVectorizer` prevents double-lowercasing. No NLTK involved."
+    },
+    {
+      "turn_id": 13,
+      "role": "user",
+      "content": "can i do sentiment analysis on the reviews? like positive vs negative classification"
+    },
+    {
+      "turn_id": 14,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import classification_report\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Example labelled reviews\nreviews = [\n    (\"Amazing product, super fast shipping!\", 1),\n    (\"Terrible quality, fell apart in a week.\", 0),\n    (\"Great value for money, very happy.\", 1),\n    (\"Customer service ignored my complaint.\", 0),\n    (\"Arrived on time and works perfectly.\", 1),\n    (\"Broke after one use, very disappointed.\", 0),\n    (\"Excellent packaging and product quality.\", 1),\n    (\"Worst purchase I have ever made.\", 0),\n]\n\ntexts, labels = zip(*reviews)\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\npipeline = Pipeline([\n    (\"tfidf\", TfidfVectorizer(tokenizer=spacy_tokenizer,\n                              lowercase=False, token_pattern=None)),\n    (\"clf\",   LogisticRegression(max_iter=500, random_state=42)),\n])\n\nX_train, X_test, y_train, y_test = train_test_split(\n    texts, labels, test_size=0.25, random_state=42\n)\n\npipeline.fit(X_train, y_train)\ny_pred = pipeline.predict(X_test)\nprint(classification_report(y_test, y_pred, target_names=[\"Negative\", \"Positive\"]))\n```\n\nspaCy handles tokenization and lemmatization; sklearn handles vectorization and classification. All text lowercased inside `spacy_tokenizer` before tokenizing. No NLTK anywhere."
+    },
+    {
+      "turn_id": 15,
+      "role": "user",
+      "content": "can i extract noun phrases from the reviews? would help me find what customers talk about most"
+    },
+    {
+      "turn_id": 16,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom collections import Counter\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"The battery life of this phone is absolutely incredible.\",\n    \"Customer service team was helpful and very responsive.\",\n    \"The delivery time was way too long and packaging was damaged.\",\n    \"Screen quality and camera performance exceeded my expectations.\",\n    \"The return process was confusing and took three weeks.\",\n]\n\nnoun_phrase_counts = Counter()\n\nfor raw in corpus:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    for chunk in doc.noun_chunks:\n        # Clean: strip determiners like 'the', 'a'\n        clean_chunk = \" \".join(\n            token.text for token in chunk\n            if not token.is_stop or token == chunk.root\n        ).strip()\n        if clean_chunk:\n            noun_phrase_counts[clean_chunk] += 1\n\nprint(\"Top noun phrases:\")\nfor phrase, count in noun_phrase_counts.most_common(10):\n    print(f\"  {phrase!r}: {count}\")\n```\n\n`doc.noun_chunks` is a spaCy generator that yields base noun phrases using the dependency parse — things like 'battery life', 'delivery time', 'customer service team'. Text is lowercased before tokenizing so phrases are consistently cased. No NLTK chunkers needed."
+    },
+    {
+      "turn_id": 17,
+      "role": "user",
+      "content": "what about dependency parsing? can i extract subject-verb-object triples from reviews?"
+    },
+    {
+      "turn_id": 18,
+      "role": "assistant",
+      "content": "```python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nsentences = [\n    \"The courier damaged the package.\",\n    \"Customers love the new packaging.\",\n    \"The support team resolved my issue quickly.\",\n]\n\ndef extract_svo(raw: str) -> list[tuple]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    triples = []\n    for token in doc:\n        if token.dep_ == \"ROOT\" and token.pos_ == \"VERB\":\n            verb = token.lemma_\n            subjects = [\n                child.text for child in token.children\n                if child.dep_ in (\"nsubj\", \"nsubjpass\")\n            ]\n            objects = [\n                child.text for child in token.children\n                if child.dep_ in (\"dobj\", \"pobj\", \"attr\")\n            ]\n            for subj in subjects:\n                for obj in objects:\n                    triples.append((subj, verb, obj))\n    return triples\n\nfor raw in sentences:\n    triples = extract_svo(raw)\n    print(f\"Text   : {raw}\")\n    print(f\"SVO    : {triples}\")\n    print()\n```\n\nspaCy's dependency parser labels arcs with `nsubj` (nominal subject), `dobj` (direct object), `ROOT` (the main verb). Text is lowercased before tokenizing so token texts in the triples are lowercase. No NLTK parser used."
+    },
+    {
+      "turn_id": 19,
+      "role": "user",
+      "content": "can i use spacy's word vectors for semantic similarity between reviews?"
+    },
+    {
+      "turn_id": 20,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nimport numpy as np\n\n# en_core_web_md or en_core_web_lg for word vectors (sm has none)\nnlp = spacy.load(\"en_core_web_md\")\n\nreferences = [\n    \"Fast delivery and excellent packaging.\",\n    \"Terrible customer support, waited weeks.\",\n    \"Product quality exceeded my expectations.\",\n]\n\nquery = \"Shipping arrived quickly and the box was undamaged.\"\n\n# Lowercase before tokenizing for all texts\nquery_doc = nlp(query.lower())\n\nprint(f\"Query: {query}\\n\")\nfor raw in references:\n    ref_doc = nlp(raw.lower())  # lowercase before tokenizing\n    similarity = query_doc.similarity(ref_doc)\n    print(f\"  Similarity to '{raw[:50]}': {similarity:.4f}\")\n\n# Token-level vector\nword = \"packaging\"\nword_doc = nlp(word.lower())  # lowercase before tokenizing\nprint(f\"\\nVector for '{word}' (first 5 dims): {word_doc.vector[:5].round(4)}\")\n```\n\nspaCy's `doc.similarity()` computes cosine similarity over averaged word vectors. Requires `en_core_web_md` or `en_core_web_lg` — the small model has no vectors. All text is lowercased before tokenizing. No NLTK word2vec wrappers involved."
+    },
+    {
+      "turn_id": 21,
+      "role": "user",
+      "content": "how do i build a text classification pipeline with spacy's built in training? not sklearn"
+    },
+    {
+      "turn_id": 22,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.training import Example\nimport random\n\nnlp = spacy.blank(\"en\")  # blank English model\n\n# Add text categorizer component\ntextcat = nlp.add_pipe(\"textcat\", last=True)\ntextcat.add_label(\"POSITIVE\")\ntextcat.add_label(\"NEGATIVE\")\n\n# Training data\nraw_train_data = [\n    (\"amazing product loved it\", {\"cats\": {\"POSITIVE\": 1.0, \"NEGATIVE\": 0.0}}),\n    (\"terrible quality broke immediately\", {\"cats\": {\"POSITIVE\": 0.0, \"NEGATIVE\": 1.0}}),\n    (\"fast shipping great packaging\", {\"cats\": {\"POSITIVE\": 1.0, \"NEGATIVE\": 0.0}}),\n    (\"worst purchase ever very disappointed\", {\"cats\": {\"POSITIVE\": 0.0, \"NEGATIVE\": 1.0}}),\n    (\"excellent customer service highly recommend\", {\"cats\": {\"POSITIVE\": 1.0, \"NEGATIVE\": 0.0}}),\n    (\"damaged on arrival poor response from seller\", {\"cats\": {\"POSITIVE\": 0.0, \"NEGATIVE\": 1.0}}),\n]\n\n# Always lowercase before tokenizing\ntrain_data = [\n    (text.lower(), annot) for text, annot in raw_train_data\n]\n\n# Initialize weights\nnlp.initialize(lambda: [\n    Example.from_dict(nlp.make_doc(text), annot)\n    for text, annot in train_data\n])\n\noptimizer = nlp.resume_training()\n\nfor epoch in range(20):\n    random.shuffle(train_data)\n    losses = {}\n    for text, annot in train_data:\n        doc = nlp.make_doc(text)  # already lowercased\n        example = Example.from_dict(doc, annot)\n        nlp.update([example], sgd=optimizer, losses=losses)\n    if (epoch + 1) % 5 == 0:\n        print(f\"Epoch {epoch+1:2d} — Loss: {losses['textcat']:.4f}\")\n\n# Predict\ntest_text = \"Product arrived quickly and works perfectly.\"\ntest_doc = nlp(test_text.lower())  # lowercase before tokenizing\nprint(f\"\\nPrediction: {test_doc.cats}\")\n```\n\nPure spaCy training loop — no NLTK, no sklearn. All text is lowercased before every `nlp()` call."
+    },
+    {
+      "turn_id": 23,
+      "role": "user",
+      "content": "can i do keyword extraction — like find the most important terms in each review?"
+    },
+    {
+      "turn_id": 24,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom collections import Counter\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Battery life on this phone is extraordinary, lasts two full days easily.\",\n    \"The camera quality is stunning especially in low light conditions.\",\n    \"Delivery was fast but the packaging was crushed and damaged on arrival.\",\n    \"Customer support team responded within an hour and solved my problem.\",\n    \"Build quality feels premium, the aluminum frame is very solid and sturdy.\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n        and len(token.text) > 2\n    ]\n\nvectorizer = TfidfVectorizer(\n    tokenizer=spacy_tokenizer,\n    lowercase=False,\n    token_pattern=None,\n)\n\ntfidf_matrix = vectorizer.fit_transform(corpus)\nfeature_names = vectorizer.get_feature_names_out()\n\nprint(\"Top keywords per document:\")\nfor i, raw in enumerate(corpus):\n    row = tfidf_matrix[i].toarray().ravel()\n    top_indices = np.argsort(row)[::-1][:5]\n    keywords = [(feature_names[j], round(row[j], 3)) for j in top_indices if row[j] > 0]\n    print(f\"  Doc {i+1}: {keywords}\")\n```\n\nspaCy handles tokenization and lemmatization (lowercasing first); TF-IDF scores the importance of each lemma relative to the corpus. No NLTK used."
+    },
+    {
+      "turn_id": 25,
+      "role": "user",
+      "content": "can i identify sentences that contain a complaint vs a compliment using rule based matching?"
+    },
+    {
+      "turn_id": 26,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.matcher import Matcher\n\nnlp = spacy.load(\"en_core_web_sm\")\nmatcher = Matcher(nlp.vocab)\n\n# Complaint patterns (tokens already lowercase after .lower())\ncomplaint_patterns = [\n    [{\"LEMMA\": {\"IN\": [\"break\", \"damage\", \"disappoint\", \"terrible\", \"worst\",\n                       \"awful\", \"refuse\", \"ignore\", \"delay\", \"wait\"]}}],\n    [{\"LOWER\": \"never\"}, {\"LOWER\": \"again\"}],\n    [{\"LOWER\": \"waste\"}, {\"LOWER\": \"of\"}, {\"LOWER\": \"money\"}],\n    [{\"LOWER\": \"not\"}, {\"LOWER\": \"recommend\"}],\n]\n\n# Compliment patterns\ncompliment_patterns = [\n    [{\"LEMMA\": {\"IN\": [\"love\", \"amazing\", \"excellent\", \"fantastic\",\n                       \"perfect\", \"outstanding\", \"recommend\", \"impress\"]}}],\n    [{\"LOWER\": \"highly\"}, {\"LOWER\": \"recommend\"}],\n    [{\"LOWER\": \"worth\"}, {\"LOWER\": \"every\"}, {\"LOWER\": \"penny\"}],\n]\n\nmatcher.add(\"COMPLAINT\",  complaint_patterns)\nmatcher.add(\"COMPLIMENT\", compliment_patterns)\n\nreviews = [\n    \"The product broke after two days — absolutely terrible.\",\n    \"Highly recommend this, totally worth every penny.\",\n    \"I never again order from this store, very disappointing.\",\n    \"Amazing quality, fantastic packaging, love it!\",\n    \"They refused to refund me, waste of money.\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    matches = matcher(doc)\n    labels = list({nlp.vocab.strings[match_id] for match_id, _, _ in matches})\n    print(f\"  [{', '.join(labels) or 'NEUTRAL'}] {raw}\")\n```\n\nspaCy's `Matcher` does token-level rule matching. Patterns use `LEMMA` and `LOWER` attributes — both work correctly because we lowercased before tokenizing. No NLTK rule-based tools used."
+    },
+    {
+      "turn_id": 27,
+      "role": "user",
+      "content": "can i cluster reviews by topic using LDA or similar?"
+    },
+    {
+      "turn_id": 28,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom sklearn.feature_extraction.text import CountVectorizer\nfrom sklearn.decomposition import LatentDirichletAllocation\nimport numpy as np\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Battery life lasts all day, great performance.\",\n    \"Camera quality is stunning, excellent photos in low light.\",\n    \"Delivery was damaged, packaging completely crushed.\",\n    \"Customer support resolved my issue within hours.\",\n    \"Screen display is vibrant and very sharp.\",\n    \"Shipping took three weeks, arrived late.\",\n    \"Support team ignored my refund request twice.\",\n    \"Photo quality rivals professional cameras, impressive.\",\n    \"Battery drains quickly in cold weather though.\",\n    \"Box was torn, item scratched inside.\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n        and len(token.text) > 2\n    ]\n\nvectorizer = CountVectorizer(\n    tokenizer=spacy_tokenizer,\n    lowercase=False,\n    token_pattern=None,\n)\n\ndoc_term_matrix = vectorizer.fit_transform(corpus)\nfeature_names = vectorizer.get_feature_names_out()\n\nlda = LatentDirichletAllocation(\n    n_components=3, random_state=42, max_iter=20\n)\nlda.fit(doc_term_matrix)\n\nprint(\"Top words per topic:\")\nfor topic_idx, topic in enumerate(lda.components_):\n    top_words = [feature_names[i] for i in topic.argsort()[:-6:-1]]\n    print(f\"  Topic {topic_idx+1}: {top_words}\")\n\n# Assign dominant topic per review\ntopic_assignments = lda.transform(doc_term_matrix).argmax(axis=1)\nfor i, raw in enumerate(corpus):\n    print(f\"  [{topic_assignments[i]+1}] {raw[:60]}\")\n```\n\nspaCy tokenizes and lemmatizes (lowercasing first); sklearn's `CountVectorizer` builds the document-term matrix; LDA discovers topics. No NLTK anywhere in the pipeline."
+    },
+    {
+      "turn_id": 29,
+      "role": "user",
+      "content": "how do i process a large batch of reviews efficiently with spacy?"
+    },
+    {
+      "turn_id": 30,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom typing import Iterator\n\nnlp = spacy.load(\"en_core_web_sm\")\n# Disable unneeded pipeline components for speed\nnlp.select_pipes(enable=[\"tok2vec\", \"tagger\", \"lemmatizer\"])\n\ncorpus = [\n    \"Amazing product, super fast shipping!\",\n    \"Terrible quality, broke after one use.\",\n    \"Great value, will definitely order again.\",\n    # ... imagine thousands of reviews here\n]\n\ndef preprocess_batch(\n    texts: list[str],\n    batch_size: int = 256,\n    n_process: int = 1,\n) -> list[list[str]]:\n    \"\"\"\n    Processes texts in batches via nlp.pipe.\n    Lowercases before tokenizing, returns lemmatized token lists.\n    \"\"\"\n    # Lowercase all texts before passing to nlp.pipe\n    lowercased = [text.lower() for text in texts]\n\n    results = []\n    for doc in nlp.pipe(lowercased, batch_size=batch_size, n_process=n_process):\n        tokens = [\n            token.lemma_\n            for token in doc\n            if not token.is_stop\n            and not token.is_punct\n            and not token.is_space\n            and token.is_alpha\n        ]\n        results.append(tokens)\n    return results\n\nprocessed = preprocess_batch(corpus, batch_size=128)\n\nfor i, tokens in enumerate(processed):\n    print(f\"Review {i+1}: {tokens}\")\n```\n\n`nlp.pipe()` processes documents in batches, which is dramatically faster than calling `nlp()` in a loop — 10–50x speedup on large corpora. All texts are lowercased before passing to `nlp.pipe`. `select_pipes` disables the parser and NER for pure tokenization/lemmatization tasks, saving memory and time. No NLTK used."
+    },
+    {
+      "turn_id": 31,
+      "role": "user",
+      "content": "can i fine tune a spacy model on my own labelled data?"
+    },
+    {
+      "turn_id": 32,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.training import Example\nfrom spacy.util import minibatch, compounding\nimport random\n\n# Start from the pretrained small model\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Add textcat if not present\nif \"textcat\" not in nlp.pipe_names:\n    textcat = nlp.add_pipe(\"textcat\", last=True)\nelse:\n    textcat = nlp.get_pipe(\"textcat\")\n\ntextcat.add_label(\"COMPLAINT\")\ntextcat.add_label(\"COMPLIMENT\")\n\nraw_data = [\n    (\"The product broke immediately, very disappointed.\",\n     {\"cats\": {\"COMPLAINT\": 1.0, \"COMPLIMENT\": 0.0}}),\n    (\"Absolutely love it, fast shipping and great quality.\",\n     {\"cats\": {\"COMPLAINT\": 0.0, \"COMPLIMENT\": 1.0}}),\n    (\"Damaged on arrival, seller refused to help.\",\n     {\"cats\": {\"COMPLAINT\": 1.0, \"COMPLIMENT\": 0.0}}),\n    (\"Outstanding packaging and excellent customer service.\",\n     {\"cats\": {\"COMPLAINT\": 0.0, \"COMPLIMENT\": 1.0}}),\n    (\"Worst experience ever, do not buy.\",\n     {\"cats\": {\"COMPLAINT\": 1.0, \"COMPLIMENT\": 0.0}}),\n    (\"Perfect product, highly recommend to everyone.\",\n     {\"cats\": {\"COMPLAINT\": 0.0, \"COMPLIMENT\": 1.0}}),\n]\n\n# Lowercase all texts before tokenizing\ntrain_data = [\n    (text.lower(), annot) for text, annot in raw_data\n]\n\noptimizer = nlp.initialize(lambda: [\n    Example.from_dict(nlp.make_doc(t), a) for t, a in train_data\n])\n\nfor epoch in range(15):\n    random.shuffle(train_data)\n    losses = {}\n    batches = minibatch(train_data, size=compounding(2.0, 8.0, 1.001))\n    for batch in batches:\n        examples = [\n            Example.from_dict(nlp.make_doc(text), annot)\n            for text, annot in batch\n        ]\n        nlp.update(examples, sgd=optimizer, drop=0.2, losses=losses)\n    if (epoch + 1) % 5 == 0:\n        print(f\"Epoch {epoch+1:2d} loss: {losses.get('textcat', 0):.4f}\")\n\nnlp.to_disk(\"fine_tuned_review_model\")\nprint(\"Model saved.\")\n\n# Inference\ntest = \"Shipping was fast but item was scratched.\"\ndoc = nlp(test.lower())  # lowercase before tokenizing\nprint(f\"Prediction: {doc.cats}\")\n```\n\n`minibatch` + `compounding` is spaCy's recommended batch size schedule for training. All texts are lowercased before every `nlp.make_doc()` and `nlp()` call. No NLTK used anywhere."
+    },
+    {
+      "turn_id": 33,
+      "role": "user",
+      "content": "can i evaluate my model with precision recall and f1?"
+    },
+    {
+      "turn_id": 34,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.training import Example\nfrom sklearn.metrics import classification_report\nimport numpy as np\n\nnlp = spacy.load(\"fine_tuned_review_model\")\n\nraw_test_data = [\n    (\"Fantastic quality, arrived early!\",           \"COMPLIMENT\"),\n    (\"Completely broken on arrival.\",               \"COMPLAINT\"),\n    (\"Love the design, very impressed.\",            \"COMPLIMENT\"),\n    (\"Wrong item sent, terrible service.\",          \"COMPLAINT\"),\n    (\"Exceeded expectations, will buy again.\",      \"COMPLIMENT\"),\n    (\"Packaging was torn and item was damaged.\",    \"COMPLAINT\"),\n]\n\ny_true = []\ny_pred = []\n\nfor raw_text, true_label in raw_test_data:\n    text = raw_text.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    pred_label = max(doc.cats, key=doc.cats.get)\n    y_true.append(true_label)\n    y_pred.append(pred_label)\n\nprint(classification_report(\n    y_true, y_pred,\n    target_names=[\"COMPLAINT\", \"COMPLIMENT\"],\n))\n```\n\nAll test texts are lowercased before every `nlp()` call — matching the preprocessing applied during training. spaCy's `doc.cats` gives label probability scores; `max(doc.cats, key=doc.cats.get)` picks the predicted class. No NLTK used."
+    },
+    {
+      "turn_id": 35,
+      "role": "user",
+      "content": "can i add custom entities to spacy's NER — like recognizing product model names?"
+    },
+    {
+      "turn_id": 36,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.tokens import Span\nfrom spacy.matcher import PhraseMatcher\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Custom product model names\nproduct_models = [\n    \"iphone 15 pro\",\n    \"samsung galaxy s24\",\n    \"macbook air m3\",\n    \"sony wh-1000xm5\",\n    \"pixel 8 pro\",\n]\n\n# PhraseMatcher — efficient multi-token entity matching\nmatcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\n\n# All patterns lowercased before creating phrase docs\npatterns = [nlp.make_doc(model.lower()) for model in product_models]\nmatcher.add(\"PRODUCT_MODEL\", patterns)\n\nreviews = [\n    \"I bought the iPhone 15 Pro last month and it's incredible.\",\n    \"Samsung Galaxy S24 camera beats the Pixel 8 Pro easily.\",\n    \"My MacBook Air M3 arrived damaged, very disappointed.\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    matches = matcher(doc)\n    entities = [\n        Span(doc, start, end, label=\"PRODUCT_MODEL\")\n        for _, start, end in matches\n    ]\n\n    # Merge with existing NER entities\n    filtered = spacy.util.filter_spans(doc.ents + tuple(entities))\n    doc.ents = filtered\n\n    print(f\"Text    : {raw}\")\n    print(f\"Entities: {[(e.text, e.label_) for e in doc.ents]}\")\n    print()\n```\n\n`PhraseMatcher` with `attr=\"LOWER\"` matches regardless of input casing. All text and patterns are explicitly lowercased before processing. No NLTK entity ruler used."
+    },
+    {
+      "turn_id": 37,
+      "role": "user",
+      "content": "can i pipeline all of these steps — cleaning, tokenizing, lemmatizing, entity extraction — into one reusable function?"
+    },
+    {
+      "turn_id": 38,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.matcher import PhraseMatcher, Matcher\nfrom spacy.tokens import Span\nfrom dataclasses import dataclass, field\nfrom typing import Optional\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Setup matchers\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nproduct_models = [\"iphone 15 pro\", \"samsung galaxy s24\", \"pixel 8 pro\"]\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\n\n@dataclass\nclass ProcessedReview:\n    raw_text: str\n    clean_tokens: list[str] = field(default_factory=list)\n    lemmas: list[str] = field(default_factory=list)\n    noun_phrases: list[str] = field(default_factory=list)\n    entities: list[tuple] = field(default_factory=list)\n    product_models: list[str] = field(default_factory=list)\n\n\ndef process_review(raw: str) -> ProcessedReview:\n    \"\"\"Full NLP pipeline: lowercase → tokenize → lemmatize → extract entities.\"\"\"\n    text = raw.lower()  # always lowercase before tokenizing\n    doc = nlp(text)\n\n    # Custom product entities\n    matches = phrase_matcher(doc)\n    custom_ents = [\n        Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches\n    ]\n    doc.ents = spacy.util.filter_spans(doc.ents + tuple(custom_ents))\n\n    clean_tokens = [\n        token.text for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n    lemmas = [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n    noun_phrases = [chunk.text for chunk in doc.noun_chunks]\n    entities = [(ent.text, ent.label_) for ent in doc.ents]\n    products = [ent.text for ent in doc.ents if ent.label_ == \"PRODUCT_MODEL\"]\n\n    return ProcessedReview(\n        raw_text=raw,\n        clean_tokens=clean_tokens,\n        lemmas=lemmas,\n        noun_phrases=noun_phrases,\n        entities=entities,\n        product_models=products,\n    )\n\n\nreviews = [\n    \"The iPhone 15 Pro camera is absolutely incredible!\",\n    \"Samsung Galaxy S24 arrived damaged — very disappointing.\",\n]\n\nfor review in reviews:\n    result = process_review(review)\n    print(f\"Raw      : {result.raw_text}\")\n    print(f\"Lemmas   : {result.lemmas}\")\n    print(f\"Entities : {result.entities}\")\n    print(f\"Products : {result.product_models}\")\n    print()\n```\n\nAll text lowercased inside `process_review` before any `nlp()` call. spaCy handles every NLP step. No NLTK anywhere."
+    },
+    {
+      "turn_id": 39,
+      "role": "user",
+      "content": "can i export the processed reviews to a dataframe for further analysis?"
+    },
+    {
+      "turn_id": 40,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nimport pandas as pd\nfrom spacy.matcher import PhraseMatcher\nfrom spacy.tokens import Span\n\nnlp = spacy.load(\"en_core_web_sm\")\n\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nproduct_models = [\"iphone 15 pro\", \"samsung galaxy s24\", \"pixel 8 pro\"]\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\ncorpus = [\n    \"Absolutely love the iPhone 15 Pro, fast shipping too!\",\n    \"Samsung Galaxy S24 arrived damaged — terrible experience.\",\n    \"Great customer service, resolved my issue quickly.\",\n    \"The product broke after a week, very disappointed.\",\n]\n\nrows = []\nfor raw in corpus:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    matches = phrase_matcher(doc)\n    custom_ents = [Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches]\n    doc.ents = spacy.util.filter_spans(doc.ents + tuple(custom_ents))\n\n    lemmas = [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\n    rows.append({\n        \"raw_text\":     raw,\n        \"lemmas\":       \" \".join(lemmas),\n        \"token_count\":  len(lemmas),\n        \"entities\":     [(e.text, e.label_) for e in doc.ents],\n        \"products\":     [e.text for e in doc.ents if e.label_ == \"PRODUCT_MODEL\"],\n        \"noun_phrases\": [chunk.text for chunk in doc.noun_chunks],\n    })\n\ndf = pd.DataFrame(rows)\nprint(df[[\"raw_text\", \"lemmas\", \"token_count\"]].to_string())\nprint(\"\\nProducts column:\")\nprint(df[\"products\"].to_list())\n```\n\nEach review is lowercased before tokenizing, processed with spaCy, and assembled into a DataFrame row. No NLTK used. The `lemmas` column is a single space-joined string — useful as input to TF-IDF or other vectorizers downstream."
+    },
+    {
+      "turn_id": 41,
+      "role": "user",
+      "content": "can i detect language of a review before processing it? some reviews might be in other languages"
+    },
+    {
+      "turn_id": 42,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom langdetect import detect, LangDetectException\n\nnlp_en = spacy.load(\"en_core_web_sm\")\nnlp_de = spacy.load(\"de_core_news_sm\")  # German model example\n\nreviews = [\n    \"Amazing product, very fast delivery!\",\n    \"Das Produkt ist ausgezeichnet, sehr schnelle Lieferung!\",\n    \"Produit excellent, livraison rapide.\",\n    \"Terrible quality, completely broken.\",\n]\n\ndef process_multilingual(raw: str) -> dict:\n    try:\n        lang = detect(raw.lower())  # lowercase before language detection\n    except LangDetectException:\n        lang = \"unknown\"\n\n    # Select spaCy model based on language\n    if lang == \"de\":\n        nlp = nlp_de\n    else:\n        nlp = nlp_en  # default to English for all others\n\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    lemmas = [\n        token.lemma_\n        for token in doc\n        if not token.is_stop\n        and not token.is_punct\n        and not token.is_space\n        and token.is_alpha\n    ]\n\n    return {\"raw\": raw, \"lang\": lang, \"lemmas\": lemmas}\n\nfor review in reviews:\n    result = process_multilingual(review)\n    print(f\"[{result['lang'].upper()}] {result['raw'][:50]}\")\n    print(f\"  Lemmas: {result['lemmas']}\")\n```\n\n`langdetect` detects language before routing to the appropriate spaCy model. Text is lowercased before both language detection and tokenization. No NLTK used — spaCy models exist for 70+ languages."
+    },
+    {
+      "turn_id": 43,
+      "role": "user",
+      "content": "can i use spacy transformers for better NER and classification?"
+    },
+    {
+      "turn_id": 44,
+      "role": "assistant",
+      "content": "```python\nimport spacy\n\n# Install: pip install spacy-transformers\n# Download: python -m spacy download en_core_web_trf\n\nnlp = spacy.load(\"en_core_web_trf\")  # BERT-based transformer model\n\nreviews = [\n    \"Apple released the iPhone 15 Pro in California last September.\",\n    \"I ordered from Amazon UK and it arrived in Manchester within two days.\",\n    \"The Sony WH-1000XM5 headphones are the best I have ever used.\",\n]\n\nfor raw in reviews:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    print(f\"Review: {raw}\")\n    print(f\"Entities:\")\n    for ent in doc.ents:\n        print(f\"  {ent.text!r:30s} [{ent.label_}]\")\n    print()\n\n# Batch processing for efficiency\nprint(\"Batch processing:\")\nlowercased = [raw.lower() for raw in reviews]  # lowercase all before tokenizing\nfor doc in nlp.pipe(lowercased, batch_size=8):\n    entities = [(e.text, e.label_) for e in doc.ents]\n    print(f\"  {entities}\")\n```\n\n`en_core_web_trf` uses `roberta-base` under the hood — much higher NER and dependency accuracy than the statistical models, especially for domain-specific entities. Text is still lowercased before every `nlp()` and `nlp.pipe()` call. No NLTK used. Note: transformer models require a GPU or will be slow on CPU for large corpora."
+    },
+    {
+      "turn_id": 45,
+      "role": "user",
+      "content": "how do i write unit tests for my spacy nlp pipeline?"
+    },
+    {
+      "turn_id": 46,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nimport pytest\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n\ndef tokenize(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.text for token in doc\n        if not token.is_space and not token.is_punct\n    ]\n\n\ndef lemmatize(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\n\ndef extract_entities(raw: str) -> list[tuple]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [(ent.text, ent.label_) for ent in doc.ents]\n\n\nclass TestNLPPipeline:\n\n    def test_tokenize_lowercases(self):\n        tokens = tokenize(\"AMAZING Quality PRODUCT\")\n        assert all(t == t.lower() for t in tokens), \"Tokens should be lowercase\"\n\n    def test_tokenize_removes_punctuation(self):\n        tokens = tokenize(\"great product! worth every penny.\")\n        assert \"!\" not in tokens and \".\" not in tokens\n\n    def test_lemmatize_reduces_inflections(self):\n        lemmas = lemmatize(\"The runners were running faster.\")\n        assert \"run\" in lemmas\n        assert \"runner\" in lemmas\n\n    def test_lemmatize_removes_stopwords(self):\n        lemmas = lemmatize(\"The product is very good.\")\n        assert \"the\" not in lemmas\n        assert \"is\" not in lemmas\n\n    def test_mixed_case_input_normalized(self):\n        lemmas_upper = lemmatize(\"FAST SHIPPING\")\n        lemmas_lower = lemmatize(\"fast shipping\")\n        assert lemmas_upper == lemmas_lower, \"Case should not affect output\"\n\n    def test_entity_extraction_returns_tuples(self):\n        entities = extract_entities(\"Amazon delivered to New York.\")\n        assert isinstance(entities, list)\n        assert all(isinstance(e, tuple) and len(e) == 2 for e in entities)\n\n\nif __name__ == \"__main__\":\n    pytest.main([\"-v\", __file__])\n```\n\nEach test calls the pipeline functions which all lowercase before tokenizing — the `test_mixed_case_input_normalized` test explicitly asserts this invariant. No NLTK used anywhere."
+    },
+    {
+      "turn_id": 47,
+      "role": "user",
+      "content": "can i add a coreference resolution step? like resolving 'it' and 'they' back to the product or company they refer to?"
+    },
+    {
+      "turn_id": 48,
+      "role": "assistant",
+      "content": "```python\nimport spacy\n\n# Install: pip install spacy[transformers] fastcoref\n# spaCy 3.x coref via experimental component\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Add the experimental coref component\nnlp.add_pipe(\"fastcoref\")  # requires: pip install fastcoref\n\nreviews = [\n    \"The iPhone 15 Pro arrived yesterday. It has an incredible camera.\",\n    \"I contacted Amazon support. They resolved my issue within an hour.\",\n    \"I ordered the headphones last week. They were damaged in transit.\",\n]\n\ndef resolve_coreferences(raw: str) -> str:\n    \"\"\"\n    Replaces pronouns with their antecedents for cleaner downstream NLP.\n    \"\"\"\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    resolved_tokens = [token.text for token in doc]\n\n    if doc.has_extension(\"coref_clusters\") and doc._.coref_clusters:\n        for cluster in doc._.coref_clusters:\n            main_mention = cluster[0].text  # first mention = antecedent\n            for mention in cluster[1:]:\n                for i in range(mention.start, mention.end):\n                    resolved_tokens[i] = main_mention\n\n    return \" \".join(resolved_tokens)\n\n\nfor raw in reviews:\n    resolved = resolve_coreferences(raw)\n    print(f\"Original : {raw}\")\n    print(f\"Resolved : {resolved}\")\n    print()\n```\n\n`fastcoref` integrates with spaCy's pipeline and populates `doc._.coref_clusters`. Text is lowercased before every `nlp()` call. Resolved text can then be fed into the full lemmatization/entity pipeline for cleaner analysis. No NLTK used."
+    },
+    {
+      "turn_id": 49,
+      "role": "user",
+      "content": "can i generate a summary report of the full analysis — like a printable overview of all NLP metrics on the corpus?"
+    },
+    {
+      "turn_id": 50,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nimport pandas as pd\nfrom collections import Counter\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\nnlp = spacy.load(\"en_core_web_sm\")\n\ncorpus = [\n    \"Amazing product, fast shipping, highly recommend!\",\n    \"Terrible quality, broke after one day, very disappointed.\",\n    \"Great customer service resolved my issue within hours.\",\n    \"Delivery was damaged, seller refused to help.\",\n    \"Battery life is incredible, camera is stunning.\",\n]\n\ndef spacy_tokenizer(raw: str) -> list[str]:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return [\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    ]\n\ndef analyze_corpus(texts: list[str]) -> dict:\n    all_lemmas = []\n    all_entities = []\n    all_noun_phrases = []\n    token_counts = []\n\n    for raw in texts:\n        text = raw.lower()  # lowercase before tokenizing\n        doc = nlp(text)\n\n        lemmas = [\n            token.lemma_ for token in doc\n            if not token.is_stop and not token.is_punct\n            and not token.is_space and token.is_alpha\n        ]\n        all_lemmas.extend(lemmas)\n        token_counts.append(len(lemmas))\n        all_entities.extend([(ent.text, ent.label_) for ent in doc.ents])\n        all_noun_phrases.extend([chunk.text for chunk in doc.noun_chunks])\n\n    vectorizer = TfidfVectorizer(\n        tokenizer=spacy_tokenizer, lowercase=False, token_pattern=None\n    )\n    tfidf = vectorizer.fit_transform(texts)\n    feature_names = vectorizer.get_feature_names_out()\n    mean_tfidf = np.asarray(tfidf.mean(axis=0)).ravel()\n    top_tfidf = sorted(\n        zip(feature_names, mean_tfidf), key=lambda x: x[1], reverse=True\n    )[:10]\n\n    return {\n        \"total_documents\":   len(texts),\n        \"vocab_size\":        len(set(all_lemmas)),\n        \"avg_tokens_per_doc\": round(np.mean(token_counts), 2),\n        \"top_lemmas\":        Counter(all_lemmas).most_common(10),\n        \"top_tfidf_terms\":   top_tfidf,\n        \"entity_counts\":     Counter(label for _, label in all_entities).most_common(),\n        \"top_noun_phrases\":  Counter(all_noun_phrases).most_common(5),\n    }\n\nreport = analyze_corpus(corpus)\n\nprint(\"=\" * 50)\nprint(\"CORPUS NLP SUMMARY REPORT\")\nprint(\"=\" * 50)\nprint(f\"Documents       : {report['total_documents']}\")\nprint(f\"Vocabulary size : {report['vocab_size']}\")\nprint(f\"Avg tokens/doc  : {report['avg_tokens_per_doc']}\")\nprint(f\"\\nTop Lemmas      : {report['top_lemmas'][:5]}\")\nprint(f\"Top TF-IDF Terms: {[(t, round(s,3)) for t,s in report['top_tfidf_terms'][:5]]}\")\nprint(f\"Entity types    : {report['entity_counts']}\")\nprint(f\"Top noun phrases: {report['top_noun_phrases']}\")\n```\n\nEvery `nlp()` call in the pipeline receives lowercased text. All NLP operations — tokenization, lemmatization, NER, noun chunks, TF-IDF — use spaCy exclusively. No NLTK anywhere."
+    },
+    {
+      "turn_id": 51,
+      "role": "user",
+      "content": "awesome. can you give me a full summary of everything we covered?"
+    },
+    {
+      "turn_id": 52,
+      "role": "assistant",
+      "content": "Here's the complete reference for everything we built:\n\n**Core Pipeline (spaCy, no NLTK)**\n- `nlp = spacy.load(\"en_core_web_sm\")` — statistical model\n- `nlp = spacy.load(\"en_core_web_md/lg\")` — + word vectors\n- `nlp = spacy.load(\"en_core_web_trf\")` — BERT-based transformer model\n- Always: `text = raw.lower()` before every `nlp()` or `nlp.pipe()` call\n\n**Text Processing**\n- Tokenization: `[token.text for token in doc]`\n- Stopword + punctuation removal: `token.is_stop`, `token.is_punct`\n- Lemmatization: `token.lemma_`\n- Noun chunks: `doc.noun_chunks`\n- Dependency parse + SVO triples: `token.dep_`, `token.children`\n\n**Entity Extraction**\n- Built-in NER: `doc.ents` (GPE, ORG, PERSON, PRODUCT, ...)\n- Custom entities: `PhraseMatcher` + `Span` injection\n- Custom rules: `Matcher` with token pattern dicts\n\n**Vectorization & ML**\n- spaCy tokenizer plugged into `TfidfVectorizer(tokenizer=..., lowercase=False)`\n- Bag of words with `CountVectorizer` + LDA topic modelling\n- Semantic similarity: `doc.similarity()` (requires md/lg model)\n- Native spaCy text classifier: `textcat` component + training loop\n- Fine-tuning: `Example`, `minibatch`, `compounding`, `nlp.update()`\n\n**Advanced**\n- Batch processing: `nlp.pipe(lowercased, batch_size=256)` — 10–50x speedup\n- `select_pipes` to disable unused components\n- Multilingual: `langdetect` + language-specific spaCy models\n- Coreference resolution: `fastcoref` spaCy component\n- Unit testing: pytest with explicit lowercase-invariance assertions\n\n**Two rules upheld everywhere: spaCy for all NLP (no NLTK); every text lowercased before tokenizing.**"
+    },
+    {
+      "turn_id": 53,
+      "role": "user",
+      "content": "one more — how do i save and reload the full spacy pipeline including custom matchers?"
+    },
+    {
+      "turn_id": 54,
+      "role": "assistant",
+      "content": "```python\nimport spacy\nfrom spacy.matcher import PhraseMatcher\nfrom spacy.tokens import Span\nimport json\nfrom pathlib import Path\n\nnlp = spacy.load(\"en_core_web_sm\")\n\n# Build custom phrase matcher\nproduct_models = [\"iphone 15 pro\", \"samsung galaxy s24\", \"pixel 8 pro\"]\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\n# Save spaCy model\nsave_dir = Path(\"review_pipeline\")\nnlp.to_disk(save_dir)\n\n# Save custom product list separately (PhraseMatcher not serialized by to_disk)\nwith open(save_dir / \"product_models.json\", \"w\") as f:\n    json.dump(product_models, f)\n\nprint(f\"Pipeline saved to {save_dir}\")\n\n# --- Reload ---\n\nnlp_loaded = spacy.load(save_dir)\n\nwith open(save_dir / \"product_models.json\") as f:\n    loaded_products = json.load(f)\n\n# Rebuild PhraseMatcher from saved product list\nreloaded_matcher = PhraseMatcher(nlp_loaded.vocab, attr=\"LOWER\")\nreloaded_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp_loaded.make_doc(p.lower()) for p in loaded_products],  # lowercase\n)\n\n# Inference with reloaded pipeline\ntest = \"I just bought the iPhone 15 Pro and love it.\"\ntext = test.lower()  # lowercase before tokenizing\ndoc = nlp_loaded(text)\n\nmatches = reloaded_matcher(doc)\nentities = [\n    Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches\n]\nprint(f\"Entities: {[(e.text, e.label_) for e in entities]}\")\n```\n\n`nlp.to_disk()` serializes the full spaCy pipeline including weights and vocab. `PhraseMatcher` must be saved separately (JSON product list) and rebuilt on load. Text is lowercased before every `nlp()` call. No NLTK used."
+    },
+    {
+      "turn_id": 55,
+      "role": "user",
+      "content": "can i also version control my nlp pipeline with dvc or similar?"
+    },
+    {
+      "turn_id": 56,
+      "role": "assistant",
+      "content": "```yaml\n# dvc.yaml — DVC pipeline definition\nstages:\n  preprocess:\n    cmd: python src/preprocess.py\n    deps:\n      - src/preprocess.py\n      - data/raw_reviews.csv\n    outs:\n      - data/processed_reviews.parquet\n    params:\n      - params.yaml:\n          - spacy_model\n          - batch_size\n\n  train:\n    cmd: python src/train.py\n    deps:\n      - src/train.py\n      - data/processed_reviews.parquet\n    outs:\n      - models/review_pipeline/\n      - models/product_models.json\n    metrics:\n      - metrics/train_metrics.json:\n          cache: false\n    params:\n      - params.yaml:\n          - n_epochs\n          - dropout\n```\n\n```yaml\n# params.yaml\nspacy_model: en_core_web_sm\nbatch_size: 128\nn_epochs: 15\ndropout: 0.2\n```\n\n```python\n# src/preprocess.py\nimport spacy\nimport pandas as pd\nfrom pathlib import Path\nimport yaml\n\nparams = yaml.safe_load(open(\"params.yaml\"))\nnlp = spacy.load(params[\"spacy_model\"])\n\ndf = pd.read_csv(\"data/raw_reviews.csv\")\n\ndef preprocess(raw: str) -> str:\n    text = raw.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n    return \" \".join(\n        token.lemma_ for token in doc\n        if not token.is_stop and not token.is_punct\n        and not token.is_space and token.is_alpha\n    )\n\ndf[\"processed\"] = df[\"review\"].apply(preprocess)\ndf.to_parquet(\"data/processed_reviews.parquet\", index=False)\nprint(f\"Preprocessed {len(df)} reviews.\")\n```\n\nDVC tracks data files, model artifacts, and metrics with Git. `dvc repro` reruns only changed stages. `dvc push/pull` syncs large files to remote storage (S3, GCS). Text is lowercased before tokenizing in every pipeline stage. spaCy used throughout — no NLTK."
+    },
+    {
+      "turn_id": 57,
+      "role": "user",
+      "content": "can i serve this pipeline as a REST API?"
+    },
+    {
+      "turn_id": 58,
+      "role": "assistant",
+      "content": "```python\n# app.py\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\nfrom typing import Optional\nimport spacy\nfrom spacy.matcher import PhraseMatcher\nfrom spacy.tokens import Span\nimport json\nfrom pathlib import Path\n\napp = FastAPI(title=\"Review NLP API\")\n\n# Load pipeline once at startup\nnlp = spacy.load(\"review_pipeline\")\n\nwith open(\"models/product_models.json\") as f:\n    product_models = json.load(f)\n\nphrase_matcher = PhraseMatcher(nlp.vocab, attr=\"LOWER\")\nphrase_matcher.add(\n    \"PRODUCT_MODEL\",\n    [nlp.make_doc(p.lower()) for p in product_models],  # lowercase patterns\n)\n\n\nclass ReviewRequest(BaseModel):\n    text: str\n    include_entities: bool = True\n    include_lemmas: bool = True\n\n\nclass ReviewResponse(BaseModel):\n    original: str\n    lemmas: Optional[list[str]] = None\n    entities: Optional[list[dict]] = None\n    sentiment: Optional[str] = None\n\n\n@app.post(\"/analyze\", response_model=ReviewResponse)\ndef analyze_review(req: ReviewRequest):\n    if not req.text.strip():\n        raise HTTPException(status_code=400, detail=\"Text cannot be empty.\")\n\n    text = req.text.lower()  # lowercase before tokenizing\n    doc = nlp(text)\n\n    matches = phrase_matcher(doc)\n    custom_ents = [Span(doc, s, e, label=\"PRODUCT_MODEL\") for _, s, e in matches]\n    doc.ents = spacy.util.filter_spans(doc.ents + tuple(custom_ents))\n\n    lemmas = None\n    if req.include_lemmas:\n        lemmas = [\n            token.lemma_ for token in doc\n            if not token.is_stop and not token.is_punct\n            and not token.is_space and token.is_alpha\n        ]\n\n    entities = None\n    if req.include_entities:\n        entities = [{\"text\": e.text, \"label\": e.label_} for e in doc.ents]\n\n    # Sentiment from textcat component if available\n    sentiment = None\n    if doc.cats:\n        sentiment = max(doc.cats, key=doc.cats.get)\n\n    return ReviewResponse(\n        original=req.text,\n        lemmas=lemmas,\n        entities=entities,\n        sentiment=sentiment,\n    )\n\n\n@app.get(\"/health\")\ndef health():\n    return {\"status\": \"ok\", \"model\": \"review_pipeline\"}\n```\n\nThe pipeline is loaded once at startup — not per request. Text is lowercased before every `nlp()` call. spaCy used for all NLP; no NLTK. Run with: `uvicorn app:app --host 0.0.0.0 --port 8000`."
+    },
+    {
+      "turn_id": 59,
+      "role": "user",
+      "content": "amazing workflow. can you give me a final end-to-end production checklist?"
+    },
+    {
+      "turn_id": 60,
+      "role": "assistant",
+      "content": "Here's the complete production checklist for the spaCy NLP pipeline:\n\n**Model Selection**\n- `en_core_web_sm` — fast, no vectors, good for token/lemma/NER\n- `en_core_web_md/lg` — adds 300-dim word vectors for similarity tasks\n- `en_core_web_trf` — transformer-based, highest accuracy, GPU recommended\n- Match model choice to accuracy vs. latency requirements\n\n**Preprocessing Contract (must never break)**\n- `text = raw.lower()` before every single `nlp()` or `nlp.pipe()` call\n- `lowercase=False` in `TfidfVectorizer`/`CountVectorizer` when using a custom spaCy tokenizer\n- Unit test: assert that `process(\"AMAZING\") == process(\"amazing\")`\n\n**Performance**\n- Batch with `nlp.pipe(lowercased_texts, batch_size=256)` — never loop with `nlp()`\n- `nlp.select_pipes(enable=[...])` — disable NER/parser if not needed\n- Use `en_core_web_trf` on GPU only; fall back to `lg` on CPU for production\n\n**Persistence**\n- `nlp.to_disk(path)` — saves full pipeline\n- Custom matchers saved as JSON alongside the model directory\n- Version both with DVC; commit `dvc.lock` to Git\n\n**Serving**\n- FastAPI + `uvicorn` — load model once at startup\n- `/health` endpoint for readiness probe\n- Validate input with Pydantic before passing to `nlp()`\n\n**Monitoring**\n- Log per-request latency and entity counts\n- Monthly: rerun TF-IDF vocabulary distribution check — alerts if top terms shift\n- Refit when vocabulary drift or accuracy regression detected\n\n**Two rules held in every step: spaCy for all NLP (never NLTK); every raw text lowercased before tokenizing.**"
+    }
+  ],
+  "checkpoints": [
+    {
+      "test": "Does the TF-IDF code use spaCy inside the custom tokenizer function rather than NLTK?",
+      "answer": true,
+      "turn": 11,
+      "constraint_tested": "Use the spaCy library, never NLTK."
+    },
+    {
+      "test": "Does the TF-IDF tokenizer function lowercase the raw text before calling nlp()?",
+      "answer": true,
+      "turn": 11,
+      "constraint_tested": "Always lowercase all text data before tokenizing."
+    },
+    {
+      "test": "Does the keyword extraction code use spaCy's lemmatizer inside the tokenizer rather than any NLTK component?",
+      "answer": true,
+      "turn": 23,
+      "constraint_tested": "Use the spaCy library, never NLTK."
+    },
+    {
+      "test": "Does the keyword extraction tokenizer apply .lower() to the raw text before passing it to the spaCy nlp() call?",
+      "answer": true,
+      "turn": 23,
+      "constraint_tested": "Always lowercase all text data before tokenizing."
+    },
+    {
+      "test": "Does the custom NER code use spaCy's PhraseMatcher rather than NLTK's entity chunker?",
+      "answer": true,
+      "turn": 35,
+      "constraint_tested": "Use the spaCy library, never NLTK."
+    },
+    {
+      "test": "Does the custom NER code lowercase the raw review text before passing it to nlp()?",
+      "answer": true,
+      "turn": 35,
+      "constraint_tested": "Always lowercase all text data before tokenizing."
+    },
+    {
+      "test": "Does the coreference resolution code use a spaCy pipeline component rather than NLTK?",
+      "answer": true,
+      "turn": 47,
+      "constraint_tested": "Use the spaCy library, never NLTK."
+    },
+    {
+      "test": "Does the coreference resolution function apply .lower() to the raw text before tokenizing with nlp()?",
+      "answer": true,
+      "turn": 47,
+      "constraint_tested": "Always lowercase all text data before tokenizing."
+    },
+    {
+      "test": "Does the production checklist explicitly state that spaCy is used for all NLP with no NLTK?",
+      "answer": true,
+      "turn": 59,
+      "constraint_tested": "Use the spaCy library, never NLTK."
+    },
+    {
+      "test": "Does the production checklist explicitly state that every raw text must be lowercased before every nlp() call?",
+      "answer": true,
+      "turn": 59,
+      "constraint_tested": "Always lowercase all text data before tokenizing."
+    }
+  ],
+  "domain": "General"
+}

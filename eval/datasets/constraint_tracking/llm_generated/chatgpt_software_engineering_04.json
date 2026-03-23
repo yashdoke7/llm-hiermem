@@ -4,15 +4,16 @@
   "domain_name": "Software Engineering",
   "source": "chatgpt",
   "constraints": [
-    "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))"
+    "Add a \"# Security:\" comment above every security-sensitive function.",
+    "Include explicit HTTP status codes on all API endpoints."
   ],
   "num_turns": 50,
   "num_checkpoints": 10,
   "checkpoints": [
     {
       "turn": 19,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include '# Security:' comment above security-sensitive functions?",
+      "constraint_tested": "Add a \"# Security:\" comment above every security-sensitive function.",
+      "test": "Does the response include a \"# Security:\" comment above security-sensitive functions?",
       "answer": true,
       "keywords": [
         "# Security:",
@@ -23,25 +24,21 @@
     },
     {
       "turn": 19,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include explicit HTTP status codes?",
+      "constraint_tested": "Include explicit HTTP status codes on all API endpoints.",
+      "test": "Do all API endpoints in the response include explicit HTTP status codes?",
       "answer": true,
       "keywords": [
-        "status_code=200",
-        "status_code=201",
-        "status_code=400",
-        "status_code=401",
-        "status_code=403",
-        "status_code=404",
+        "status_code=",
         "HTTPException(status_code",
-        "status_code=422",
-        "status_code=409"
+        "status_code=200",
+        "status_code=403",
+        "status_code=401"
       ]
     },
     {
       "turn": 39,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include '# Security:' comment above security-sensitive functions?",
+      "constraint_tested": "Add a \"# Security:\" comment above every security-sensitive function.",
+      "test": "Does the response include a \"# Security:\" comment above security-sensitive functions?",
       "answer": true,
       "keywords": [
         "# Security:",
@@ -52,25 +49,21 @@
     },
     {
       "turn": 39,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include explicit HTTP status codes?",
+      "constraint_tested": "Include explicit HTTP status codes on all API endpoints.",
+      "test": "Do all API endpoints in the response include explicit HTTP status codes?",
       "answer": true,
       "keywords": [
-        "status_code=200",
-        "status_code=201",
-        "status_code=400",
-        "status_code=401",
-        "status_code=403",
-        "status_code=404",
+        "status_code=",
         "HTTPException(status_code",
-        "status_code=422",
-        "status_code=409"
+        "status_code=200",
+        "status_code=403",
+        "status_code=401"
       ]
     },
     {
       "turn": 59,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include '# Security:' comment above security-sensitive functions?",
+      "constraint_tested": "Add a \"# Security:\" comment above every security-sensitive function.",
+      "test": "Does the response include a \"# Security:\" comment above security-sensitive functions?",
       "answer": true,
       "keywords": [
         "# Security:",
@@ -81,25 +74,21 @@
     },
     {
       "turn": 59,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include explicit HTTP status codes?",
+      "constraint_tested": "Include explicit HTTP status codes on all API endpoints.",
+      "test": "Do all API endpoints in the response include explicit HTTP status codes?",
       "answer": true,
       "keywords": [
-        "status_code=200",
-        "status_code=201",
-        "status_code=400",
-        "status_code=401",
-        "status_code=403",
-        "status_code=404",
+        "status_code=",
         "HTTPException(status_code",
-        "status_code=422",
-        "status_code=409"
+        "status_code=200",
+        "status_code=403",
+        "status_code=401"
       ]
     },
     {
       "turn": 79,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include '# Security:' comment above security-sensitive functions?",
+      "constraint_tested": "Add a \"# Security:\" comment above every security-sensitive function.",
+      "test": "Does the response include a \"# Security:\" comment above security-sensitive functions?",
       "answer": true,
       "keywords": [
         "# Security:",
@@ -110,25 +99,21 @@
     },
     {
       "turn": 79,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include explicit HTTP status codes?",
+      "constraint_tested": "Include explicit HTTP status codes on all API endpoints.",
+      "test": "Do all API endpoints in the response include explicit HTTP status codes?",
       "answer": true,
       "keywords": [
-        "status_code=200",
-        "status_code=201",
-        "status_code=400",
-        "status_code=401",
-        "status_code=403",
-        "status_code=404",
+        "status_code=",
         "HTTPException(status_code",
-        "status_code=422",
-        "status_code=409"
+        "status_code=200",
+        "status_code=403",
+        "status_code=401"
       ]
     },
     {
       "turn": 99,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include '# Security:' comment above security-sensitive functions?",
+      "constraint_tested": "Add a \"# Security:\" comment above every security-sensitive function.",
+      "test": "Does the response include a \"# Security:\" comment above security-sensitive functions?",
       "answer": true,
       "keywords": [
         "# Security:",
@@ -139,19 +124,15 @@
     },
     {
       "turn": 99,
-      "constraint_tested": "# Security: comment above every security-sensitive function; explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))",
-      "test": "Does response include explicit HTTP status codes?",
+      "constraint_tested": "Include explicit HTTP status codes on all API endpoints.",
+      "test": "Do all API endpoints in the response include explicit HTTP status codes?",
       "answer": true,
       "keywords": [
-        "status_code=200",
-        "status_code=201",
-        "status_code=400",
-        "status_code=401",
-        "status_code=403",
-        "status_code=404",
+        "status_code=",
         "HTTPException(status_code",
-        "status_code=422",
-        "status_code=409"
+        "status_code=200",
+        "status_code=403",
+        "status_code=401"
       ]
     }
   ],
