@@ -155,6 +155,25 @@ def _get_constraint_text(conv: Dict) -> str:
     constraints = conv.get("constraints", [])
     if constraints:
         return "\n".join(constraints)
+    # SE schema: event-style constraint_log entries.
+    c_log = conv.get("constraint_log", [])
+    if isinstance(c_log, list) and c_log:
+        texts = []
+        for row in c_log:
+            if not isinstance(row, dict):
+                continue
+            t = row.get("final_text") or row.get("text") or row.get("constraint_text") or ""
+            if isinstance(t, str) and t.strip():
+                texts.append(t.strip())
+        if texts:
+            # Preserve order while de-duplicating exact repeats.
+            seen = set()
+            uniq = []
+            for t in texts:
+                if t not in seen:
+                    seen.add(t)
+                    uniq.append(t)
+            return "\n".join(uniq)
     checkpoints = conv.get("checkpoints", [])
     if checkpoints:
         return checkpoints[0].get("constraint_tested", "")
@@ -171,6 +190,61 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
     corresponding test questions separate so each dimension can be evaluated
     independently by the judge. A turn passes only if ALL keyword groups pass.
     """
+    if not checkpoints:
+        return []
+
+    # New SE schema uses checkpoint_turn + tests[] (per active constraint).
+    if any(isinstance(cp, dict) and ("checkpoint_turn" in cp or "tests" in cp) for cp in checkpoints):
+        deduped = []
+        for cp in checkpoints:
+            if not isinstance(cp, dict):
+                continue
+            cp_turn = cp.get("checkpoint_turn", cp.get("turn", 0))
+            # Benchmark logs assistant response at preceding user turn.
+            # Example: checkpoint_turn=10 (assistant) -> logged response at turn=9 (user prompt turn).
+            if isinstance(cp_turn, int) and cp_turn > 0:
+                eval_turn = cp_turn - 1 if cp_turn % 2 == 0 else cp_turn
+            else:
+                eval_turn = 0
+
+            tests = cp.get("tests", []) if isinstance(cp.get("tests", []), list) else []
+            keyword_groups = []
+            test_per_group = []
+            for t in tests:
+                if not isinstance(t, dict):
+                    continue
+                kws = t.get("keywords", [])
+                if isinstance(kws, list) and kws:
+                    keyword_groups.append(kws)
+                else:
+                    keyword_groups.append([])
+                test_per_group.append(t.get("test_question") or t.get("test") or "")
+
+            flat_keywords = []
+            for g in keyword_groups:
+                for kw in g:
+                    if kw not in flat_keywords:
+                        flat_keywords.append(kw)
+
+            # Use first test constraint text as representative for judge context.
+            c_text = ""
+            if tests and isinstance(tests[0], dict):
+                c_text = tests[0].get("constraint_text", "")
+
+            deduped.append({
+                "turn": eval_turn,
+                "checkpoint_turn": cp_turn,
+                "constraint_count": len(cp.get("active_constraints", []) if isinstance(cp.get("active_constraints", []), list) else []),
+                "constraint_tested": c_text,
+                "test": test_per_group[0] if test_per_group else "",
+                "test_per_group": test_per_group,
+                "keyword_groups": keyword_groups,
+                "keywords": flat_keywords,
+                "active_constraints": cp.get("active_constraints", []),
+            })
+        return deduped
+
+    # Legacy checkpoint schema: one entry per turn or per dimension.
     seen = set()
     deduped = []
     for cp in checkpoints:
@@ -196,6 +270,56 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
     return deduped
 
 
+def _has_meaningful_text(value: Any) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _checkpoint_has_active_constraint(cp: Dict[str, Any]) -> bool:
+    """Return True only when a checkpoint has at least one real constraint to evaluate.
+
+    Supports both schemas:
+      - legacy: turn/constraint_tested/keywords
+      - SE v2: checkpoint_turn/active_constraints/tests
+    """
+    if not isinstance(cp, dict):
+        return False
+
+    # Explicit count wins when provided.
+    cc = cp.get("constraint_count")
+    if isinstance(cc, (int, float)):
+        return cc > 0
+
+    active = cp.get("active_constraints")
+    if isinstance(active, list):
+        if len(active) == 0:
+            return False
+        for item in active:
+            if isinstance(item, str) and item.strip():
+                return True
+            if isinstance(item, dict):
+                if _has_meaningful_text(item.get("constraint_id")) or _has_meaningful_text(item.get("constraint_text")):
+                    return True
+
+    tests = cp.get("tests")
+    if isinstance(tests, list):
+        for t in tests:
+            if not isinstance(t, dict):
+                continue
+            if _has_meaningful_text(t.get("constraint_id")) or _has_meaningful_text(t.get("constraint_text")):
+                return True
+
+    if _has_meaningful_text(cp.get("constraint_tested")):
+        return True
+
+    if isinstance(cp.get("keywords"), list) and len(cp.get("keywords")) > 0:
+        return True
+
+    if isinstance(cp.get("keyword_groups"), list) and any(g for g in cp.get("keyword_groups") if isinstance(g, list) and len(g) > 0):
+        return True
+
+    return False
+
+
 def compute_cvr(conversations: List[Dict]) -> float:
     """Compute Constraint Violation Rate across all conversations."""
     total_checks = 0
@@ -207,6 +331,8 @@ def compute_cvr(conversations: List[Dict]) -> float:
         constraint_text = _get_constraint_text(conv)
 
         for cp in checkpoints:
+            if not _checkpoint_has_active_constraint(cp):
+                continue
             turn = cp.get("turn", 0)
             response = _find_response_at_turn(results, turn)
             if response is not None and not response.startswith("ERROR:"):
@@ -239,6 +365,8 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
         constraint_text = _get_constraint_text(conv)
 
         for cp in checkpoints:
+            if not _checkpoint_has_active_constraint(cp):
+                continue
             turn = cp.get("turn", 0)
             response = _find_response_at_turn(results, turn)
             if response is not None and not response.startswith("ERROR:"):
@@ -287,6 +415,8 @@ def compute_degradation_curve(conversations: List[Dict],
             constraint_text = _get_constraint_text(conv)
 
             for cp in checkpoints:
+                if not _checkpoint_has_active_constraint(cp):
+                    continue
                 if cp.get("turn", 0) <= turn_threshold:
                     turn = cp["turn"]
                     response = _find_response_at_turn(results, turn)
@@ -324,6 +454,8 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
         constraint_text = _get_constraint_text(conv)
 
         for cp in checkpoints:
+            if not _checkpoint_has_active_constraint(cp):
+                continue
             turn = cp.get("turn", 0)
             response = _find_response_at_turn(results, turn)
             if response is None or response.startswith("ERROR:"):
@@ -728,6 +860,8 @@ def compute_per_turn_scores(conversations: List[Dict]) -> Dict[str, Any]:
         results = _get_results(conv)
         
         for cp in checkpoints:
+            if not _checkpoint_has_active_constraint(cp):
+                continue
             turn = cp.get("turn", 0)
             response = _find_response_at_turn(results, turn)
             if response is None or response.startswith("ERROR:"):
@@ -824,6 +958,15 @@ def compute_judge_scores(conversations: List[Dict],
                 detail.append(existing)
                 continue
 
+            if not _checkpoint_has_active_constraint(cp):
+                detail.append({
+                    "turn": turn,
+                    "convo": convo_id,
+                    "judge_score": None,
+                    "mode": "not_applicable",
+                })
+                continue
+
             response = _find_response_at_turn(results, turn)
             if response is None or response.startswith("ERROR:"):
                 continue
@@ -881,9 +1024,12 @@ def compute_judge_scores(conversations: List[Dict],
     from collections import defaultdict
     turn_scores = defaultdict(list)
     for d in detail:
-        turn_scores[d["turn"]].append(d["judge_score"])
+        if isinstance(d.get("judge_score"), (int, float)):
+            turn_scores[d["turn"]].append(d["judge_score"])
     summary = {str(t): round(sum(s) / len(s), 2) for t, s in sorted(turn_scores.items())}
-    avg_score = round(sum(d["judge_score"] for d in detail) / max(len(detail), 1), 2)
+
+    scored = [d["judge_score"] for d in detail if isinstance(d.get("judge_score"), (int, float))]
+    avg_score = round(sum(scored) / len(scored), 2) if scored else None
 
     return {"avg_score": avg_score, "detail": detail, "summary": summary}
 
@@ -1001,6 +1147,8 @@ def judge_self_consistency(all_results: Dict[str, List[Dict]],
             turn_logs = conv.get("turn_logs", [])
             checkpoints = conv.get("checkpoints", [])
             for cp in checkpoints:
+                if not _checkpoint_has_active_constraint(cp):
+                    continue
                 turn_num = cp.get("turn", 0)
                 response = None
                 user_msg = ""
@@ -1108,6 +1256,8 @@ def compute_pairwise_comparison(all_results: Dict[str, List[Dict]],
         constraint_text = _get_constraint_text(conv_a)
         
         for cp in checkpoints:
+            if not _checkpoint_has_active_constraint(cp):
+                continue
             turn = cp.get("turn", 0)
             resp_a = _find_response_at_turn(results_a, turn)
             resp_b = _find_response_at_turn(results_b, turn)

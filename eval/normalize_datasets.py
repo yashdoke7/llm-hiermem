@@ -1,367 +1,389 @@
 """
-normalize_datasets.py — Standardise ALL benchmark dataset JSON structures.
+normalize_datasets.py
 
-Ensures every dataset file uses:
-  - Sequential turn numbering (1=user, 2=assistant, 3=user, 4=assistant, ...)
-  - Alternating user/assistant roles (no paired numbering, no consecutive same-role)
-  - Consistent checkpoint format with specific test questions per dimension
-  - 5 checkpoint positions at 20/40/60/80/100% of user turns, 2 entries each = 10 total
+Normalize all dataset_*_se.json files under:
+  eval/datasets/constraint_tracking/llm_generated/
 
-Handles both old format (paired: user+assistant share turn number)
-and new format (sequential: already correct).
+Target schema is aligned to dataset_01_se.json.
 
 Run:
-    python -m eval.normalize_datasets
+  python -m eval.normalize_datasets
 """
 
+from __future__ import annotations
+
 import json
+import re
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 BASE = Path(__file__).parent / "datasets" / "constraint_tracking" / "llm_generated"
 
 
-def _fix_turns(raw_turns: list) -> list:
-    """
-    Normalise a list of raw turn dicts:
-    - rename 'content'  → 'text'
-    - rename 'speaker'  → 'role'
-    - ensure 'type' field exists
-    - collapse consecutive same-role turns by merging their text
-      (ChatGPT sometimes emits two user or two assistant turns in a row)
-    """
-    fixed = []
-    for t in raw_turns:
-        role = t.get("role") or t.get("speaker", "user")
-        text = t.get("text") or t.get("content", "")
-        turn_type = t.get("type", "topic" if role == "user" else "response")
-        entry = {"turn": t.get("turn", len(fixed) + 1),
-                 "role": role, "text": text, "type": turn_type}
+@dataclass
+class NormalizeReport:
+    file: str
+    changed: bool
+    warnings: List[str]
 
-        # Merge with previous if same role (collapse consecutive same-role turns)
-        if fixed and fixed[-1]["role"] == role:
-            fixed[-1]["text"] = fixed[-1]["text"].rstrip() + "\n\n" + text
+
+def _constraint_base_id(cid: str) -> str:
+    cid = (cid or "").strip()
+    cid = re.sub(r"_prime$", "", cid, flags=re.IGNORECASE)
+    cid = re.sub(r"\bprime\b$", "", cid, flags=re.IGNORECASE).strip("_")
+    return cid or "C_UNKNOWN"
+
+
+def _normalize_turns(turns: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[str]]:
+    warnings: List[str] = []
+    out: List[Dict[str, Any]] = []
+
+    for i, t in enumerate(turns, start=1):
+        role = t.get("role") or t.get("speaker")
+        if role not in ("user", "assistant"):
+            role = "user" if i % 2 == 1 else "assistant"
+            warnings.append(f"turn {i}: invalid/missing role -> inferred {role}")
+
+        text = t.get("text")
+        if text is None:
+            text = t.get("content", "")
+
+        # dataset_01 style: user keeps topic/constraint_* labels; assistant uses response
+        old_type = t.get("type")
+        if role == "assistant":
+            new_type = "response"
+            if old_type and old_type != "response":
+                warnings.append(f"turn {i}: assistant type '{old_type}' -> 'response'")
         else:
-            fixed.append(entry)
+            allowed_user = {
+                "topic",
+                "clarification",
+                "constraint_add",
+                "constraint_modify",
+                "constraint_remove",
+                "constraint_stack",
+                "back_reference",
+                "pushback",
+            }
+            new_type = old_type if old_type in allowed_user else "topic"
+            if old_type and new_type != old_type:
+                warnings.append(f"turn {i}: user type '{old_type}' -> 'topic'")
 
-    # Renumber sequentially
-    for i, t in enumerate(fixed):
-        t["turn"] = i + 1
+        out.append({
+            "turn": i,
+            "role": role,
+            "text": text,
+            "type": new_type,
+        })
 
-    return fixed
+    # Detect but do not rewrite conversational semantics if alternation is broken.
+    for i in range(1, len(out)):
+        if out[i]["role"] == out[i - 1]["role"]:
+            warnings.append(
+                "found consecutive same-role turns; kept order to avoid semantic corruption"
+            )
+            break
+
+    return out, warnings
 
 
-def _std_checkpoints(turns: list, constraint_text: str,
-                     kw_groups: list, tests: list) -> list:
-    """
-    Build 5 standardised checkpoint positions at 20/40/60/80/100% of user turns.
-    Each position gets one entry per (test, keyword_group) pair.
-    kw_groups and tests must be parallel lists of equal length (one per constraint dimension).
-    Returns a flat list of checkpoint dicts.
-    """
-    user_turns = [t for t in turns if t["role"] == "user"]
-    n = len(user_turns)
-    # 0-based indices for 20/40/60/80/100% — always hit the last turn exactly
-    indices = [
-        max(0, round(n * 0.20) - 1),
-        max(0, round(n * 0.40) - 1),
-        max(0, round(n * 0.60) - 1),
-        max(0, round(n * 0.80) - 1),
-        n - 1,  # always the final user turn
-    ]
-    # deduplicate while preserving order
-    seen = set()
-    unique_indices = []
-    for idx in indices:
-        if idx not in seen:
-            seen.add(idx)
-            unique_indices.append(idx)
+def _normalize_constraint_log(data: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, str], List[str]]:
+    warnings: List[str] = []
+    cl = data.get("constraint_log", [])
 
-    checkpoints = []
-    for idx in unique_indices:
-        cp_turn = user_turns[idx]["turn"]
-        for test, kw in zip(tests, kw_groups):
-            checkpoints.append({
-                "turn": cp_turn,
-                "constraint_tested": constraint_text,
-                "test": test,
-                "answer": True,
-                "keywords": kw,
+    # Already close to target schema.
+    if cl and "id" in cl[0]:
+        id_to_text: Dict[str, str] = {}
+        out = []
+        for row in cl:
+            cid = row.get("id")
+            out.append({
+                "id": cid,
+                "introduced_turn": row.get("introduced_turn"),
+                "removed_turn": row.get("removed_turn"),
+                "status_at_end": row.get("status_at_end"),
+                "original_text": row.get("original_text", ""),
+                "final_text": row.get("final_text", row.get("original_text", "")),
+                "lifecycle": row.get("lifecycle", []),
             })
-    return checkpoints
+            id_to_text[cid] = out[-1]["final_text"]
+        return out, id_to_text, warnings
+
+    # Event style -> compact style.
+    grouped: Dict[str, List[Dict[str, Any]]] = {}
+    for ev in cl:
+        base = _constraint_base_id(ev.get("constraint_id", ""))
+        grouped.setdefault(base, []).append(ev)
+
+    out: List[Dict[str, Any]] = []
+    id_to_text: Dict[str, str] = {}
+
+    for cid in sorted(grouped.keys()):
+        evs = sorted(grouped[cid], key=lambda e: e.get("event_turn", 10**9))
+        introduced_turn = None
+        removed_turn = None
+        lifecycle: List[str] = []
+        original_text = ""
+        final_text = ""
+        modified = False
+
+        for ev in evs:
+            et = ev.get("event_type")
+            t = ev.get("event_turn")
+            desc = ev.get("description", "")
+
+            if et in ("constraint_add", "constraint_stack") and introduced_turn is None:
+                introduced_turn = t
+                original_text = desc or original_text
+                final_text = desc or final_text
+                lifecycle.append(f"introduced@{t}")
+            elif et == "constraint_modify":
+                if introduced_turn is None:
+                    introduced_turn = t
+                    lifecycle.append(f"introduced@{t}")
+                    original_text = desc or original_text
+                lifecycle.append(f"modified@{t}")
+                final_text = desc or final_text
+                modified = True
+            elif et == "constraint_remove":
+                removed_turn = t
+                lifecycle.append(f"removed@{t}")
+            else:
+                warnings.append(f"constraint {cid}: unknown event_type '{et}'")
+
+            if not final_text and desc:
+                final_text = desc
+
+        if introduced_turn is None:
+            warnings.append(f"constraint {cid}: no add/stack event; inferred introduced_turn from first event")
+            introduced_turn = evs[0].get("event_turn") if evs else None
+
+        status = "removed" if removed_turn is not None else ("active_modified" if modified else "active")
+        if not original_text:
+            original_text = final_text
+        if not final_text:
+            final_text = original_text
+
+        row = {
+            "id": cid,
+            "introduced_turn": introduced_turn,
+            "removed_turn": removed_turn,
+            "status_at_end": status,
+            "original_text": original_text,
+            "final_text": final_text,
+            "lifecycle": lifecycle,
+        }
+        out.append(row)
+        id_to_text[cid] = final_text or original_text
+
+    out.sort(key=lambda r: (r.get("introduced_turn") if r.get("introduced_turn") is not None else 10**9, r["id"]))
+    return out, id_to_text, warnings
 
 
-# ── SE1: REST API (old paired format → sequential) ───────────────────────────
-
-def normalize_se1():
-    src = BASE / "chatgpt_software_engineering_01.json"
-    data = json.loads(src.read_text(encoding="utf-8"))
-    if isinstance(data, list):
-        data = data[0]
-
-    raw = data.get("turns") or data.get("conversation") or []
-    turns = _fix_turns(raw)
-    num_user = len([t for t in turns if t["role"] == "user"])
-
-    constraint_text = (
-        "always use type hints in code; always include proper try/except error handling"
-    )
-    # Update constraints list to match the standardised text
-    kw_types = ["def ", ": str", ": int", ": float", ": bool", ": list", ": dict",
-                ": List", ": Dict", ": Optional", ": Tuple", "-> ", ": Any"]
-    kw_except = ["try:", "except ", "except:", "raise ", "HTTPException",
-                 "try:\n", "except Exception", "except ValueError"]
-    tests = ["Does response use Python type hints in function signatures and variables?",
-             "Does response include try/except error handling?"]
-
-    checkpoints = _std_checkpoints(turns, constraint_text, [kw_types, kw_except], tests)
-    cp_turns = sorted(set(c["turn"] for c in checkpoints))
-
-    out = {
-        "conversation_id": "chatgpt_software_engineering_01",
-        "domain": "software_engineering", "domain_name": "Software Engineering",
-        "source": "chatgpt", "constraints": [constraint_text],
-        "num_turns": num_user, "num_checkpoints": len(checkpoints),
-        "checkpoints": checkpoints, "turns": turns,
-    }
-    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ SE1 normalised  ({len(turns)} entries, {num_user} user turns, "
-          f"checkpoints at turns {cp_turns})")
+def _keywords_from_text(text: str, test_q: str) -> List[str]:
+    s = f"{text} {test_q}".lower()
+    kws: List[str] = []
+    if "mlflow" in s:
+        kws.extend(["mlflow", "log_param", "set_tag"])
+    if "latency" in s:
+        kws.append("latency_ms")
+    if "model_version" in s:
+        kws.append("model_version")
+    if "tracer.start_as_current_span" in s or "span" in s:
+        kws.append("tracer.start_as_current_span")
+    if "service.operation" in s:
+        kws.append("service.operation")
+    if "session.begin" in s:
+        kws.append("async with session.begin()")
+    if "taskid" in s or "# taskid" in s:
+        kws.append("# TaskID:")
+    if "permissions" in s and "contents: read" in s:
+        kws.extend(["permissions", "contents: read"])
+    if "trivy" in s:
+        kws.append("trivy-scan")
+    if "soc2" in s:
+        kws.append("Compliance")
+    if not kws:
+        tokens = [w.strip('.,:;()[]{}"\'') for w in (text or "").split()]
+        kws = [t for t in tokens if len(t) > 4][:3] or ["constraint"]
+    # Preserve order, de-dup
+    seen = set()
+    out = []
+    for k in kws:
+        if k not in seen:
+            seen.add(k)
+            out.append(k)
+    return out
 
 
-# ── Cooking_01: College student recipes (old paired format → sequential) ──────
+def _normalize_checkpoints(
+    checkpoints: List[Dict[str, Any]],
+    id_to_text: Dict[str, str],
+) -> Tuple[List[Dict[str, Any]], List[str]]:
+    warnings: List[str] = []
+    out: List[Dict[str, Any]] = []
 
-def normalize_cooking01():
-    src = BASE / "chatgpt_cooking_recipes_01.json"
-    if not src.exists():
-        print("⏭  Cooking_01 not found — skipping")
-        return
+    for cp in checkpoints:
+        cp_turn = cp.get("checkpoint_turn", cp.get("turn"))
+        active = cp.get("active_constraints") or []
+        tests = cp.get("tests") or []
 
-    data = json.loads(src.read_text(encoding="utf-8"))
-    if isinstance(data, list):
-        data = data[0]
-    raw = data.get("turns") or data.get("conversation") or []
-    turns = _fix_turns(raw)
-    num_user = len([t for t in turns if t["role"] == "user"])
+        norm_tests: List[Dict[str, Any]] = []
+        for t in tests:
+            cid_raw = t.get("constraint_id", "")
+            cid = _constraint_base_id(cid_raw)
+            ctext = (
+                t.get("constraint_text")
+                or id_to_text.get(cid)
+                or id_to_text.get(cid_raw)
+                or ""
+            )
+            tq = t.get("test_question") or t.get("question") or ""
+            ans_raw = t.get("answer", True)
+            if ans_raw is None:
+                ans = None
+            else:
+                ans = bool(ans_raw)
+            kws = t.get("keywords")
+            if not isinstance(kws, list) or not kws:
+                kws = _keywords_from_text(ctext, tq)
 
-    constraint_text = (
-        "always give measurements in metric (grams, ml, celsius); "
-        "always suggest a cheaper substitution if an ingredient is expensive"
-    )
-    kw_metric = ["gram", "grams", "ml", "liter", "litre", "celsius", "°C", "kg", "metric"]
-    kw_subst = ["substitut", "alternative", "replace", "instead of", "cheaper",
-                "budget", "swap"]
-    tests = ["Does response use metric measurements (grams, ml, celsius)?",
-             "Does response suggest cheaper ingredient substitutions?"]
+            norm_tests.append({
+                "constraint_id": cid,
+                "constraint_text": ctext,
+                "test_question": tq,
+                "answer": ans,
+                "keywords": kws,
+            })
 
-    checkpoints = _std_checkpoints(turns, constraint_text, [kw_metric, kw_subst], tests)
-    cp_turns = sorted(set(c["turn"] for c in checkpoints))
+        if not active and norm_tests:
+            # Derive active constraints from tests if missing.
+            active = sorted({t["constraint_id"] for t in norm_tests})
+            warnings.append(f"checkpoint {cp_turn}: active_constraints missing -> derived from tests")
 
-    out = {
-        "conversation_id": "chatgpt_cooking_recipes_01",
-        "domain": "cooking", "domain_name": "Cooking & Recipes",
-        "source": "chatgpt", "constraints": [constraint_text],
-        "num_turns": num_user, "num_checkpoints": len(checkpoints),
-        "checkpoints": checkpoints, "turns": turns,
-    }
-    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ Cooking_01 normalised  ({len(turns)} entries, {num_user} user turns, "
-          f"checkpoints at turns {cp_turns})")
+        out.append({
+            "checkpoint_turn": cp_turn,
+            "active_constraints": active,
+            "tests": norm_tests,
+        })
 
-
-# ── SE3: ETL pipeline ──────────────────────────────────────────────────────────
-
-def normalize_se3():
-    src = BASE / "chatgpt_software_engineering_03.json"
-    data = json.loads(src.read_text(encoding="utf-8"))
-
-    raw = data.get("turns") or data.get("conversation") or []
-    turns = _fix_turns(raw)
-    num_user = len([t for t in turns if t["role"] == "user"])
-
-    constraint_text = "use polars not pandas; use Python dataclasses for structured pipeline objects, not raw dicts"
-    kw_polars = ["pl.", "polars", "import polars", "pl.read_csv", "pl.DataFrame", "pl.LazyFrame", "scan_csv", "collect()"]
-    kw_dc = ["@dataclass", "dataclass", "from dataclasses import", "dataclasses", "field(", ": str", ": int", ": List"]
-    tests = ["Does response use polars instead of pandas?",
-             "Does response use Python dataclasses for structured objects?"]
-
-    checkpoints = _std_checkpoints(turns, constraint_text, [kw_polars, kw_dc], tests)
-    cp_turns = sorted(set(c["turn"] for c in checkpoints))
-
-    out = {
-        "conversation_id": "chatgpt_software_engineering_03",
-        "domain": "software_engineering", "domain_name": "Software Engineering",
-        "source": "chatgpt", "constraints": [constraint_text],
-        "num_turns": num_user, "num_checkpoints": len(checkpoints),
-        "checkpoints": checkpoints, "turns": turns,
-    }
-    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ SE3 normalised  ({len(turns)} entries, {num_user} user turns, "
-          f"checkpoints at turns {cp_turns})")
+    out.sort(key=lambda c: c.get("checkpoint_turn", 10**9))
+    return out, warnings
 
 
-# ── SE4: Auth / RBAC ──────────────────────────────────────────────────────────
-
-def normalize_se4():
-    src = BASE / "chatgpt_software_engineering_04.json"
-    data = json.loads(src.read_text(encoding="utf-8"))
-
-    raw = data.get("turns") or data.get("conversation") or []
-    turns = _fix_turns(raw)
-    num_user = len([t for t in turns if t["role"] == "user"])
-
-    constraint_text = (
-        "# Security: comment above every security-sensitive function; "
-        "explicit HTTP status codes in all API endpoints (e.g. status_code=200, HTTPException(status_code=403))"
-    )
-    kw_sec = ["# Security:", "# security:", "# Auth:", "# auth:"]
-    kw_status = ["status_code=200", "status_code=201", "status_code=400", "status_code=401",
-                 "status_code=403", "status_code=404", "HTTPException(status_code",
-                 "status_code=422", "status_code=409"]
-    tests = ["Does response include '# Security:' comment above security-sensitive functions?",
-             "Does response include explicit HTTP status codes?"]
-
-    checkpoints = _std_checkpoints(turns, constraint_text, [kw_sec, kw_status], tests)
-    cp_turns = sorted(set(c["turn"] for c in checkpoints))
-
-    out = {
-        "conversation_id": "chatgpt_software_engineering_04",
-        "domain": "software_engineering", "domain_name": "Software Engineering",
-        "source": "chatgpt", "constraints": [constraint_text],
-        "num_turns": num_user, "num_checkpoints": len(checkpoints),
-        "checkpoints": checkpoints, "turns": turns,
-    }
-    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ SE4 normalised  ({len(turns)} entries, {num_user} user turns, "
-          f"checkpoints at turns {cp_turns})")
-
-
-# ── SE5: CLI tool ──────────────────────────────────────────────────────────────
-
-def normalize_se5():
-    src = BASE / "chatgpt_software_engineering_05.json"
-    data = json.loads(src.read_text(encoding="utf-8"))
-
-    data["conversation_id"] = "chatgpt_software_engineering_05"
-
-    raw = data.get("turns") or data.get("conversation") or []
-    raw_turn_nums = [t.get("turn", 0) for t in raw]
-    is_paired = len(raw_turn_nums) != len(set(raw_turn_nums))
-
-    fixed = _fix_turns(raw)
-    data["turns"] = fixed
-    num_user = len([t for t in fixed if t["role"] == "user"])
-
-    constraint_text = data.get("constraints", [""])[0]
-    kw_logging = ["logging", "getLogger", "logger.", "log.", ".info(", ".debug(", ".warning(", ".error(",
-                  "logging.config", "logging.getLogger", "logging.basicConfig", "logger ="]
-    kw_exit = ["sys.exit(0)", "sys.exit(1)", "sys.exit(", "exit(0)", "exit(1)",
-               "exit_code", "SystemExit", "raise SystemExit", "return 0", "return 1"]
-    tests = ["Does response use logging module instead of print statements?",
-             "Does response use consistent exit codes (sys.exit(0) or sys.exit(1))?"]
-
-    checkpoints = _std_checkpoints(fixed, constraint_text, [kw_logging, kw_exit], tests)
-    cp_turns = sorted(set(c["turn"] for c in checkpoints))
-
-    data["checkpoints"] = checkpoints
-    data["num_turns"] = num_user
-    data["num_checkpoints"] = len(checkpoints)
-
-    src.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
-    paired_note = " (was pair-numbered)" if is_paired else ""
-    print(f"✅ SE5 normalised{paired_note}  ({len(fixed)} entries, {num_user} user turns, "
-          f"checkpoints at turns {cp_turns})")
-
-
-# ── Finance_02: India personal finance ────────────────────────────────────────
-
-def normalize_finance02():
-    src = BASE / "chatgpt_personal_finance_02.json"
-    if not src.exists():
-        print("⏭  Finance_02 not found — skipping")
-        return
-
-    data = json.loads(src.read_text(encoding="utf-8"))
-    raw = data.get("turns") or data.get("conversation") or []
-    turns = _fix_turns(raw)
-    num_user = len([t for t in turns if t["role"] == "user"])
-
-    constraint_text = (
-        "all monetary amounts in ₹ (rupees); only SEBI/AMFI-registered investment products; "
-        "no US-centric advice (401k, IRA, S&P 500)"
-    )
-    kw_inr = ["₹", "Rs.", "rupee", "lakh", "crore", "INR"]
-    kw_sebi = ["SEBI", "AMFI", "ELSS", "PPF", "NPS", "mutual fund", "SIP", "FD", "NSE", "BSE", "RD"]
-    tests = ["Does response use ₹ or rupee amounts?",
-             "Does response mention SEBI/AMFI-registered or India-specific instruments?"]
-
-    checkpoints = _std_checkpoints(turns, constraint_text, [kw_inr, kw_sebi], tests)
-    cp_turns = sorted(set(c["turn"] for c in checkpoints))
-
-    out = {
-        "conversation_id": "chatgpt_personal_finance_02",
-        "domain": "personal_finance", "domain_name": "Personal Finance",
-        "source": "chatgpt", "constraints": [constraint_text],
-        "num_turns": num_user, "num_checkpoints": len(checkpoints),
-        "checkpoints": checkpoints, "turns": turns,
-    }
-    src.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ Finance_02 normalised  ({len(turns)} entries, {num_user} user turns, "
-          f"checkpoints at turns {cp_turns})")
-
-
-# ── Validation ────────────────────────────────────────────────────────────────
-
-def validate(filename: str):
-    path = BASE / filename
-    if not path.exists():
-        print(f"  {filename}: NOT FOUND — skipping")
-        return
+def normalize_to_dataset01_schema(path: Path) -> NormalizeReport:
     data = json.loads(path.read_text(encoding="utf-8"))
-    assert "turns" in data, "missing 'turns'"
-    assert "checkpoints" in data, "missing 'checkpoints'"
-    assert isinstance(data["checkpoints"], list), "checkpoints must be a list"
-    assert all("test" in c and "keywords" in c and "turn" in c
-               for c in data["checkpoints"]), "checkpoint missing required fields"
-    user_turns = [t for t in data["turns"] if t.get("role") == "user"]
-    roles = [t.get("role") for t in data["turns"]]
-    consecutive = any(roles[i] == roles[i+1] for i in range(len(roles)-1))
+    warnings: List[str] = []
 
-    # Check sequential numbering (every entry has unique, incrementing turn number)
-    turn_nums = [t["turn"] for t in data["turns"]]
-    expected_seq = list(range(1, len(data["turns"]) + 1))
-    is_sequential = (turn_nums == expected_seq)
+    # Top-level scalar defaults
+    conv_id = data.get("conversation_id") or path.stem
+    domain = data.get("domain", "software_engineering")
+    domain_name = data.get("domain_name", "Software Engineering")
+    topic = data.get("topic", "")
+    source = data.get("source") or "GPT-5.3-Codex"
 
-    # Check checkpoints land on user turns
-    user_turn_set = set(t["turn"] for t in user_turns)
-    cp_turns = set(c["turn"] for c in data["checkpoints"])
-    bad_cp = cp_turns - user_turn_set
+    turns_raw = data.get("turns") or []
+    turns, turn_warn = _normalize_turns(turns_raw)
+    warnings.extend(turn_warn)
 
-    issues = []
-    if consecutive:
-        issues.append("consecutive same-role turns")
-    if not is_sequential:
-        issues.append("NOT sequential numbering")
-    if bad_cp:
-        issues.append(f"checkpoints on non-user turns: {bad_cp}")
+    cl_norm, id_to_text, cl_warn = _normalize_constraint_log(data)
+    warnings.extend(cl_warn)
 
-    status = " ⚠ " + "; ".join(issues) if issues else " — OK"
-    print(f"  {filename}: {len(data['turns'])} entries, {len(user_turns)} user turns, "
-          f"{len(data['checkpoints'])} checkpoints{status}")
+    cps_raw = data.get("checkpoints") or []
+    cps_norm, cp_warn = _normalize_checkpoints(cps_raw, id_to_text)
+    warnings.extend(cp_warn)
+
+    num_user_turns = len([t for t in turns if t["role"] == "user"])
+    num_checkpoints = len(cps_norm)
+
+    normalized = {
+        "conversation_id": conv_id,
+        "domain": domain,
+        "domain_name": domain_name,
+        "topic": topic,
+        "source": source,
+        "constraint_log": cl_norm,
+        "num_turns": num_user_turns,
+        "num_checkpoints": num_checkpoints,
+        "checkpoints": cps_norm,
+        "turns": turns,
+    }
+
+    old_serialized = json.dumps(data, ensure_ascii=False, sort_keys=True)
+    new_serialized = json.dumps(normalized, ensure_ascii=False, sort_keys=True)
+    changed = old_serialized != new_serialized
+
+    if changed:
+        path.write_text(json.dumps(normalized, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Non-fixable semantic checks
+    cp_false = 0
+    for cp in cps_norm:
+        for t in cp.get("tests", []):
+            if t.get("answer") is False:
+                cp_false += 1
+    if cp_false == 0:
+        warnings.append("no false checkpoint answers present; judge sensitivity may be weak")
+
+    return NormalizeReport(file=path.name, changed=changed, warnings=warnings)
+
+
+def _validate_shape(path: Path) -> List[str]:
+    issues: List[str] = []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    turns = data.get("turns", [])
+    cps = data.get("checkpoints", [])
+
+    if data.get("num_turns") != len([t for t in turns if t.get("role") == "user"]):
+        issues.append("num_turns does not match number of user turns")
+    if data.get("num_checkpoints") != len(cps):
+        issues.append("num_checkpoints does not match checkpoint array length")
+
+    for i, t in enumerate(turns, start=1):
+        if t.get("turn") != i:
+            issues.append("turn numbering is not sequential")
+            break
+
+    for i in range(1, len(turns)):
+        if turns[i - 1].get("role") == turns[i].get("role"):
+            issues.append("consecutive same-role turns remain (manual review may be needed)")
+            break
+
+    required_cp = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    cp_turns = [cp.get("checkpoint_turn") for cp in cps]
+    if cp_turns != required_cp:
+        issues.append("checkpoint turns differ from expected 10-step grid")
+
+    return issues
+
+
+def main() -> None:
+    files = sorted(BASE.glob("dataset_*_se.json"))
+    if not files:
+        print("No dataset_*_se.json files found.")
+        return
+
+    print(f"Normalizing {len(files)} SE dataset files to dataset_01 schema...\n")
+    reports: List[NormalizeReport] = []
+    for path in files:
+        report = normalize_to_dataset01_schema(path)
+        reports.append(report)
+        status = "UPDATED" if report.changed else "UNCHANGED"
+        print(f"- {path.name}: {status}")
+        for w in report.warnings:
+            print(f"    warning: {w}")
+
+    print("\nValidation summary:")
+    for path in files:
+        issues = _validate_shape(path)
+        if issues:
+            print(f"- {path.name}: ISSUES")
+            for issue in issues:
+                print(f"    - {issue}")
+        else:
+            print(f"- {path.name}: OK")
 
 
 if __name__ == "__main__":
-    normalize_se1()
-    normalize_cooking01()
-    normalize_se3()
-    normalize_se4()
-    normalize_se5()
-    normalize_finance02()
-
-    print("\nValidating...")
-    for f in ["chatgpt_software_engineering_01.json",
-              "chatgpt_cooking_recipes_01.json",
-              "chatgpt_software_engineering_03.json",
-              "chatgpt_software_engineering_04.json",
-              "chatgpt_software_engineering_05.json",
-              "chatgpt_personal_finance_02.json"]:
-        validate(f)
+    main()
