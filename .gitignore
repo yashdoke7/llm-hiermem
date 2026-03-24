@@ -49,7 +49,7 @@ docs/HierMem_Benchmark_Plan.docx
 
 # Real chat exports (private data — never push)
 eval/datasets/*/real_exports/
-
+eval/datasets/constraint_tracking/llm_generated/temp
 results/smoke_test.json
 
 prompt.txt
