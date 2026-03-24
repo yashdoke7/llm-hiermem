@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -62,6 +63,15 @@ COST_PER_1M_TOKENS = {
     "curator": 0.50,
     "embedding": 0.10,
 }
+
+# Relative retrieval-op pricing (vector search requests/chunk fetches).
+COST_PER_1K_RETRIEVAL_OPS = {
+    "default": 0.05,
+}
+
+# Observed runtime cost proxy for local/cloud GPU execution.
+# Override with env, e.g. GPU_HOURLY_USD=0.77
+GPU_HOURLY_USD = float(os.getenv("GPU_HOURLY_USD", "0.77"))
 
 
 @dataclass
@@ -160,13 +170,49 @@ def _estimate_turn_cost(system_name: str, turn_log: Dict[str, Any]) -> TurnCost:
     embedding_tokens = 0
     if system_name in ("rag", "rag_summary"):
         queries = pipeline.get("semantic_queries") or []
-        embedding_tokens = 120 * len(queries) if queries else 120
+        embedding_requests = int(pipeline.get("embedding_requests", 0) or 0)
+        # Backward compatibility for old logs that only had vector_queries.
+        legacy_vector = int(pipeline.get("vector_queries", 0) or 0)
+        if queries:
+            embedding_tokens = 120 * len(queries)
+        elif embedding_requests > 0:
+            embedding_tokens = 120 * embedding_requests
+        elif legacy_vector > 0:
+            embedding_tokens = 120
 
     return TurnCost(
         main_tokens=float(main_tokens),
         curator_tokens=float(curator_tokens),
         embedding_tokens=float(embedding_tokens),
     )
+
+
+def _estimate_retrieval_ops(system_name: str, turn_log: Dict[str, Any]) -> int:
+    """Estimate retrieval operations from pipeline telemetry.
+
+    Retrieval ops are lightweight compute proxies for vector calls and chunk fetches.
+    """
+    pipeline = turn_log.get("pipeline_details") or {}
+
+    if system_name == "hiermem":
+        semantic_q = len(pipeline.get("semantic_queries") or [])
+        seg_fetch = len(pipeline.get("segments_fetched") or [])
+        full_turn_fetch = len(pipeline.get("fetch_full_turns") or [])
+        return semantic_q + seg_fetch + full_turn_fetch
+
+    if system_name in ("rag", "rag_summary"):
+        retrieval_queries = int(pipeline.get("retrieval_query_count", 0) or 0)
+        retrieved_chunks = int(pipeline.get("retrieved_chunks_count", 0) or 0)
+        # Backward compatibility for older logs.
+        if retrieved_chunks == 0 and "vector_queries" in pipeline:
+            retrieved_chunks = int(pipeline.get("vector_queries", 0) or 0)
+        return retrieval_queries + retrieved_chunks
+
+    return 0
+
+
+def _retrieval_ops_to_cost_units(retrieval_ops: int) -> float:
+    return (float(retrieval_ops) / 1000.0) * COST_PER_1K_RETRIEVAL_OPS["default"]
 
 
 def _load_results(run_dir: Path) -> Dict[str, List[Dict[str, Any]]]:
@@ -344,6 +390,9 @@ def _build_metrics_for_dataset(
     for system_name, convos in dataset_system_results.items():
         turn_latencies: List[float] = []
         turn_costs: List[float] = []
+        retrieval_ops: List[float] = []
+        retrieval_costs: List[float] = []
+        runtime_costs_usd: List[float] = []
         main_tokens: List[float] = []
         curator_tokens: List[float] = []
         embedding_tokens: List[float] = []
@@ -366,10 +415,14 @@ def _build_metrics_for_dataset(
                 lat = t.get("latency_seconds")
                 if isinstance(lat, (int, float)):
                     turn_latencies.append(float(lat))
+                    runtime_costs_usd.append((float(lat) / 3600.0) * GPU_HOURLY_USD)
 
                 tc = _estimate_turn_cost(system_name, t)
                 # NOTE: all cost figures are ESTIMATED from token counts, not observed
                 turn_costs.append(tc.total_cost_units)
+                rops = _estimate_retrieval_ops(system_name, t)
+                retrieval_ops.append(float(rops))
+                retrieval_costs.append(_retrieval_ops_to_cost_units(rops))
                 main_tokens.append(tc.main_tokens)
                 curator_tokens.append(tc.curator_tokens)
                 embedding_tokens.append(tc.embedding_tokens)
@@ -396,11 +449,22 @@ def _build_metrics_for_dataset(
 
         # --- Aggregate scores — never default to 0 when absent ---
         avg_score: Optional[float] = mean(judge_scores) if judge_scores else None
-        total_cost = float(sum(turn_costs))
+        total_token_cost = float(sum(turn_costs))
+        total_retrieval_cost = float(sum(retrieval_costs))
+        total_compute_cost = total_token_cost + total_retrieval_cost
+        total_runtime_cost_usd = float(sum(runtime_costs_usd))
 
         # cost_per_quality_point is undefined (None) when judge scores are missing.
         # Never substitute 0 or a sentinel like 999 — callers must handle None.
-        cqp: Optional[float] = (total_cost / avg_score) if (avg_score and avg_score > 0) else None
+        cqp_token: Optional[float] = (
+            (total_token_cost / avg_score) if (avg_score and avg_score > 0) else None
+        )
+        cqp_compute: Optional[float] = (
+            (total_compute_cost / avg_score) if (avg_score and avg_score > 0) else None
+        )
+        cqp_runtime_usd: Optional[float] = (
+            (total_runtime_cost_usd / avg_score) if (avg_score and avg_score > 0) else None
+        )
 
         # Degradation curve: average LAAJ score at each checkpoint turn
         degradation_curve: Dict[int, float] = {
@@ -427,7 +491,15 @@ def _build_metrics_for_dataset(
             "avg_latency_seconds": round(mean(turn_latencies), 3) if turn_latencies else None,
             # --- Cost (ESTIMATED from token counts) ---
             "avg_cost_per_turn_units": round(mean(turn_costs), 8) if turn_costs else None,
-            "total_cost_units": round(total_cost, 8),
+            "total_cost_units": round(total_token_cost, 8),
+            "avg_retrieval_ops_per_turn": round(mean(retrieval_ops), 4) if retrieval_ops else None,
+            "avg_retrieval_cost_per_turn_units": round(mean(retrieval_costs), 8) if retrieval_costs else None,
+            "total_retrieval_cost_units": round(total_retrieval_cost, 8),
+            "avg_compute_cost_per_turn_units": round((total_compute_cost / max(len(turn_costs), 1)), 8)
+            if turn_costs else None,
+            "total_compute_cost_units": round(total_compute_cost, 8),
+            "avg_runtime_cost_per_turn_usd": round(mean(runtime_costs_usd), 8) if runtime_costs_usd else None,
+            "total_runtime_cost_usd": round(total_runtime_cost_usd, 8),
             "avg_main_tokens": round(mean(main_tokens), 2) if main_tokens else None,
             "avg_curator_tokens": round(mean(curator_tokens), 2) if curator_tokens else None,
             "avg_embedding_tokens": round(mean(embedding_tokens), 2) if embedding_tokens else None,
@@ -436,8 +508,11 @@ def _build_metrics_for_dataset(
             # --- Judge scores (OBSERVED, only present when laaj.json is filled) ---
             "judge_score_avg": round(avg_score, 4) if avg_score is not None else None,
             "judge_samples": len(judge_scores),
-            # cost_per_quality_point is None when judge scores are absent — never 0 or fake sentinel
-            "cost_per_quality_point": round(cqp, 8) if cqp is not None else None,
+            # cost_per_quality_point remains backward-compatible but now reflects compute cost
+            # (token + retrieval) for fairer system comparisons.
+            "cost_per_quality_point": round(cqp_compute, 8) if cqp_compute is not None else None,
+            "token_cost_per_quality_point": round(cqp_token, 8) if cqp_token is not None else None,
+            "runtime_cost_per_quality_point_usd": round(cqp_runtime_usd, 8) if cqp_runtime_usd is not None else None,
             # --- Degradation & survival (derived from LAAJ, None when no scores) ---
             "first_violation_turn": first_violation_turn,
             "constraint_survival_rate": survival_rate,
@@ -456,6 +531,11 @@ def _build_metrics_for_dataset(
         "cost_is_estimated": True,
         # Token breakdown uses heuristics (curator ≈ 4-10% of main, embedding ≈ 120 per query)
         "token_breakdown_is_estimated": True,
+        # Retrieval ops pricing is a normalized proxy unless replaced with infra billing data
+        "retrieval_cost_is_estimated": True,
+        # Runtime cost derives from measured latency and configured hourly GPU price
+        "runtime_cost_is_observed_latency_scaled": True,
+        "gpu_hourly_usd": GPU_HOURLY_USD,
         # Judge scores are real LAAJ judgments only when status is partial or ready
         "judge_score_is_observed": out["dataset_status"] in ("partial_judge", "ready_for_paper"),
     }
@@ -479,8 +559,17 @@ def _write_summary_csv(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> No
         "judge_samples",
         "avg_latency_seconds",
         "avg_cost_per_turn_units",
+        "avg_retrieval_ops_per_turn",
+        "avg_retrieval_cost_per_turn_units",
+        "avg_compute_cost_per_turn_units",
         "total_cost_units",
+        "total_retrieval_cost_units",
+        "total_compute_cost_units",
+        "avg_runtime_cost_per_turn_usd",
+        "total_runtime_cost_usd",
         "cost_per_quality_point",
+        "token_cost_per_quality_point",
+        "runtime_cost_per_quality_point_usd",
         "avg_main_tokens",
         "avg_curator_tokens",
         "avg_embedding_tokens",
@@ -675,23 +764,28 @@ def _build_arch_aggregation(
     """
     system_scores: Dict[str, List[float]] = {}
     system_costs: Dict[str, List[float]] = {}
+    system_compute_costs: Dict[str, List[float]] = {}
     system_dataset_count: Dict[str, int] = {}
 
     for dataset_name, dmx in all_dataset_metrics.items():
         for sys_name, row in dmx.get("systems", {}).items():
             score = row.get("judge_score_avg")
             cost = row.get("avg_cost_per_turn_units")
+            compute_cost = row.get("avg_compute_cost_per_turn_units")
             system_dataset_count[sys_name] = system_dataset_count.get(sys_name, 0) + 1
             if score is not None:
                 system_scores.setdefault(sys_name, []).append(score)
             if cost is not None:
                 system_costs.setdefault(sys_name, []).append(cost)
+            if compute_cost is not None:
+                system_compute_costs.setdefault(sys_name, []).append(compute_cost)
 
     agg_systems: Dict[str, Any] = {}
     all_sys = set(list(system_scores) + list(system_costs) + list(system_dataset_count))
     for sys_name in all_sys:
         scores = system_scores.get(sys_name, [])
         costs = system_costs.get(sys_name, [])
+        compute_costs = system_compute_costs.get(sys_name, [])
         agg_systems[sys_name] = {
             "datasets_included": system_dataset_count.get(sys_name, 0),
             "mean_judge_score": round(mean(scores), 4) if scores else None,
@@ -699,6 +793,8 @@ def _build_arch_aggregation(
             "score_variance": round(variance(scores), 6) if len(scores) > 1 else None,
             "mean_cost_per_turn": round(mean(costs), 8) if costs else None,
             "cost_variance": round(variance(costs), 10) if len(costs) > 1 else None,
+            "mean_compute_cost_per_turn": round(mean(compute_costs), 8) if compute_costs else None,
+            "compute_cost_variance": round(variance(compute_costs), 10) if len(compute_costs) > 1 else None,
         }
 
     return {
@@ -706,7 +802,11 @@ def _build_arch_aggregation(
             "arch": arch_name,
             "source_run_dir": source_run_dir,
             "datasets_count": len(all_dataset_metrics),
-            "cost_units": COST_PER_1M_TOKENS,
+            "cost_units": {
+                "tokens_per_1m": COST_PER_1M_TOKENS,
+                "retrieval_ops_per_1k": COST_PER_1K_RETRIEVAL_OPS,
+                "gpu_hourly_usd": GPU_HOURLY_USD,
+            },
         },
         "systems": agg_systems,
         # Verbatim per-dataset breakdown nested here for one-stop reading

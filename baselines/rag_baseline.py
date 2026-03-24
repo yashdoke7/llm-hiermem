@@ -45,7 +45,9 @@ class RAGBaseline:
 
         # Retrieve relevant past turns
         retrieved = []
-        if self.vector_store.count() > 0:
+        has_index = self.vector_store.count() > 0
+        retrieval_query_count = 1 if has_index else 0
+        if has_index:
             retrieved = self.vector_store.query(
                 query_text=user_message, n_results=self.top_k
             )
@@ -90,7 +92,13 @@ class RAGBaseline:
             context_tokens=count_tokens(context),
             chunks_retrieved=len(retrieved),
             pipeline_details={
-                "vector_queries": len(retrieved),  # top-k similarity queries fired
+                # Legacy field kept for backward compatibility with old analysis scripts.
+                "vector_queries": len(retrieved),
+                # New explicit retrieval telemetry for compute accounting.
+                "retrieval_query_count": retrieval_query_count,
+                "retrieved_chunks_count": len(retrieved),
+                "embedding_requests": retrieval_query_count,
+                "semantic_queries": [user_message] if retrieval_query_count else [],
                 "sources_used": [f"semantic:turn_{r.get('metadata',{}).get('turn','?')}" for r in retrieved],
                 "context_tokens_used": count_tokens(context),
             }

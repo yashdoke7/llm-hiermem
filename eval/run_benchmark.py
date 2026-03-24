@@ -70,7 +70,8 @@ def load_benchmark(benchmark_name: str) -> List[Dict]:
 
 def run_system_on_conversation(system, system_name: str, conversation: Dict,
                                conv_index: int = 0, total_convos: int = 1,
-                               partial_dir: Path = None) -> Dict:
+                               partial_dir: Path = None,
+                               max_user_turns: int = None) -> Dict:
     """Run a single system on a single conversation with detailed per-step logging.
     
     partial_dir: if set, saves a checkpoint after every turn so runs interrupted
@@ -81,6 +82,11 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
     checkpoints = conversation.get("checkpoints", [])
     user_turns = [t for t in turns if t.get("role") == "user"]
     total_user_turns = len(user_turns)
+    effective_total_user_turns = (
+        min(total_user_turns, max_user_turns)
+        if isinstance(max_user_turns, int) and max_user_turns > 0
+        else total_user_turns
+    )
     conv_id = conversation.get("conversation_id", "unknown")
 
     # --- Resume: load partial progress and replay into system state ---
@@ -98,7 +104,7 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                 turn_logs = saved_logs
                 # Count how many user turns were actually saved (for display)
                 saved_user_turns = sum(1 for tl in saved_logs if not tl.get("response", "").startswith("ERROR:"))
-                print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} — resuming from user turn {saved_user_turns + 1}/{total_user_turns}")
+                print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} — resuming from user turn {saved_user_turns + 1}/{effective_total_user_turns}")
                 # Replay saved responses into system state
                 for tl in saved_logs:
                     u = tl.get("user", "")
@@ -131,7 +137,7 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                             system.turn_count = len(saved_logs)
 
     if resume_from_turn == 0:
-        print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({total_user_turns} turns)")
+        print(f"\n  [{conv_index+1}/{total_convos}] {conv_id} ({effective_total_user_turns} turns)")
 
     total_start = time.time()
     user_turn_idx = sum(1 for tl in turn_logs if not tl.get("response", "").startswith("ERROR:"))  # display counter
@@ -139,6 +145,9 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
     for turn_data in turns:
         if turn_data.get("role") != "user":
             continue
+
+        if user_turn_idx >= effective_total_user_turns:
+            break
 
         user_msg = turn_data.get("text", turn_data.get("content"))
         turn_num = turn_data.get("turn", turn_data.get("turn_id", 0))
@@ -172,10 +181,10 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
             # Estimate remaining time
             turns_done = len(turn_logs) + 1
             avg_per_turn = total_elapsed / turns_done
-            turns_left = total_user_turns - turns_done
+            turns_left = effective_total_user_turns - turns_done
             eta_mins = round(avg_per_turn * turns_left / 60, 1)
             
-            print(f"    Turn {user_turn_idx:2d}/{total_user_turns} | {turn_elapsed:5.1f}s{mode}{tokens_str} | "
+            print(f"    Turn {user_turn_idx:2d}/{effective_total_user_turns} | {turn_elapsed:5.1f}s{mode}{tokens_str} | "
                   f"ETA: {eta_mins}min", flush=True)
             
             # Build detailed turn log
@@ -195,7 +204,9 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                     # --- Existing fields ---
                     "curator_strategy":    cd.retrieval_strategy if cd else None,
                     "segments_fetched":    cd.segments_to_fetch if cd else [],
+                    "peripheral_segments": cd.peripheral_segments if cd else [],
                     "semantic_queries":    cd.semantic_queries if cd else [],
+                    "fetch_full_turns":   cd.fetch_full_turns if cd else [],
                     "curator_reasoning":   cd.reasoning if cd else "",
                     "context_tokens_used": result.tokens_used,
                     "sources_used":        result.assembled_context.sources_used if result.assembled_context else [],
@@ -229,7 +240,7 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
         except Exception as e:
             response = f"ERROR: {e}"
             turn_elapsed = round(time.time() - turn_start, 2)
-            print(f"    Turn {turn_num:2d}/{total_user_turns} | ERROR: {e}", flush=True)
+            print(f"    Turn {turn_num:2d}/{effective_total_user_turns} | ERROR: {e}", flush=True)
             turn_log = {
                 "turn": turn_num,
                 "type": turn_type,
@@ -293,7 +304,8 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
                   output_dir: Path = None, max_convos: int = None,
                   convo_ids: List[str] = None, run_dir: Path = None,
                   judge_provider: str = None, judge_model: str = None,
-                  skip_metrics: bool = False, specific_file: str = None):
+                  skip_metrics: bool = False, specific_file: str = None,
+                  max_user_turns: int = None):
     """Run specified systems on a benchmark.
     
     Args:
@@ -384,7 +396,8 @@ def run_benchmark(systems_to_run: List[str], benchmark_name: str,
             partial_dir = output_dir / "partial"
             result = run_system_on_conversation(system, system_name, conv,
                                                 conv_index=i, total_convos=len(convos_to_run),
-                                                partial_dir=partial_dir)
+                                                partial_dir=partial_dir,
+                                                max_user_turns=max_user_turns)
             system_results.append(result)
             
             # Save after each conversation (crash-safe)
@@ -464,6 +477,8 @@ if __name__ == "__main__":
                         help="Output directory")
     parser.add_argument("--max-convos", type=int, default=None,
                         help="Limit number of conversations (for quick testing)")
+    parser.add_argument("--max-user-turns", type=int, default=None,
+                        help="Limit user turns per conversation (for quick local testing)")
     parser.add_argument("--convo", nargs="+", default=None,
                         help="Run specific conversation IDs (e.g. --convo chatgpt_cooking_recipes_01)")
     parser.add_argument("--run-dir", type=str, default=None,
@@ -626,4 +641,5 @@ if __name__ == "__main__":
         run_benchmark(systems, args.benchmark, output_dir, args.max_convos,
                       convo_ids=args.convo, run_dir=run_dir,
                       judge_provider=args.judge_provider, judge_model=args.judge_model,
-                      skip_metrics=effective_skip_metrics, specific_file=args.specific_file)
+                      skip_metrics=effective_skip_metrics, specific_file=args.specific_file,
+                      max_user_turns=args.max_user_turns)
