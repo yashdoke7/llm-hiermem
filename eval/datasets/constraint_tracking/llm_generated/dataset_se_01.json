@@ -1,0 +1,935 @@
+{
+  "conversation_id": "dataset_se_01",
+  "domain": "software_engineering",
+  "domain_name": "Software Engineering",
+  "topic": "Python Microservices Platform — FastAPI, Celery, Redis, PostgreSQL",
+  "constraint_log": [
+    {
+      "id": "C1",
+      "introduced_turn": 7,
+      "removed_turn": null,
+      "status_at_end": "active_modified",
+      "original_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('span_name'):`",
+      "final_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows the format service.operation (e.g. orders.fetch_cart)",
+      "lifecycle": [
+        "introduced@7",
+        "modified@43"
+      ]
+    },
+    {
+      "id": "C2",
+      "introduced_turn": 11,
+      "removed_turn": 67,
+      "status_at_end": "removed",
+      "original_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+      "final_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+      "lifecycle": [
+        "introduced@11",
+        "removed@67"
+      ]
+    },
+    {
+      "id": "C3",
+      "introduced_turn": 79,
+      "removed_turn": null,
+      "status_at_end": "active",
+      "original_text": "All PostgreSQL write operations must be wrapped in explicit transactions using `async with session.begin():`",
+      "final_text": "All PostgreSQL write operations must be wrapped in explicit transactions using `async with session.begin():`",
+      "lifecycle": [
+        "introduced@79"
+      ]
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('span_name'):`",
+          "test_question": "Does the assistant response at turn 10 include a `with tracer.start_as_current_span(...)` block around an external call?",
+          "answer": true,
+          "keywords": [
+            "with tracer.start_as_current_span",
+            "redis_client.set",
+            "tracer.start_as_current_span"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('span_name'):`",
+          "test_question": "Does the assistant response at turn 20 wrap external Redis/HTTP calls in `with tracer.start_as_current_span(...)`?",
+          "answer": true,
+          "keywords": [
+            "tracer.start_as_current_span",
+            "redis_client.get",
+            "httpx.AsyncClient"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+          "test_question": "Does the assistant response at turn 20 include a `# TaskID:` line at the top of the Celery task function body?",
+          "answer": true,
+          "keywords": [
+            "# TaskID:",
+            "@celery_app.task",
+            "def refresh_product_cache"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('span_name'):`",
+          "test_question": "Does the assistant response at turn 30 include tracing wrappers around external calls in the shown task?",
+          "answer": true,
+          "keywords": [
+            "with tracer.start_as_current_span",
+            "redis_client.hset",
+            "httpx.AsyncClient"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+          "test_question": "Does the assistant response at turn 30 include a `# TaskID:` comment at the top of the Celery task function body?",
+          "answer": false,
+          "keywords": [
+            "@celery_app.task",
+            "def sync_inventory",
+            "# TaskID:"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('span_name'):`",
+          "test_question": "Does the assistant response at turn 40 wrap external HTTP and Redis calls in `with tracer.start_as_current_span(...)` blocks?",
+          "answer": true,
+          "keywords": [
+            "tracer.start_as_current_span",
+            "httpx.AsyncClient",
+            "redis_client.setex"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+          "test_question": "Does the Celery task in turn 40 begin with a `# TaskID:` comment line inside the function body?",
+          "answer": true,
+          "keywords": [
+            "# TaskID:",
+            "@celery_app.task",
+            "def reconcile_payment_status"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows service.operation",
+          "test_question": "Does the assistant response at turn 50 use `with tracer.start_as_current_span(...)` with span names in `service.operation` format for external calls?",
+          "answer": true,
+          "keywords": [
+            "orders.health_check",
+            "workers.ping_redis",
+            "tracer.start_as_current_span"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+          "test_question": "Does the Celery task in turn 50 include `# TaskID:` at the top of the task function body?",
+          "answer": true,
+          "keywords": [
+            "# TaskID:",
+            "def ping_worker_heartbeat",
+            "@celery_app.task"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows service.operation",
+          "test_question": "Does the assistant response at turn 60 use `service.operation` span names for all shown tracing wrappers?",
+          "answer": false,
+          "keywords": [
+            "tracer.start_as_current_span",
+            "retry payment charge",
+            "redis cleanup"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All Celery task functions must include a `# TaskID: <unique_id>` comment at the top of the function body",
+          "test_question": "Does the Celery task in turn 60 include a `# TaskID:` comment as the first line in the function body?",
+          "answer": true,
+          "keywords": [
+            "# TaskID:",
+            "@celery_app.task",
+            "def retry_failed_payment"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows service.operation",
+          "test_question": "Does the assistant response at turn 70 wrap external calls with `with tracer.start_as_current_span(...)` using `service.operation` names?",
+          "answer": true,
+          "keywords": [
+            "deployments.fetch",
+            "k8s.patch",
+            "tracer.start_as_current_span"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows service.operation",
+          "test_question": "Does the assistant response at turn 80 use tracing wrappers with `service.operation` names for DB and external calls?",
+          "answer": true,
+          "keywords": [
+            "orders.create_order",
+            "orders.publish_event",
+            "tracer.start_as_current_span"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All PostgreSQL write operations must be wrapped in explicit transactions using `async with session.begin():`",
+          "test_question": "Does the assistant response at turn 80 wrap PostgreSQL writes in `async with session.begin():`?",
+          "answer": true,
+          "keywords": [
+            "async with session.begin()",
+            "session.add",
+            "session.execute"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows service.operation",
+          "test_question": "Does the assistant response at turn 90 include tracing wrappers with `service.operation` names around external calls?",
+          "answer": true,
+          "keywords": [
+            "orders.reserve_inventory",
+            "payments.enqueue_capture",
+            "tracer.start_as_current_span"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All PostgreSQL write operations must be wrapped in explicit transactions using `async with session.begin():`",
+          "test_question": "Does the assistant response at turn 90 wrap all shown PostgreSQL write operations in `async with session.begin():`?",
+          "answer": false,
+          "keywords": [
+            "session.execute",
+            "session.commit",
+            "async with session.begin()"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every service function that makes an external call must wrap it in `with tracer.start_as_current_span('service.operation'):` where the span name follows service.operation",
+          "test_question": "Does the assistant response at turn 100 use `with tracer.start_as_current_span(...)` with `service.operation` naming for external calls?",
+          "answer": true,
+          "keywords": [
+            "orders.insert_order",
+            "orders.write_outbox",
+            "tracer.start_as_current_span"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All PostgreSQL write operations must be wrapped in explicit transactions using `async with session.begin():`",
+          "test_question": "Does the assistant response at turn 100 wrap PostgreSQL writes in `async with session.begin():` blocks?",
+          "answer": true,
+          "keywords": [
+            "async with session.begin()",
+            "session.add",
+            "session.execute"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I’m starting an e-commerce backend and want to use FastAPI microservices. How would you split services first without over-engineering it?",
+      "type": "topic"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Start with business boundaries that naturally change independently, not technical layers. For e-commerce, a practical initial split is `catalog`, `cart`, `orders`, `payments`, and `notifications`, with an `api-gateway` edge service. Keep auth as a shared capability at the edge first, then extract if needed. Define clear ownership per service and avoid synchronous chains longer than one hop in v1.",
+      "type": "response"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "Can you suggest a FastAPI project structure for each service and for a monorepo?",
+      "type": "topic"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Use a monorepo with one folder per service and a shared `libs` folder for contracts and utilities. Inside each service, keep `api`, `schemas`, `domain`, `repositories`, and `workers` separated so HTTP and background logic stay decoupled. Add `alembic` per service if databases are independent, otherwise centralize migrations temporarily. Keep Dockerfiles and Helm values close to each service for deployment parity.",
+      "type": "response"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "Would you start with one PostgreSQL database shared by all services or one DB per service now?",
+      "type": "topic"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Begin with one PostgreSQL cluster but separate schemas per service to reduce early operational load. Enforce ownership so only a service writes to its schema and others consume via APIs or events. This gives you strong boundaries without needing immediate data infrastructure complexity. Plan an extraction path by avoiding cross-schema foreign keys from day one.",
+      "type": "response"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "Oh, by the way our platform team mandates OpenTelemetry tracing across all services. Every service function that makes a DB, HTTP, or Redis call must wrap it in `with tracer.start_as_current_span(\"span_name\"):`.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Great constraint, it will pay off quickly when debugging latency. We should treat DB, HTTP, and Redis access as traced boundaries in every service function. Example: `with tracer.start_as_current_span(\"fetch_cart\"):` around a Redis get, then another span for DB fallback. I’ll keep this tracing wrapper in all future code snippets that perform external calls.",
+      "type": "response"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "Now let’s move to async processing. Where does Celery fit for orders and notifications?",
+      "type": "topic"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Use Celery for non-blocking workflows like email, inventory sync, and payment reconciliation.\n```python\nfrom opentelemetry import trace\ntracer = trace.get_tracer(__name__)\n\ndef cache_order_status(redis_client, order_id: str, status: str) -> None:\n    with tracer.start_as_current_span(\"orders.cache_status\"):\n        redis_client.set(f\"order:{order_id}:status\", status, ex=300)\n```\nKeep your FastAPI request path thin and enqueue heavy work after basic validation.",
+      "type": "response"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "Also I should mention, our ops dashboard tracks tasks by a TaskID comment. All Celery task functions need a `# TaskID: <unique_id>` at the top of the function body.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Perfect, we can standardize task signatures with that marker.\n```python\nfrom celery import Celery\nfrom opentelemetry import trace\n\ncelery_app = Celery(\"orders\")\ntracer = trace.get_tracer(__name__)\n\n@celery_app.task(name=\"orders.send_confirmation\")\ndef send_confirmation_email(order_id: str, user_email: str) -> None:\n    # TaskID: ORD-TASK-001\n    with tracer.start_as_current_span(\"orders.send_confirmation\"):\n        # external HTTP call to email provider\n        pass\n```\nThis keeps traceability in both your task dashboard and distributed traces.",
+      "type": "response"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "How would you do Redis caching for catalog reads with good invalidation patterns?",
+      "type": "topic"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "Use cache-aside for product detail reads and set short TTLs on hot keys to avoid stale tail risk. On product updates, publish an invalidation event and delete affected keys from Redis in a worker. For misses, read from PostgreSQL and repopulate cache with jittered TTLs to reduce synchronized expiry. Keep key patterns explicit, like `catalog:product:{id}:v{schema_version}`.",
+      "type": "response"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "Can you show Celery Beat scheduling for a periodic catalog refresh job?",
+      "type": "topic"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Use Celery Beat to schedule refreshes and keep the task idempotent so retries are safe. Register the periodic entry in beat config and keep interval conservative until load metrics stabilize. The worker should only refresh changed products using timestamps or version counters. Also isolate queue names so refresh traffic cannot starve user-facing tasks.",
+      "type": "response"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "I need retries for flaky payment provider calls. What retry strategy would you pick?",
+      "type": "topic"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Use bounded exponential backoff with jitter and classify exceptions into retryable and terminal.\n```python\n@celery_app.task(bind=True, max_retries=5)\ndef capture_payment(self, payment_id: str) -> None:\n    # TaskID: PAY-TASK-002\n    with tracer.start_as_current_span(\"payments.capture\"):\n        try:\n            # external HTTP call to payment gateway\n            pass\n        except TimeoutError as exc:\n            raise self.retry(exc=exc, countdown=min(2 ** self.request.retries, 60))\n```\nCombine this with idempotency keys so repeated attempts do not duplicate charges.",
+      "type": "response"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Can you give me one combined example: read cache, call provider, then update cache in a background task?",
+      "type": "topic"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "Sure, here is a compact worker flow with both requirements applied.\n```python\n@celery_app.task(name=\"catalog.refresh_product_cache\")\ndef refresh_product_cache(product_id: str) -> None:\n    # TaskID: CAT-TASK-003\n    with tracer.start_as_current_span(\"catalog.read_cache\"):\n        cached = redis_client.get(f\"catalog:product:{product_id}\")\n\n    if cached:\n        return\n\n    with tracer.start_as_current_span(\"catalog.fetch_product_api\"):\n        async with httpx.AsyncClient(timeout=3.0) as client:\n            response = client.get(f\"http://catalog-service/internal/products/{product_id}\")\n            payload = response.json()\n\n    with tracer.start_as_current_span(\"catalog.write_cache\"):\n        redis_client.set(f\"catalog:product:{product_id}\", json.dumps(payload), ex=120)\n```\nThis shape keeps trace spans around every external interaction and satisfies your task annotation rule.",
+      "type": "response"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "How do we avoid duplicate task execution from broker reconnects or worker restarts?",
+      "type": "topic"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Treat every task as at-least-once and implement idempotency at the business boundary. Store an idempotency key in PostgreSQL or Redis before performing side effects, and no-op if already processed. Keep task payloads deterministic and include a stable operation key like `order_id + action + version`. Use short visibility timeout tuning and explicit acknowledgments only after state transition is committed.",
+      "type": "response"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "What queue topology would you use for high and low priority tasks?",
+      "type": "topic"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Define separate queues such as `critical`, `default`, and `bulk`, each with dedicated worker concurrency. Route payment captures and order confirmations to `critical`, while cache warmups and analytics go to `bulk`. Apply different retry/backoff policies per queue so low-priority storms don’t impact checkout. Add dead-letter handling for poison messages and alerting on queue depth growth.",
+      "type": "response"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "Can you sketch an order placement flow using API + Celery for post-order operations?",
+      "type": "topic"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Keep order placement synchronous up to durable write, then fan out asynchronous side effects. The API should validate cart, reserve inventory, persist order, and return immediately with order status. Post-order tasks can handle email, invoice PDF generation, and loyalty updates on separate queues. This minimizes p95 latency while preserving reliability with retries.",
+      "type": "response"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "Do you recommend saga choreography or orchestration for order + payment + inventory?",
+      "type": "topic"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "For your current size, orchestration is easier to reason about and debug. A dedicated order workflow service can issue commands and compensations with clear state transitions. Choreography can be added later when teams and domains are mature enough to own event contracts cleanly. Start with explicit workflow state in PostgreSQL and durable event logs.",
+      "type": "response"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Show me a periodic inventory sync task that reads vendor API and updates Redis stock snapshots.",
+      "type": "topic"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Here’s a periodic task shape for vendor sync.\n```python\n@celery_app.task(name=\"inventory.sync_vendor_stock\")\ndef sync_inventory(vendor_id: str) -> None:\n    with tracer.start_as_current_span(\"inventory.fetch_vendor\"):\n        data = httpx.get(f\"https://vendor.example.com/{vendor_id}/stock\", timeout=5.0).json()\n\n    with tracer.start_as_current_span(\"inventory.cache_snapshot\"):\n        redis_client.hset(f\"inventory:{vendor_id}\", mapping=data)\n```\nYou can trigger this from Celery Beat every few minutes with jitter to avoid thundering calls.",
+      "type": "response"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "Let’s switch to inter-service communication. Should internal service calls be HTTP first?",
+      "type": "topic"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Yes, HTTP with FastAPI is a practical default because tooling and debuggability are strong. Define internal endpoints separately from public APIs and version them with explicit contracts. Use short timeouts, retries only on safe methods, and correlation IDs propagated in headers. Reserve event-driven messaging for asynchronous state changes and side effects.",
+      "type": "response"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "How should errors propagate between services so clients get clean responses?",
+      "type": "topic"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Normalize internal failures into a structured error envelope with code, message, retriable flag, and source service. At the gateway, map internal errors to stable client-facing status codes and avoid leaking stack details. Preserve trace IDs in every error response so support can jump to logs and spans quickly. Add retry headers only when clients can safely replay requests.",
+      "type": "response"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "Could you show a circuit-breaker style wrapper for HTTP dependencies?",
+      "type": "topic"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Use a small stateful wrapper with open, half-open, and closed states plus a rolling failure window. Keep timeout and breaker thresholds per dependency, not global. In failures, return a typed fallback or fast error so upstream latency stays bounded. This is especially useful around payment and recommendation services with variable latency.",
+      "type": "response"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "At what point would you bring in gRPC for internal calls?",
+      "type": "topic"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Adopt gRPC when you have high call volume, strict schema evolution needs, and performance pressure from JSON overhead. It also helps when multiple teams consume generated clients across languages. Until then, HTTP JSON is easier for debugging and incremental rollout in your stack. You can pilot gRPC on one latency-sensitive path before broad adoption.",
+      "type": "response"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Give me one resilient payment status reconciliation task with retries, cache update, and outbound callback.",
+      "type": "topic"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "This version includes tracing and the task annotation requirement.\n```python\n@celery_app.task(bind=True, max_retries=4, name=\"payments.reconcile_status\")\ndef reconcile_payment_status(self, payment_id: str) -> None:\n    # TaskID: PAY-TASK-040\n    with tracer.start_as_current_span(\"payments.read_gateway\"):\n        async with httpx.AsyncClient(timeout=2.0) as client:\n            status = client.get(f\"http://payment-gateway/internal/status/{payment_id}\").json()\n\n    with tracer.start_as_current_span(\"payments.cache_status\"):\n        redis_client.setex(f\"payment:{payment_id}:status\", 300, status[\"state\"])\n\n    with tracer.start_as_current_span(\"payments.callback_orders\"):\n        async with httpx.AsyncClient(timeout=2.0) as client:\n            client.post(\"http://orders-service/internal/payment-status\", json=status)\n```\nWrap this with idempotency checks so duplicated retries do not trigger duplicate downstream effects.",
+      "type": "response"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "How do I enforce correlation IDs across gateway and all downstream services?",
+      "type": "topic"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Generate a request ID at the gateway if missing and forward it in `X-Request-ID` and trace headers. Add FastAPI middleware in every service to read, attach to logging context, and include in responses. For Celery, pass correlation metadata in task headers so async boundaries remain traceable. Standardize log format as JSON with request and trace IDs to simplify querying.",
+      "type": "response"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "Platform team just updated tracing spec: span names must be `service.operation` format now, like `orders.fetch_cart` or `cache.read_session`, not free-form names.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Understood, I’ll use `service.operation` span names from now on whenever external calls are shown. For example, `with tracer.start_as_current_span(\"orders.fetch_payment_status\"):` for provider calls and `\"cache.read_cart\"` for Redis reads. This aligns trace search and dashboards across services. I’ll keep your Celery `# TaskID` rule active too until you say otherwise.",
+      "type": "response"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "Can we add rate limiting middleware at the gateway without hurting checkout too much?",
+      "type": "topic"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Use token-bucket limits by route class, with stricter limits on auth and search and softer limits on checkout. Store counters in Redis with short windows and per-tenant keys to avoid global contention. Return clear `429` payloads with reset hints so clients can back off predictably. Exempt internal service-to-service traffic by mTLS identity rather than IP.",
+      "type": "response"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "How would you version APIs while keeping mobile clients stable?",
+      "type": "topic"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Keep URI versioning at the edge like `/v1` and evolve internals behind the gateway. Add compatibility adapters so old mobile payload shapes are translated server-side. Deprecate fields with telemetry-backed rollout windows and sunset notices before removal. Maintain contract tests per version to avoid regressions during refactors.",
+      "type": "response"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "Show me health and readiness endpoints for API and worker, including Redis checks.",
+      "type": "topic"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Here is a compact health example with the current tracing format and task annotation.\n```python\n@router.get(\"/health/ready\")\nasync def ready_check():\n    with tracer.start_as_current_span(\"orders.health_check\"):\n        redis_client.ping()\n        return {\"status\": \"ready\"}\n\n@celery_app.task(name=\"workers.ping_heartbeat\")\ndef ping_worker_heartbeat() -> None:\n    # TaskID: OPS-TASK-050\n    with tracer.start_as_current_span(\"workers.ping_redis\"):\n        redis_client.set(\"worker:heartbeat\", \"ok\", ex=30)\n```\nKeep liveness shallow and readiness deep so orchestrators make better restart decisions.",
+      "type": "response"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "Should we use a service mesh right away or wait?",
+      "type": "topic"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Wait unless you already need mTLS policy, rich traffic shaping, or uniform retries across many services. A mesh adds operational surface area and debugging complexity during early growth. Start with app-level observability and gateway policies first. Reevaluate once service count and cross-team ownership increase.",
+      "type": "response"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "How do canary releases interact with Celery workers in this architecture?",
+      "type": "topic"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Canary API pods by traffic percentage, but canary workers by queue partition or routing key. Keep old and new worker versions consuming separate queues until payload compatibility is proven. Use feature flags inside tasks for behavior toggles without redeploys. Track failure and retry deltas by deployment label before promoting.",
+      "type": "response"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "What’s your recommended auth pattern between gateway and internal services?",
+      "type": "topic"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Use JWT validation at the gateway and issue short-lived internal identity tokens for downstream calls. Internal services should trust gateway-issued claims plus mTLS peer identity in production. Avoid re-validating end-user tokens in every service unless a domain has stricter compliance needs. Cache public keys and rotate signing keys with overlap windows.",
+      "type": "response"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "Can you show a retrying payment task again, and don’t forget our `service.operation` tracing plus the TaskID comment?",
+      "type": "topic"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Absolutely, here is the pattern with both constraints respected.\n```python\n@celery_app.task(bind=True, max_retries=5, name=\"payments.retry_capture\")\ndef retry_failed_payment(self, payment_id: str) -> None:\n    # TaskID: PAY-TASK-058\n    with tracer.start_as_current_span(\"payments.read_gateway\"):\n        status = payment_client.fetch(payment_id)\n\n    if status == \"FAILED_TEMPORARY\":\n        raise self.retry(countdown=min(2 ** self.request.retries, 120))\n\n    with tracer.start_as_current_span(\"cache.write_payment_status\"):\n        redis_client.setex(f\"payment:{payment_id}:status\", 300, status)\n```\nAdd idempotency key checks before capture attempts to keep retries safe.",
+      "type": "response"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Can you provide readiness and startup probe guidance for Kubernetes with this stack?",
+      "type": "topic"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Use startup probes to absorb cold boot for FastAPI and dependency warmup, then switch to readiness checks before taking traffic.\n```python\n@celery_app.task(name=\"payments.retry_failed\")\ndef retry_failed_payment(payment_id: str) -> None:\n    # TaskID: PAY-TASK-060\n    with tracer.start_as_current_span(\"retry payment charge\"):\n        payment_client.capture(payment_id)\n    with tracer.start_as_current_span(\"redis cleanup\"):\n        redis_client.delete(f\"payment:{payment_id}:pending\")\n```\nFor API pods, readiness should verify DB and Redis reachability while liveness remains lightweight.",
+      "type": "response"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "Let’s focus on request tracing across gateway, orders, and payments. What should I standardize first?",
+      "type": "topic"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Standardize propagation headers, span attributes, and error semantics before adding more dashboards. Ensure gateway always forwards `traceparent` and service metadata like tenant and route template. Keep span names deterministic and low-cardinality to preserve query performance. Add trace ID to every structured log entry for instant pivoting from logs to traces.",
+      "type": "response"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "Should I use baggage for tenant and region, or just custom headers?",
+      "type": "topic"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Use baggage for cross-cutting metadata that needs consistent propagation and observability context. Keep it small and controlled because baggage travels across every hop. For large or sensitive values, use custom headers or request context stores instead. Define an allowlist so teams do not introduce high-cardinality baggage accidentally.",
+      "type": "response"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "I’m adding an API gateway service now. Any request routing pitfalls to avoid?",
+      "type": "topic"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Avoid embedding business logic in the gateway beyond auth, routing, and coarse policy checks. Keep route ownership explicit and avoid wildcard rewrites that hide breaking changes. Set per-route timeouts and fallback behaviors so one weak dependency does not degrade everything. Preserve original request IDs and trace headers through all rewrites.",
+      "type": "response"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "Actually ops dropped the TaskID annotation requirement last standup. They’re using structured logs with trace IDs now, so we can remove that rule.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Good update, we’ll stop requiring `# TaskID` comments from here onward. I’ll keep the tracing requirement with `service.operation` naming active for all external calls. Structured logging with trace IDs is cleaner and less error-prone than manual annotations. We can enrich logs with task name and retry count to preserve dashboard visibility.",
+      "type": "response"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "Now deployment: can you show a rollout helper that patches deployments and checks status?",
+      "type": "topic"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Here’s a traced helper for rollout operations.\n```python\ndef patch_deployment(k8s_client, name: str, image: str):\n    with tracer.start_as_current_span(\"deployments.fetch\"):\n        dep = k8s_client.read_namespaced_deployment(name=name, namespace=\"prod\")\n\n    dep.spec.template.spec.containers[0].image = image\n\n    with tracer.start_as_current_span(\"k8s.patch\"):\n        k8s_client.patch_namespaced_deployment(name=name, namespace=\"prod\", body=dep)\n```\nPair this with a rollout status watcher and automatic rollback threshold.",
+      "type": "response"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "What Helm chart layout would you use for API services and Celery workers in one repo?",
+      "type": "topic"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Use one umbrella chart for environment wiring and one subchart per deployable workload. Keep separate values blocks for `api`, `worker`, and `beat` replicas, resources, and probes. Share ConfigMap and Secret templates through helper macros to avoid drift. Add chart tests for rendered manifests and policy checks in CI.",
+      "type": "response"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "How do I tune rolling updates and HPA for checkout and order workers?",
+      "type": "topic"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "For checkout API, prefer small max surge and strict max unavailable to protect traffic continuity. For workers, scale on queue depth and processing latency rather than CPU alone. Set stabilization windows to avoid replica flapping during bursts. Keep preStop hooks and graceful termination long enough to finish in-flight tasks.",
+      "type": "response"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "Can you give me a worker deployment snippet, and keep the same tracing wrapper style we switched to at turn 43?",
+      "type": "topic"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Yes, and we’ll preserve the `service.operation` span format in worker code paths. In Kubernetes, define separate worker Deployment with queue-specific env vars and readiness checks on broker connectivity. Keep worker command explicit, for example `celery -A app.worker worker -Q critical,default -l info`. Add resource requests that reflect task memory spikes to avoid eviction storms.",
+      "type": "response"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "How should I manage secrets for DB, Redis, and provider API keys across environments?",
+      "type": "topic"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Use an external secret manager and sync into Kubernetes Secrets at deploy time. Rotate credentials by versioned secret names and dual-read windows to avoid downtime. Never inject secrets into images; mount or env-inject at runtime only. Audit access paths and use least-privilege service accounts per workload.",
+      "type": "response"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "We had a data integrity incident this week. New rule: all PostgreSQL write operations must use explicit transactions with `async with session.begin():`.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Understood, here is an order write path with both active constraints.\n```python\nasync def create_order(session, redis_client, order):\n    with tracer.start_as_current_span(\"orders.create_order\"):\n        async with session.begin():\n            session.add(order)\n            session.execute(\n                text(\"INSERT INTO outbox_events(event_type, payload) VALUES (:t, :p)\"),\n                {\"t\": \"ORDER_CREATED\", \"p\": order.id}\n            )\n\n    with tracer.start_as_current_span(\"orders.publish_event\"):\n        redis_client.publish(\"orders.events\", str(order.id))\n```\nThis keeps writes atomic and traceable across DB and Redis boundaries.",
+      "type": "response"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "How do you recommend handling DB migrations now that services are evolving independently?",
+      "type": "topic"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Run migrations per service schema with independent version tables and deployment gates. Use expand-contract patterns so old and new app versions can coexist during rollouts. Never couple destructive migration steps with the same deploy that still reads old columns. Add migration smoke tests against production-like data snapshots in CI.",
+      "type": "response"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "What about connection pooling settings for async SQLAlchemy in FastAPI?",
+      "type": "topic"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Start with conservative pool sizes per pod and scale horizontally before increasing per-process connections. Tune `pool_size`, `max_overflow`, and `pool_recycle` based on observed wait time and DB saturation. Keep one async engine per process and avoid creating engines per request. Track pool checkout latency as an SLI so regressions are visible early.",
+      "type": "response"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "I also want read replicas for catalog and analytics queries. How should routing work?",
+      "type": "topic"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Use explicit read/write session routing in repositories, not hidden magic in ORM hooks. Route stale-tolerant reads to replicas and keep checkout-critical reads on primary when consistency is required. Monitor replication lag and fail back to primary automatically when lag breaches threshold. Expose consistency mode in service APIs so callers choose correctness versus latency intentionally.",
+      "type": "response"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "Can you show profiling ideas for slow writes, and keep the same explicit transaction pattern we discussed after the incident?",
+      "type": "topic"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Profile by combining query plans, lock wait metrics, and trace spans around each DB phase. Instrument writes with `orders.validate`, `orders.insert`, and `orders.commit` spans so hotspots are obvious. Keep writes inside explicit transactions and log affected row counts to detect anomalies. Add periodic `EXPLAIN ANALYZE` capture for top write queries under controlled load tests.",
+      "type": "response"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "Give me an end-to-end create-order snippet with DB insert, inventory reserve, and payment capture; same tracing naming style and transaction requirement as before.",
+      "type": "topic"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Here is a compact flow.\n```python\nasync def place_order(session, inventory_client, payment_client, payload):\n    with tracer.start_as_current_span(\"orders.reserve_inventory\"):\n        await inventory_client.reserve(payload[\"items\"])\n\n    session.execute(\n        text(\"INSERT INTO orders(id, user_id, total) VALUES (:id, :u, :t)\"),\n        {\"id\": payload[\"id\"], \"u\": payload[\"user_id\"], \"t\": payload[\"total\"]}\n    )\n    session.commit()\n\n    with tracer.start_as_current_span(\"payments.enqueue_capture\"):\n        await payment_client.capture_async(payload[\"id\"], payload[\"payment_token\"])\n```\nYou can emit an outbox event after commit for downstream notifications.",
+      "type": "response"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "Can you give me an architecture review checklist for this platform before we go live?",
+      "type": "topic"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Review bounded contexts, ownership boundaries, and whether any service bypasses another service’s data contract. Validate observability coverage for all external calls and confirm `service.operation` span naming consistency. Verify async workflows for idempotency, dead-letter handling, and replay safety. Confirm data safety controls, including explicit transactions for writes and tested rollback paths.",
+      "type": "response"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "What failure modes should I game-day first for this stack?",
+      "type": "topic"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Start with Redis outage, payment provider timeout storms, and partial PostgreSQL degradation. Then test message backlog growth, worker crash loops, and bad deployment rollback under active traffic. Include trace sampling misconfiguration scenarios because they can blind incident response. Measure recovery objectives and verify runbooks are executable by on-call without tribal context.",
+      "type": "response"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "Last thing before handoff: what CI/CD pipeline stages do you recommend?",
+      "type": "topic"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Use stages for lint/type checks, unit tests, contract tests, build, security scan, integration tests, and progressive deploy. Gate production rollout on migration validation and synthetic checkout probes. Add post-deploy verification for traces, error rates, queue lag, and DB write latency. Keep rollback automation one command away with immutable image tags.",
+      "type": "response"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "Please summarize a final reference architecture, and include reminders about the tracing format and transaction rule so I can share with the team.",
+      "type": "topic"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Reference architecture: FastAPI services behind an API gateway, Celery workers for async tasks, Redis for cache and transient coordination, and PostgreSQL as system of record. Communication is HTTP for request-response and event-driven patterns for side effects, with explicit idempotency controls for all retried operations. Observability uses OpenTelemetry spans with strict `service.operation` naming and correlated structured logs. Data integrity policy enforces explicit transaction blocks for all PostgreSQL writes using `async with session.begin():`.",
+      "type": "response"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Great, close with one repository method example that inserts an order plus outbox event correctly, keeping all current constraints.",
+      "type": "topic"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Here is a final repository method with both active constraints enforced.\n```python\nfrom sqlalchemy import text\n\nasync def insert_order_with_outbox(session, order):\n    with tracer.start_as_current_span(\"orders.insert_order\"):\n        async with session.begin():\n            session.add(order)\n\n    with tracer.start_as_current_span(\"orders.write_outbox\"):\n        async with session.begin():\n            session.execute(\n                text(\"INSERT INTO outbox_events(aggregate_id, event_type, payload) VALUES (:id, :t, :p)\"),\n                {\"id\": order.id, \"t\": \"ORDER_CREATED\", \"p\": str(order.id)}\n            )\n```\nThis keeps write paths transaction-safe and trace-compliant for your production standard.",
+      "type": "response"
+    }
+  ]
+}

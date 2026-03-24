@@ -1,0 +1,948 @@
+{
+  "conversation_id": "dataset_health_02",
+  "domain": "healthcare",
+  "domain_name": "Healthcare",
+  "topic": "Drug Discovery Pipeline — Molecular Featurization, ADMET, Virtual Screening, IND Prep",
+  "constraint_log": [
+    {
+      "turn": 7,
+      "constraint_id": "C1",
+      "action": "add",
+      "text": "Every molecular featurization function must validate SMILES input using Chem.MolFromSmiles(smiles) is not None before processing and log invalid SMILES to an invalid_smiles_log table."
+    },
+    {
+      "turn": 17,
+      "constraint_id": "C2",
+      "action": "add",
+      "text": "All ADMET prediction outputs must include a prediction_confidence score from 0.0 to 1.0, and any prediction with confidence below 0.7 must set low_confidence: true."
+    },
+    {
+      "turn": 43,
+      "constraint_id": "C1",
+      "action": "modify",
+      "text": "C1 updated: after SMILES validation, molecule must be standardized to canonical SMILES using Chem.MolToSmiles(mol) before any featurization; invalid SMILES must still be logged to invalid_smiles_log."
+    },
+    {
+      "turn": 67,
+      "constraint_id": "C2",
+      "action": "remove",
+      "text": "C2 removed from individual prediction functions because confidence flagging moved to global calibration service."
+    },
+    {
+      "turn": 79,
+      "constraint_id": "C3",
+      "action": "add",
+      "text": "All regulatory submission data exports must include a data_lineage dictionary tracing each data field back to source study ID and raw data file hash."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Validate SMILES with Chem.MolFromSmiles(smiles) is not None before featurization and log invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant explicitly require Chem.MolFromSmiles(smiles) is not None before featurization and include logging invalid SMILES to invalid_smiles_log?",
+          "answer": true,
+          "keywords": [
+            "Chem.MolFromSmiles(smiles) is not None",
+            "invalid_smiles_log",
+            "skip featurization",
+            "RDKit"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Validate SMILES with Chem.MolFromSmiles(smiles) is not None before featurization and log invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant preserve C1 by validating SMILES before featurization and writing invalid records to invalid_smiles_log?",
+          "answer": true,
+          "keywords": [
+            "MolFromSmiles",
+            "invalid_smiles_log",
+            "featurize_molecule",
+            "None"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "ADMET outputs must include prediction_confidence in 0.0-1.0 and set low_confidence: true when confidence < 0.7.",
+          "test_question": "Does the assistant output include both prediction_confidence and explicit low_confidence: true when confidence is below 0.7?",
+          "answer": false,
+          "keywords": [
+            "prediction_confidence",
+            "low_confidence",
+            "< 0.7",
+            "manual review"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Validate SMILES with Chem.MolFromSmiles(smiles) is not None before featurization and log invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant include the C1 validation gate and invalid_smiles_log insert before featurization in the ADMET workflow?",
+          "answer": true,
+          "keywords": [
+            "Chem.MolFromSmiles",
+            "invalid_smiles_log",
+            "before DeepChem featurizer",
+            "return None"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "ADMET outputs must include prediction_confidence in 0.0-1.0 and set low_confidence: true when confidence < 0.7.",
+          "test_question": "Does the assistant provide prediction_confidence and conditionally set low_confidence true when value is under 0.7?",
+          "answer": true,
+          "keywords": [
+            "prediction_confidence",
+            "low_confidence",
+            "0.7",
+            "downstream review queue"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Validate SMILES with Chem.MolFromSmiles(smiles) is not None before featurization and log invalid SMILES to invalid_smiles_log.",
+          "test_question": "At this checkpoint, does the assistant still enforce SMILES validation and logging invalid entries to invalid_smiles_log before feature generation?",
+          "answer": true,
+          "keywords": [
+            "MolFromSmiles",
+            "invalid_smiles_log",
+            "feature generation",
+            "reject invalid SMILES"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "ADMET outputs must include prediction_confidence in 0.0-1.0 and set low_confidence: true when confidence < 0.7.",
+          "test_question": "Does the assistant return ADMET predictions with prediction_confidence and low_confidence boolean thresholded at 0.7?",
+          "answer": true,
+          "keywords": [
+            "prediction_confidence",
+            "low_confidence",
+            "confidence < 0.7",
+            "flag"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "After validation, standardize to canonical SMILES with Chem.MolToSmiles(mol) before featurization, while logging invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant include validation, invalid_smiles_log logging, and canonical standardization via Chem.MolToSmiles(mol) before featurization?",
+          "answer": true,
+          "keywords": [
+            "Chem.MolFromSmiles",
+            "Chem.MolToSmiles(mol)",
+            "canonical_smiles",
+            "invalid_smiles_log"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "ADMET outputs must include prediction_confidence in 0.0-1.0 and set low_confidence: true when confidence < 0.7.",
+          "test_question": "Does the assistant still include prediction_confidence and low_confidence threshold logic in outputs?",
+          "answer": true,
+          "keywords": [
+            "prediction_confidence",
+            "low_confidence",
+            "0.7 threshold",
+            "manual review"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "After validation, standardize to canonical SMILES with Chem.MolToSmiles(mol) before featurization, while logging invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant explicitly include Chem.MolToSmiles(mol) canonicalization in addition to validation and invalid_smiles_log before featurization?",
+          "answer": false,
+          "keywords": [
+            "Chem.MolToSmiles(mol)",
+            "canonical SMILES",
+            "invalid_smiles_log",
+            "featurization"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "ADMET outputs must include prediction_confidence in 0.0-1.0 and set low_confidence: true when confidence < 0.7.",
+          "test_question": "Does the assistant keep prediction_confidence and low_confidence output logic in this checkpoint response?",
+          "answer": true,
+          "keywords": [
+            "prediction_confidence",
+            "low_confidence",
+            "confidence score",
+            "< 0.7"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "After validation, standardize to canonical SMILES with Chem.MolToSmiles(mol) before featurization, while logging invalid SMILES to invalid_smiles_log.",
+          "test_question": "After C2 removal, does the assistant still satisfy updated C1 by validating, canonicalizing, and logging invalid SMILES?",
+          "answer": true,
+          "keywords": [
+            "Chem.MolFromSmiles",
+            "Chem.MolToSmiles(mol)",
+            "invalid_smiles_log",
+            "canonicalization"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "After validation, standardize to canonical SMILES with Chem.MolToSmiles(mol) before featurization, while logging invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant continue to enforce updated C1 in the regulatory export context?",
+          "answer": true,
+          "keywords": [
+            "canonical_smiles",
+            "Chem.MolToSmiles(mol)",
+            "invalid_smiles_log",
+            "pre-featurization"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Regulatory exports must include data_lineage mapping each field to source study ID and raw data file hash.",
+          "test_question": "Does the assistant require data_lineage with both source study ID and raw data file hash for each exported field?",
+          "answer": true,
+          "keywords": [
+            "data_lineage",
+            "study_id",
+            "raw_file_hash",
+            "IND export"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "After validation, standardize to canonical SMILES with Chem.MolToSmiles(mol) before featurization, while logging invalid SMILES to invalid_smiles_log.",
+          "test_question": "Does the assistant still mention C1 updated flow with Chem.MolToSmiles(mol) and invalid_smiles_log?",
+          "answer": true,
+          "keywords": [
+            "Chem.MolFromSmiles",
+            "Chem.MolToSmiles(mol)",
+            "invalid_smiles_log",
+            "canonical smiles"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Regulatory exports must include data_lineage mapping each field to source study ID and raw data file hash.",
+          "test_question": "Does the assistant explicitly include both source study ID and raw data file hash in data_lineage for each export field?",
+          "answer": false,
+          "keywords": [
+            "data_lineage",
+            "study_id",
+            "raw data file hash",
+            "field-level provenance"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "After validation, standardize to canonical SMILES with Chem.MolToSmiles(mol) before featurization, while logging invalid SMILES to invalid_smiles_log.",
+          "test_question": "In the final response, does the assistant preserve the full updated C1 sequence: validation, invalid logging, and canonical SMILES standardization before featurization?",
+          "answer": true,
+          "keywords": [
+            "Chem.MolFromSmiles(smiles) is not None",
+            "invalid_smiles_log",
+            "Chem.MolToSmiles(mol)",
+            "canonical_smiles"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Regulatory exports must include data_lineage mapping each field to source study ID and raw data file hash.",
+          "test_question": "In the final response, does the assistant include data_lineage with source study ID and raw file hash for each exported regulatory field?",
+          "answer": true,
+          "keywords": [
+            "data_lineage",
+            "source_study_id",
+            "raw_file_hash",
+            "IND package"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I am designing a drug discovery pipeline at our startup. Can you help me frame an end-to-end architecture from target selection to IND-ready data?",
+      "type": "message"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Yes. I would split it into five stages: molecular featurization, ADMET prediction, virtual screening, hit-to-lead optimization, and regulatory data assembly. Use Python orchestration, RDKit for chemistry transforms, DeepChem for model layers, and a metadata store to track assay provenance.",
+      "type": "message"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "We are target-based. For kinase inhibition, should we start with ligand libraries or structure-first workflows?",
+      "type": "message"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Start hybrid. Use known ligands to bootstrap a ligand-based model, then layer structure-based docking once your protein preparation is stable. This lets you get quick triage while avoiding overdependence on early docking noise.",
+      "type": "message"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "What data infrastructure would you set up first so we do not break reproducibility later?",
+      "type": "message"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Create a compound registry, assay results warehouse, model registry, and immutable raw-data bucket with checksums. Store every transform step as a job record and tie model artifacts to dataset version IDs. That will support backtracking when we revisit hit calls later.",
+      "type": "message"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "Chemistry lead just set a rule: every molecular featurization function must validate SMILES using Chem.MolFromSmiles(smiles) is not None before processing, and invalid inputs must be logged to invalid_smiles_log. Broken inputs caused failed runs last month.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Understood. I will treat that as mandatory. In every featurizer wrapper: parse with Chem.MolFromSmiles(smiles), reject None, insert invalid records into invalid_smiles_log, then continue only with valid molecules.",
+      "type": "message"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "Great. For representation, should we prioritize ECFP, graph convolutions, or both in parallel?",
+      "type": "message"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Run both in parallel. Baseline with ECFP4 for speed, then add graph conv in DeepChem for richer signal. Your featurize_molecule function should first enforce Chem.MolFromSmiles(smiles) is not None, log failures to invalid_smiles_log, and skip featurization for invalid strings.",
+      "type": "message"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "Can you sketch a minimal DeepChem setup for multitask property prediction so we can compare featurizers?",
+      "type": "message"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Use two dataset builders with identical splits: one with CircularFingerprint(size=2048, radius=2), one with MolGraphConvFeaturizer. Feed both into a MultitaskRegressor or GraphConvModel and compare MAE, ROC-AUC, and calibration. Keep the same split seed to make the comparison fair.",
+      "type": "message"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "For fingerprints, do we include chirality now or defer until lead optimization?",
+      "type": "message"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "Include chirality now for kinase work because stereochemistry can alter potency and clearance. Keep one non-chiral control model so you can quantify the incremental value.",
+      "type": "message"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "How should we manage split strategy to avoid scaffold leakage?",
+      "type": "message"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Use scaffold split as primary and random split as stress test. Given our earlier reproducibility setup, store split manifests as versioned artifacts so each experiment references exact train, valid, and test compound IDs.",
+      "type": "message"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "New requirement from medicinal chemistry: all ADMET prediction outputs must include prediction_confidence from 0.0 to 1.0, and if confidence is below 0.7 we need low_confidence: true for manual review routing.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Accepted. We now enforce both constraints: C1 for SMILES validation/logging and C2 for ADMET output confidence fields with low_confidence gating below 0.7.",
+      "type": "message"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Can you provide an ADMET output schema example for hERG and BBB?",
+      "type": "message"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "Example output: {\"compound_id\":\"CMP_102\",\"herg_risk\":\"medium\",\"bbb_permeable\":false,\"prediction_confidence\":0.64}. For low-confidence cases we can route based on prediction_confidence in the review service. Upstream featurization still validates with MolFromSmiles and logs invalid values to invalid_smiles_log.",
+      "type": "message"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "For ADMET tasks, should we train one multitask network or separate specialist models?",
+      "type": "message"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Start with multitask if tasks share chemistry, then peel off specialist heads for endpoints like hERG where signal patterns diverge. Keep common trunk embeddings for transfer benefits and faster iteration.",
+      "type": "message"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "Any practical feature additions beyond ECFP and graph nodes for ADMET?",
+      "type": "message"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Add physicochemical descriptors: logP, TPSA, HBA, HBD, rotatable bonds, aromatic ring count. Concatenate these with learned graph embeddings. As a back-reference to our split discussion, compute descriptors after data split to avoid accidental leakage via imputed values.",
+      "type": "message"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "How do we encode Lipinski checks in the pipeline output?",
+      "type": "message"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Emit a lipinski_summary object with rule-wise booleans and a violation_count. Keep it separate from learned ADMET predictions so rule-based and model-based signals are auditable independently.",
+      "type": "message"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "I want early BBB and hERG triage before expensive docking. Reasonable?",
+      "type": "message"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "Yes, that is efficient. Pre-filter with ADMET classifiers, then pass only acceptable compounds to docking. This mirrors your target-based strategy and cuts virtual screening volume significantly.",
+      "type": "message"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Show me a compact inference function contract that includes all active requirements.",
+      "type": "message"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Contract: parse smiles with Chem.MolFromSmiles(smiles); if None, write to invalid_smiles_log and return error. If valid, featurize and predict endpoints. Return {prediction_confidence: float in [0,1], low_confidence: prediction_confidence < 0.7, endpoints:{herg, bbb, clogp}} and enqueue low_confidence items to downstream review queue.",
+      "type": "message"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "What metrics should we report weekly for ADMET model governance?",
+      "type": "message"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Track endpoint AUC or RMSE, calibration error, low_confidence rate, scaffold-split performance, and drift in descriptor distributions. Also monitor invalid SMILES frequency as an upstream data quality indicator.",
+      "type": "message"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "Could active learning help us pick compounds for wet-lab follow-up?",
+      "type": "message"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Yes. Use uncertainty sampling on the calibrated outputs plus diversity constraints in chemical space. Because we already expose low_confidence, you can prioritize uncertain but novel scaffolds for assay acquisition.",
+      "type": "message"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "Should we keep explainability for medicinal chemists in this phase?",
+      "type": "message"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Provide simple local explanations: atom-level saliency for graph models and bit attribution for ECFP. Pair with rule-based descriptors so chemists can reconcile model output against known SAR intuition.",
+      "type": "message"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "I need a rough timeline from current data to first ADMET triage release.",
+      "type": "message"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Week 1 data audit and featurization hardening, week 2 baseline training, week 3 calibration and threshold tuning, week 4 deployment shadow mode. Reuse the reproducible split manifests we defined earlier to avoid reset work.",
+      "type": "message"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Before we pivot to docking, summarize the production-safe ADMET interface one more time.",
+      "type": "message"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Production ADMET interface: validate smiles with Chem.MolFromSmiles and reject invalid inputs, record invalid entries in invalid_smiles_log, featurize valid compounds, output endpoint predictions plus prediction_confidence in [0,1], and set low_confidence true when confidence < 0.7 for manual triage.",
+      "type": "message"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "Perfect. Now transitioning to virtual screening. Any prep before AutoDock Vina?",
+      "type": "message"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Prepare protein protonation states, define binding box from known ligands, and generate ligand conformers with consistent protonation. Pre-filter by ADMET as discussed so docking queue remains focused.",
+      "type": "message"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "Constraint update: duplicate compound registrations came from inconsistent SMILES strings. Keep C1 active but now require canonical standardization using Chem.MolToSmiles(mol) after validation and before any featurization, while still logging invalid entries to invalid_smiles_log.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Acknowledged. Updated C1 flow is now: Chem.MolFromSmiles validation, invalid_smiles_log on failures, Chem.MolToSmiles(mol) canonicalization on valid molecules, then featurization. C2 remains active for ADMET outputs.",
+      "type": "message"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "For docking throughput, batch size and parallelism recommendations?",
+      "type": "message"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Use chunked batches of 500 to 2000 ligands with process-level parallelism per receptor. Persist intermediate pose files and docking metadata so failed batches can restart without recomputing complete queues.",
+      "type": "message"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "How do we merge ADMET and docking into a single ranking score?",
+      "type": "message"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Compute a weighted composite: normalized docking score, ADMET desirability score, novelty penalty, and synthetic accessibility. Keep weight configs versioned so later back-testing can reproduce rank shifts.",
+      "type": "message"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "Can you provide pseudo-output for virtual screening candidate records with active constraints embedded where needed?",
+      "type": "message"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Candidate record example: validate smiles via Chem.MolFromSmiles; on valid molecule compute canonical_smiles = Chem.MolToSmiles(mol); on invalid write to invalid_smiles_log. For predicted ADMET fields include prediction_confidence and low_confidence = prediction_confidence < 0.7. Record docking_score, pose_id, and rank_score for downstream hit picking.",
+      "type": "message"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "Any tips for reducing false positives after docking?",
+      "type": "message"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Apply consensus scoring, remove PAINS alerts, and enforce strain-energy checks on poses. Also cluster top hits by scaffold to avoid selecting many analogs of one unstable chemotype.",
+      "type": "message"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "I remember your earlier uncertainty idea. Can we apply it here too?",
+      "type": "message"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Yes, back-referencing that active-learning idea: prioritize compounds with strong docking but uncertain ADMET for confirmatory assays. That gives better information gain than only selecting top composite scores.",
+      "type": "message"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "Should we retrain docking rescoring models weekly or monthly?",
+      "type": "message"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Monthly is safer unless assay throughput is very high. Weekly retrains can create instability unless you lock strong validation gates and drift thresholds.",
+      "type": "message"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "I need the screening API contract before I hand this to engineering.",
+      "type": "message"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Screening API contract: input smiles, validate and log invalids, canonicalize valid smiles, featurize, infer ADMET with confidence metadata, perform docking, and return ranked candidates with complete provenance IDs for model version and receptor prep.",
+      "type": "message"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Please write one more concise JSON-like response object example for an accepted hit candidate.",
+      "type": "message"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Example: {\"compound_id\":\"CMP_887\",\"smiles\":\"CCN...\",\"dock_score\":-10.4,\"admet\":{\"herg\":\"low\",\"bbb\":\"moderate\",\"prediction_confidence\":0.82,\"low_confidence\":false},\"rank_score\":0.91}. Upstream featurization still rejects invalid SMILES with MolFromSmiles and records failures in invalid_smiles_log.",
+      "type": "message"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "Moving to hit triage meetings. How many hits should we take forward per sprint?",
+      "type": "message"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "A practical range is 20 to 40 prioritized hits per sprint, balanced across scaffold families. This keeps medicinal chemistry bandwidth realistic while preserving structural diversity.",
+      "type": "message"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "Can we include synthetic accessibility and route complexity now?",
+      "type": "message"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Yes. Add SA score, retrosynthesis step count, and building-block availability. As a back-reference to your reproducibility concern, version each route-planning model and reagent catalog snapshot.",
+      "type": "message"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "I also want a meeting-ready one-liner policy statement for our cheminformatics preprocessing.",
+      "type": "message"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Policy: all compounds must pass RDKit SMILES validation, failed inputs are logged, and valid molecules are canonicalized before feature generation to prevent duplicate registrations and unstable model behavior.",
+      "type": "message"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "Update from platform team: global confidence calibration is now centralized, so individual prediction functions no longer need prediction_confidence and low_confidence fields. Remove C2 at function level.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Understood. C2 is removed from local function outputs. We keep updated C1 fully active: validate with Chem.MolFromSmiles, log invalids to invalid_smiles_log, canonicalize with Chem.MolToSmiles(mol), then featurize.",
+      "type": "message"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "Now in hit-to-lead optimization, what should we track for SAR velocity?",
+      "type": "message"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Track potency shift per analog cycle, ligand efficiency, lipophilic efficiency, and ADMET movement across matched molecular pairs. Keep preprocessing strict: Chem.MolFromSmiles check, invalid_smiles_log capture, and Chem.MolToSmiles(mol) canonicalization before any descriptor generation.",
+      "type": "message"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "For multi-parameter optimization, should we use weighted desirability or Pareto fronts?",
+      "type": "message"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Use Pareto fronts for exploration, then weighted desirability for decision time. This avoids hiding tradeoffs too early and gives medicinal chemists transparent optimization paths.",
+      "type": "message"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "Could we integrate matched molecular pair analysis with our existing featurization stack?",
+      "type": "message"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Yes. Generate transformation rules from canonicalized structures and tie each rule to potency and ADMET deltas. Back-referencing turn 43, canonical SMILES is crucial so transformation matching is consistent.",
+      "type": "message"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "What is a good cadence for design-make-test-analyze loops at this stage?",
+      "type": "message"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Aim for a 2 to 3 week DMTA loop with weekly computational refresh. Keep a rolling top-chemotype board so project leads can react quickly to emerging liabilities.",
+      "type": "message"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "Can we start outlining IND package data objects now or wait?",
+      "type": "message"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Start now. Draft schemas for compound identity, assay summaries, PK and tox studies, analytical methods, and model-supported rationale sections. Early schema discipline reduces reconciliation pain later.",
+      "type": "message"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "New regulatory requirement: all IND submission exports must include a data_lineage dictionary tracing every field to source study ID and raw data file hash. This is now C3.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Accepted. For every export row, include data_lineage at field level with source_study_id and raw_file_hash. We also keep updated C1 in upstream computation: validate with Chem.MolFromSmiles, log invalids in invalid_smiles_log, canonicalize via Chem.MolToSmiles(mol), then featurize.",
+      "type": "message"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "Can you define a regulatory export schema snippet for assay potency and PK?",
+      "type": "message"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Schema snippet: compound_id, canonical_smiles, potency_ic50_nM, pk_clearance, pk_half_life_hr, study_ids, raw_file_hashes, and per-field data_lineage metadata. Keep units explicit and include transformation method tags.",
+      "type": "message"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "How do we represent failed assays in a way regulators will accept?",
+      "type": "message"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Represent failures explicitly with status codes, failure_reason, and timestamped retry policy. Do not drop records. Include lineage pointers to raw failed files so auditors can verify full study accounting.",
+      "type": "message"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "We may include a PROTAC branch. Does this change data package design?",
+      "type": "message"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Yes, add linker descriptors, ternary complex assay outputs, and degradation kinetics fields. Keep them in extension tables but preserve the same lineage contract so IND reviewers see one coherent provenance model.",
+      "type": "message"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "Please draft a final validation checklist before export.",
+      "type": "message"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Checklist: schema completeness, unit normalization, canonical structure consistency, missingness thresholds, signed artifact versions, and lineage coverage. Back-referencing your first infrastructure request, include immutable checksum verification for every raw source file.",
+      "type": "message"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "Give one compact example export record we can review with QA.",
+      "type": "message"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Example record: {\"compound_id\":\"CMP_901\",\"canonical_smiles\":\"CCOC...\",\"potency_ic50_nM\":38,\"pk_clearance\":12.1,\"data_lineage\":{\"potency_ic50_nM\":{\"study_id\":\"STUDY_22\"},\"pk_clearance\":{\"study_id\":\"STUDY_31\"}}}. Upstream generation assumes Chem.MolFromSmiles validation, invalid_smiles_log capture, and Chem.MolToSmiles(mol) canonicalization.",
+      "type": "message"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "I noticed this resembles your earlier schema. What extra controls do we need before sign-off?",
+      "type": "message"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Add cross-table foreign key checks, duplicate compound detection on canonical_smiles, and lineage completeness tests per field. Run frozen export rehearsals in staging before final package lock.",
+      "type": "message"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "Can we automate reviewer packets for clinical, tox, and CMC stakeholders?",
+      "type": "message"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Yes. Generate role-specific views from the same master export, each with traceable citations to source studies. Keep one hash-manifest so all packets prove consistency against the master package.",
+      "type": "message"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "What should be our final go or no-go meeting summary template?",
+      "type": "message"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Template: target rationale, lead series summary, ADMET and PK risk register, manufacturability, IND-enabling study status, and unresolved questions with owner and due date. Include one annex with full data lineage compliance results.",
+      "type": "message"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "Before we close, can you restate the end-to-end pipeline in one concise operational sequence?",
+      "type": "message"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Sequence: ingest compounds, validate and canonicalize structures, featurize, run ADMET and screening workflows, prioritize hits, optimize leads with SAR and MPO loops, then assemble IND-ready exports with auditable provenance for every field.",
+      "type": "message"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Final request: give me the production policy statement that combines current active constraints for engineering handoff.",
+      "type": "message"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Production policy: every featurization path must validate with Chem.MolFromSmiles(smiles) is not None, log invalid entries to invalid_smiles_log, and canonicalize valid molecules using Chem.MolToSmiles(mol) before feature generation. Every IND export must include data_lineage for each field with source_study_id and raw_file_hash so reviewers can trace values back to original study files.",
+      "type": "message"
+    }
+  ]
+}

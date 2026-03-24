@@ -1,0 +1,947 @@
+{
+  "conversation_id": "dataset_legal_03",
+  "domain": "legal",
+  "domain_name": "Legal",
+  "topic": "Patent Analytics — Claim Parsing, FTO Analysis, Litigation Risk, Prior Art Search",
+  "constraint_log": [
+    {
+      "turn": 9,
+      "event": "add",
+      "constraint_id": "C1",
+      "constraint_text": "All patent claim parsing outputs must include a claim_type field with one of: independent, dependent, method, apparatus, composition."
+    },
+    {
+      "turn": 21,
+      "event": "add",
+      "constraint_id": "C2",
+      "constraint_text": "All prior art search results must be ranked by relevance_score (0.0-1.0), only relevance_score >= 0.6 returned to attorneys, and lower-scoring results stored in low_relevance_archive."
+    },
+    {
+      "turn": 45,
+      "event": "modify",
+      "constraint_id": "C1",
+      "constraint_text": "All patent claim parsing outputs must include claim_type and claim_scope (narrow, broad, moderate)."
+    },
+    {
+      "turn": 67,
+      "event": "remove",
+      "constraint_id": "C2",
+      "constraint_text": "Prior art API threshold filtering removed; return all ranked results and let UI apply threshold."
+    },
+    {
+      "turn": 79,
+      "event": "add",
+      "constraint_id": "C3",
+      "constraint_text": "All FTO analysis reports must include litigation_risk_score (1-10) and risk_rationale, and be logged to fto_report_log with report_id, analyzed_by, generated_at."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All patent claim parsing outputs must include claim_type.",
+          "test_question": "Does the assistant text include a claim parsing output that explicitly contains a claim_type field?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "independent",
+            "dependent",
+            "parsed_claims",
+            "\"claim_type\": \"method\""
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All patent claim parsing outputs must include claim_type.",
+          "test_question": "Does the assistant include claim_type for each example claim record in the parsing output?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "apparatus",
+            "composition",
+            "claim_id",
+            "json schema"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All patent claim parsing outputs must include claim_type.",
+          "test_question": "Does the assistant include claim_type in the shown claim extraction payload?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "method",
+            "dependent",
+            "claims_extracted"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Prior art results must be ranked by relevance_score, filtered at >= 0.6, and below-threshold items archived.",
+          "test_question": "Does the assistant show ranked relevance_score values, return only scores >= 0.6, and mention low_relevance_archive for excluded items?",
+          "answer": true,
+          "keywords": [
+            "relevance_score",
+            ">= 0.6",
+            "ORDER BY relevance_score DESC",
+            "low_relevance_archive",
+            "elasticsearch"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All patent claim parsing outputs must include claim_type.",
+          "test_question": "Does the assistant include claim_type in the claim-parsing snippet it provides?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "independent",
+            "claim parser",
+            "output payload"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Prior art results must be ranked by relevance_score, filtered at >= 0.6, and below-threshold items archived.",
+          "test_question": "Does the assistant explicitly state that below-threshold results are stored in low_relevance_archive?",
+          "answer": false,
+          "keywords": [
+            "relevance_score",
+            ">= 0.6",
+            "low_relevance_archive",
+            "ranked results"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All claim parsing outputs must include claim_type and claim_scope.",
+          "test_question": "Does the assistant provide both claim_type and claim_scope fields in claim parsing output?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "claim_scope",
+            "broad",
+            "moderate",
+            "narrow"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Prior art results must be ranked by relevance_score, filtered at >= 0.6, and below-threshold items archived.",
+          "test_question": "Does the assistant include score ranking, >=0.6 filtering, and low_relevance_archive handling?",
+          "answer": true,
+          "keywords": [
+            "relevance_score",
+            "0.6",
+            "low_relevance_archive",
+            "ranked",
+            "attorney feed"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All claim parsing outputs must include claim_type and claim_scope.",
+          "test_question": "Does the assistant include claim_scope together with claim_type in the claim output shown?",
+          "answer": false,
+          "keywords": [
+            "claim_scope",
+            "claim_type",
+            "narrow|broad|moderate",
+            "claim analysis model"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Prior art results must be ranked by relevance_score, filtered at >= 0.6, and below-threshold items archived.",
+          "test_question": "Does the assistant keep threshold filtering and archive behavior for low scores?",
+          "answer": true,
+          "keywords": [
+            "relevance_score",
+            ">= 0.6",
+            "low_relevance_archive",
+            "sorted descending"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All claim parsing outputs must include claim_type and claim_scope.",
+          "test_question": "Does the assistant include both claim_type and claim_scope in the portfolio monitoring claim snippet?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "claim_scope",
+            "monitoring payload",
+            "dependent",
+            "moderate"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All claim parsing outputs must include claim_type and claim_scope.",
+          "test_question": "Does the assistant keep claim_type and claim_scope in the claim extraction portion?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "claim_scope",
+            "method",
+            "broad"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All FTO reports must include litigation_risk_score and risk_rationale, and be logged with report_id, analyzed_by, generated_at.",
+          "test_question": "Does the assistant output litigation_risk_score and risk_rationale and include fto_report_log fields report_id, analyzed_by, generated_at?",
+          "answer": true,
+          "keywords": [
+            "litigation_risk_score",
+            "risk_rationale",
+            "fto_report_log",
+            "report_id",
+            "analyzed_by",
+            "generated_at"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All claim parsing outputs must include claim_type and claim_scope.",
+          "test_question": "Does the assistant include claim_type and claim_scope in the valuation feature payload?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "claim_scope",
+            "valuation features",
+            "apparatus"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All FTO reports must include litigation_risk_score and risk_rationale, and be logged with report_id, analyzed_by, generated_at.",
+          "test_question": "Does the assistant include both litigation_risk_score and risk_rationale in the report example while logging required fields?",
+          "answer": false,
+          "keywords": [
+            "litigation_risk_score",
+            "risk_rationale",
+            "fto_report_log",
+            "generated_at",
+            "report_id"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All claim parsing outputs must include claim_type and claim_scope.",
+          "test_question": "Does the assistant final schema include claim_type and claim_scope for claim analysis output?",
+          "answer": true,
+          "keywords": [
+            "claim_type",
+            "claim_scope",
+            "final schema",
+            "composition",
+            "narrow"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All FTO reports must include litigation_risk_score and risk_rationale, and be logged with report_id, analyzed_by, generated_at.",
+          "test_question": "Does the assistant final recommendation include both risk fields and the full fto_report_log audit fields?",
+          "answer": true,
+          "keywords": [
+            "litigation_risk_score",
+            "risk_rationale",
+            "fto_report_log",
+            "report_id",
+            "analyzed_by",
+            "generated_at"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I am designing the ingestion layer for a patent analytics platform. I need to ingest USPTO, EPO, and WIPO records in Python and normalize bibliographic fields. What architecture would you start with?",
+      "type": "user_query"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Start with a staged pipeline: source adapters -> raw landing zone -> normalization -> indexing. In Python, use source-specific clients, map into a canonical patent document model, then publish normalized records to Elasticsearch bulk ingestion queues.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "For source adapters, should I run pull jobs separately per office or unify through one orchestrator?",
+      "type": "user_query"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Use one orchestrator with adapter plugins per office. Keep adapter contracts identical: fetch_batch(cursor), transform_raw(), and emit_raw_event(), so retries and observability are consistent.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "How should I handle family deduplication where USPTO grants and WIPO publications overlap?",
+      "type": "user_query"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Create a family resolver step keyed by DOCDB family ID when available, with fallback on priority number + earliest filing date + assignee similarity. Persist both family-level and jurisdiction-level records to avoid losing legal status differences.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "I also want language normalization, especially for EPO/WIPO abstracts in non-English. Translate at ingestion time or query time?",
+      "type": "user_query"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Do both: machine-translate into a stored English field at ingestion for recall, and keep original text for legal traceability. Cache translation hashes so repeated family members do not retrigger translation costs.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "IP counsel says all patent claim parsing outputs must include a claim_type field (\"independent\", \"dependent\", \"method\", \"apparatus\", \"composition\") for downstream FTO analysis — without it, the FTO module cannot proceed. C1 goes live.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Acknowledged. I will enforce C1 in every claim parser output. Example payload: {\"parsed_claims\":[{\"claim_id\":\"1\",\"text\":\"A method for...\",\"claim_type\":\"method\"},{\"claim_id\":\"2\",\"text\":\"The method of claim 1...\",\"claim_type\":\"dependent\"},{\"claim_id\":\"10\",\"text\":\"An apparatus comprising...\",\"claim_type\":\"apparatus\"}]}",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "What modeling approach do you recommend for classifying independent versus dependent claims robustly?",
+      "type": "user_query"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Use a hybrid approach: rule layer first (references like \"claim 1\", \"according to claim\") then a fine-tuned transformer classifier for edge cases. Output both labels and confidence for auditability, while always emitting claim_type.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "Can you propose a canonical JSON schema for parsed claims and entities?",
+      "type": "user_query"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "Suggested schema fields: patent_id, claim_id, claim_text, claim_type, dependencies[], technical_terms[], and parser_version. Keep claim_type required and constrained to the five allowed values.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "How do we detect composition claims that look like method language because of translation artifacts?",
+      "type": "user_query"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Add a post-classification disambiguation pass using chemistry lexicons, phrase patterns (\"comprising X wt%\"), and IPC/CPC sections. If conflicts persist, store claim_type from the model plus a review_flag for analyst resolution.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "I need a lightweight parser service API before we train a larger model. What endpoints are enough?",
+      "type": "user_query"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Start with POST /parse_claims, GET /parse_status/{job_id}, and GET /claim/{patent_id}/{claim_id}. The parse response should include claim_type in each claim record and dependency links.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Can you show a small parsed output for one apparatus patent and one composition patent?",
+      "type": "user_query"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "Example: {\"patent_id\":\"US123\",\"claims\":[{\"claim_id\":\"1\",\"claim_type\":\"apparatus\",\"claim_text\":\"An apparatus...\"}]}; {\"patent_id\":\"WO456\",\"claims\":[{\"claim_id\":\"1\",\"claim_type\":\"composition\",\"claim_text\":\"A composition comprising...\"}]}. This keeps C1 compliance while we expand entity extraction.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "All prior art search results must be ranked by relevance_score (0.0–1.0) and filtered so that only results with relevance_score >= 0.6 are returned to attorneys. Results below threshold must be stored in a low_relevance_archive table separately. C2 goes live. C1 still active.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Understood. Prior art API will sort by relevance_score DESC, return only items where relevance_score >= 0.6, and write lower-scoring hits to low_relevance_archive. C1 remains required for claim parsing outputs.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "Should we combine BM25 and embedding similarity in Elasticsearch, or use two-stage retrieval?",
+      "type": "user_query"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Use two-stage retrieval: BM25 candidate generation, then embedding rerank. As in our earlier family normalization design, keep provenance fields so attorneys can trace why records were matched.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "What feature set should the reranker use for prior art relevance?",
+      "type": "user_query"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Combine cosine similarity, claim overlap ratio, CPC overlap, citation graph distance, and recency decay. Normalize into a calibrated relevance_score from 0.0 to 1.0 before thresholding at 0.6.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "How do we expose explainability so attorneys trust the ranking?",
+      "type": "user_query"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "Attach explanation blocks per hit: top contributing terms, semantic match highlights, and feature contributions. Return attorney-visible hits only if relevance_score >= 0.6 and archive the rest to low_relevance_archive.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Show me an example response that includes parsed claim signals and prior art retrieval output.",
+      "type": "user_query"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Example: {\"claims_extracted\":[{\"claim_id\":\"1\",\"claim_type\":\"method\"},{\"claim_id\":\"2\",\"claim_type\":\"dependent\"}],\"prior_art_results\":[{\"doc_id\":\"US-A\",\"relevance_score\":0.91},{\"doc_id\":\"EP-B\",\"relevance_score\":0.74}],\"filter\":\"relevance_score >= 0.6\",\"sql_hint\":\"ORDER BY relevance_score DESC\",\"archived\":[{\"doc_id\":\"WO-C\",\"relevance_score\":0.42,\"target_table\":\"low_relevance_archive\"}]}.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "I want to tune embedding models on patent corpora. Should I fine-tune from a general legal model or from technical SBERT?",
+      "type": "user_query"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Start from a technical SBERT backbone, then domain-adapt on patent pairs (claim-to-prior-art relevance labels). Keep a held-out legal set for calibration of relevance_score near the 0.6 boundary.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "How should I version retrieval experiments so counsel can compare quality over time?",
+      "type": "user_query"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Version indexes and rerankers with experiment_id and freeze evaluation slices. Include metrics above and below the threshold we introduced at turn 21 so counsel sees precision gains versus recall loss.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "Can you give pseudocode for hybrid retrieval and filtering?",
+      "type": "user_query"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Pseudo-flow: candidates = bm25(query); dense = embed(query); reranked = rerank(candidates, dense); sorted = sort_desc(reranked, relevance_score); returned = [r for r in sorted if r.relevance_score >= 0.6]; archive(low_relevance_archive, [r for r in sorted if r.relevance_score < 0.6]).",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "I am worried about multilingual prior art, especially JP and CN patents. Any indexing tricks?",
+      "type": "user_query"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Store multilingual fields with language analyzers plus translated English mirror fields. For dense vectors, use multilingual patent embeddings and log language_match confidence in each relevance explanation.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Please provide another concrete response payload example that product can wire into the attorney dashboard.",
+      "type": "user_query"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Payload: {\"claim_parse\":[{\"claim_id\":\"1\",\"claim_type\":\"independent\"},{\"claim_id\":\"2\",\"claim_type\":\"dependent\"}],\"results\":[{\"doc_id\":\"US777\",\"relevance_score\":0.88},{\"doc_id\":\"WO901\",\"relevance_score\":0.63}],\"rule_applied\":\"relevance_score >= 0.6\",\"order\":\"desc\"}.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "Moving to FTO analysis, I want claim chart generation from parsed claims and matched prior art. How would you sequence that?",
+      "type": "user_query"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Sequence: claim element extraction -> element-to-reference mapping -> evidence sentence selection -> chart assembly -> human review. Preserve citation spans so each infringement argument is defensible.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "Should we generate one chart per independent claim or merge dependent claims under the parent?",
+      "type": "user_query"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Generate a primary chart per independent claim and append dependent claim deltas under each parent. This aligns with the parser structure we established earlier and keeps attorney review focused.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "IP counsel extended C1 — claim_type must now also be accompanied by a claim_scope field (\"narrow\", \"broad\", \"moderate\") generated by the claim analysis model, because attorneys need scope indicators for licensing strategy. C1 updated to C1'. C2 still active.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Confirmed. C1 now requires both claim_type and claim_scope in all claim parsing outputs, while C2 remains active for prior art filtering and archiving.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "Can you map claim_scope into licensing recommendations during FTO workflows?",
+      "type": "user_query"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Yes. Broad claims map to higher licensing urgency, moderate claims to negotiation watchlists, and narrow claims to lower immediate pressure, but always with claim_type and claim_scope in the evidence payload.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "Give me an end-to-end example combining parser output, prior art result filtering, and claim chart metadata.",
+      "type": "user_query"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Example: {\"claims\":[{\"claim_id\":\"1\",\"claim_type\":\"apparatus\",\"claim_scope\":\"broad\"},{\"claim_id\":\"2\",\"claim_type\":\"dependent\",\"claim_scope\":\"narrow\"}],\"prior_art_returned\":[{\"doc_id\":\"EP111\",\"relevance_score\":0.84},{\"doc_id\":\"US222\",\"relevance_score\":0.66}],\"low_relevance_archive\":[{\"doc_id\":\"WO333\",\"relevance_score\":0.41}],\"chart_meta\":{\"chart_id\":\"CH-19\",\"generated_by\":\"fto_engine_v2\"}}.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "How should I score infringement likelihood per mapped claim element?",
+      "type": "user_query"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Use element-level probabilities from entailment models, then aggregate with weights by independent/dependent hierarchy from the taxonomy we discussed at turn 12. Keep claim_type and claim_scope as features in the aggregation model.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "What tables do you recommend for storing FTO intermediate artifacts?",
+      "type": "user_query"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Use fto_jobs, fto_claim_elements, fto_reference_matches, and fto_charts. In claim tables, make claim_type and claim_scope non-null fields to enforce the updated parser contract.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "Could we auto-suggest design-around opportunities from chart gaps?",
+      "type": "user_query"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Yes, mine unmapped high-importance elements and propose design alternatives linked to affected modules. Rank suggestions by legal confidence and implementation effort to guide engineering triage.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "Need an API response example for counsel review view with parser and prior-art sections.",
+      "type": "user_query"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Response can include claim_records, top_prior_art, chart_summary, and review_actions. top_prior_art should remain threshold-filtered at relevance_score >= 0.6, with low_relevance_archive populated for excluded items.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Please show a concrete sample now.",
+      "type": "user_query"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Sample: {\"claim_records\":[{\"claim_id\":\"1\",\"claim_type\":\"method\"},{\"claim_id\":\"2\",\"claim_type\":\"dependent\"}],\"top_prior_art\":[{\"doc_id\":\"US900\",\"relevance_score\":0.79}],\"low_relevance_archive\":[{\"doc_id\":\"CN112\",\"relevance_score\":0.52}],\"chart_summary\":{\"coverage\":0.71}}.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "How do we monitor model drift in claim parser and reranker simultaneously?",
+      "type": "user_query"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Track parser class distribution shifts for claim_type and claim_scope, plus reranker calibration drift around score deciles. Trigger retraining if attorney override rates rise beyond threshold.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "What governance checkpoints should happen before client-facing FTO reports are released?",
+      "type": "user_query"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Require automated policy checks, attorney sign-off, and immutable audit trails for source evidence and model versions. Include a final legal review gate for high-risk matters.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "Can we estimate confidence intervals on FTO conclusions?",
+      "type": "user_query"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Yes, use bootstrap sampling across claim-element matches and propagate uncertainty into report-level risk bands. Store uncertainty metadata with each claim_type and claim_scope record for explainability.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "C2 (relevance score threshold filtering in the API) was removed — the attorney review UI now handles interactive filtering and the API should return all results ranked by score so attorneys can set their own threshold. C2 removed.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Acknowledged. API will now return all prior art results ranked by relevance_score, and the UI controls thresholding. C1 requirements for claim_type and claim_scope remain active.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "Switching to portfolio monitoring: I need alerts for competitor filings and legal status changes across jurisdictions.",
+      "type": "user_query"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Build event-driven monitors for publication, grant, opposition, and lapse updates. For linked claim analytics, keep payloads like {\"claim_id\":\"1\",\"claim_type\":\"dependent\",\"claim_scope\":\"moderate\"} so downstream licensing and FTO views stay consistent.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "Since we removed backend thresholding at turn 67, how should UI-side filtering interact with ranked API responses?",
+      "type": "user_query"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Return full ranked lists with pagination and score histograms; the UI can apply sliders and save attorney-specific presets. Keep server sorting deterministic so filtered subsets are reproducible.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "I also want expiration tracking and annuity risk alerts for key patent families.",
+      "type": "user_query"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Add a scheduler that computes jurisdictional expiry timelines, fee windows, and grace periods. Emit family-level risk alerts with severity and projected revenue impact tags.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "How can we detect aggressive filing behavior from competitors in adjacent CPC classes?",
+      "type": "user_query"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Use rolling windows on filing velocity per assignee and CPC cluster, then detect anomalies using seasonal baselines. Combine with claim breadth signals from claim_scope to distinguish defensive filings from expansion moves.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "Can we wire notifications to Slack and email with attorney-friendly summaries?",
+      "type": "user_query"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Yes, publish normalized monitoring events to a notification service with channel templates. Include short legal summaries, top affected assets, and links to ranked evidence lists.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "The engineer introduces C3 — all FTO analysis reports must include a litigation_risk_score (1–10) and a risk_rationale text field, logged to a fto_report_log table with report_id, analyzed_by, and generated_at.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "C3 accepted. FTO report output will include litigation_risk_score and risk_rationale, and each report write will log {\"report_id\":\"R-501\",\"analyzed_by\":\"fto_assistant\",\"generated_at\":\"2026-03-24T10:15:00Z\"} to fto_report_log. Claim outputs continue to include claim_type and claim_scope.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "Now I want portfolio landscaping and whitespace mapping to guide acquisition strategy. Where do we start?",
+      "type": "user_query"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Start with technology clusters built from embeddings + CPC + assignee signals, then identify sparse clusters with rising market demand. Overlay litigation history and FTO outcomes to prioritize acquisition targets.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "How do we connect whitespace opportunities with enforceability and licensing value?",
+      "type": "user_query"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Score each whitespace zone by novelty density, claim breadth mix, and competitor concentration, then cross-reference governance gates we defined around turn 63. Use claim_type and claim_scope aggregates to estimate enforceability and license leverage.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "Can you propose an IP valuation formula blending legal strength and commercial signals?",
+      "type": "user_query"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "A practical model: valuation = cash_flow_potential * legal_strength * market_coverage * enforceability_discount. legal_strength can combine claim_scope distribution, citation quality, opposition outcomes, and FTO litigation_risk_score inversely.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "What features should feed a supervised valuation model if I have historical licensing deals?",
+      "type": "user_query"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Use deal amount as target, and features from claim complexity, family size, remaining term, jurisdiction mix, forward citations, invalidation history, and portfolio fit. Add report-level risk descriptors from FTO outputs for legal context.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "Give me a sample valuation-facing report payload combining claim analytics and FTO risk metadata.",
+      "type": "user_query"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Payload: {\"claim_analytics\":[{\"claim_id\":\"1\",\"claim_type\":\"apparatus\",\"claim_scope\":\"broad\"}],\"fto_report\":{\"report_id\":\"R-880\",\"litigation_risk_score\":8},\"fto_report_log\":{\"report_id\":\"R-880\",\"analyzed_by\":\"risk_model_v3\",\"generated_at\":\"2026-03-24T16:00:00Z\"},\"valuation_inputs\":{\"market_coverage\":0.67}}.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "I need a final production checklist across ingestion, parsing, retrieval, FTO, monitoring, and valuation.",
+      "type": "user_query"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Checklist: data contracts, schema validation, model version pinning, index reproducibility, legal audit trails, role-based access, and continuous evaluation. Add rollback playbooks for parser, retriever, and valuation services.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "What KPIs should I report to IP leadership monthly?",
+      "type": "user_query"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Report ingestion freshness, parse accuracy by claim type/scope, attorney acceptance of ranked prior art, FTO turnaround time, litigation risk trend, whitespace conversion rate, and realized licensing value.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "Any final advice on reducing legal risk while scaling globally?",
+      "type": "user_query"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Prioritize jurisdiction-aware rules, immutable evidence lineage, and periodic counsel calibration workshops. Reuse the multilingual normalization approach we discussed early in the pipeline to keep cross-border analysis consistent.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "Please provide one final consolidated schema snippet that satisfies current active constraints.",
+      "type": "user_query"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Consolidated snippet: {\"claim_output\":{\"claim_id\":\"1\",\"claim_type\":\"composition\",\"claim_scope\":\"narrow\"},\"fto_report\":{\"report_id\":\"R-999\",\"litigation_risk_score\":6,\"risk_rationale\":\"Key independent claim partially overlaps competitor process claims in US and EP.\"},\"fto_report_log\":{\"report_id\":\"R-999\",\"analyzed_by\":\"fto_assistant_v4\",\"generated_at\":\"2026-03-24T18:05:00Z\"}}.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Great, close this out with implementation priorities for the next sprint.",
+      "type": "user_query"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Next sprint priorities: finalize canonical schemas, enforce parser validators for claim_type + claim_scope, productionize FTO report generation with mandatory litigation_risk_score and risk_rationale, and harden fto_report_log writes (report_id, analyzed_by, generated_at). Then run end-to-end QA across ingestion, retrieval, monitoring, and valuation dashboards.",
+      "type": "assistant_response"
+    }
+  ]
+}

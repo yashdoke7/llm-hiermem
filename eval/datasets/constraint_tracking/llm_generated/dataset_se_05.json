@@ -1,0 +1,944 @@
+{
+  "conversation_id": "dataset_se_05",
+  "domain": "software_engineering",
+  "domain_name": "Software Engineering",
+  "topic": "Production RAG System — LangChain, Pinecone, OpenAI, RAGAS Evaluation",
+  "constraint_log": [
+    {
+      "turn": 11,
+      "action": "add",
+      "constraint_id": "C1",
+      "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log for FinOps tracking."
+    },
+    {
+      "turn": 19,
+      "action": "add",
+      "constraint_id": "C2",
+      "constraint_text": "All retrieval results passed into LLM context must include source_document_id and chunk_id metadata for attribution."
+    },
+    {
+      "turn": 53,
+      "action": "modify",
+      "constraint_id": "C1",
+      "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log for chargeback."
+    },
+    {
+      "turn": 71,
+      "action": "remove",
+      "constraint_id": "C2",
+      "constraint_text": "All retrieval results passed into LLM context must include source_document_id and chunk_id metadata for attribution."
+    },
+    {
+      "turn": 83,
+      "action": "add",
+      "constraint_id": "C3",
+      "constraint_text": "All production prompt templates must be fetched from prompt_registry using prompt_id and prompt_version; no hardcoded prompts in app code."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [],
+      "tests": []
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log.",
+          "test_question": "Does the assistant explicitly require writing prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log for each LLM call?",
+          "answer": true,
+          "keywords": [
+            "llm_usage_log",
+            "prompt_tokens",
+            "completion_tokens",
+            "model_name",
+            "latency_ms"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All retrieved chunks passed to LLM context must carry source_document_id and chunk_id metadata.",
+          "test_question": "Does the assistant state that retrieved context items include both source_document_id and chunk_id before being sent to the model?",
+          "answer": true,
+          "keywords": [
+            "source_document_id",
+            "chunk_id",
+            "retrieval payload",
+            "context builder"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log.",
+          "test_question": "Does the assistant mention capturing token counts, model name, and latency into llm_usage_log in the proposed flow?",
+          "answer": true,
+          "keywords": [
+            "llm_usage_log",
+            "token counts",
+            "model_name",
+            "latency_ms",
+            "OpenAI callback"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All retrieved chunks passed to LLM context must carry source_document_id and chunk_id metadata.",
+          "test_question": "Does the assistant include both source_document_id and chunk_id in each candidate chunk during multi-query retrieval?",
+          "answer": true,
+          "keywords": [
+            "source_document_id",
+            "chunk_id",
+            "multi-query",
+            "candidate chunks"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log.",
+          "test_question": "Does the assistant still include llm_usage_log fields prompt_tokens, completion_tokens, model_name, and latency_ms?",
+          "answer": true,
+          "keywords": [
+            "llm_usage_log",
+            "prompt_tokens",
+            "completion_tokens",
+            "model_name",
+            "latency_ms"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All retrieved chunks passed to LLM context must carry source_document_id and chunk_id metadata.",
+          "test_question": "Does the assistant require both source_document_id and chunk_id in retrieval output passed to the model context?",
+          "answer": false,
+          "keywords": [
+            "source_document_id",
+            "chunk_id",
+            "retrieval output",
+            "context packet"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log.",
+          "test_question": "Does the assistant show an implementation that logs prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log?",
+          "answer": true,
+          "keywords": [
+            "INSERT INTO llm_usage_log",
+            "prompt_tokens",
+            "completion_tokens",
+            "model_name",
+            "latency_ms"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All retrieved chunks passed to LLM context must carry source_document_id and chunk_id metadata.",
+          "test_question": "Does the assistant include source_document_id and chunk_id fields in the context assembly stage?",
+          "answer": true,
+          "keywords": [
+            "context assembly",
+            "source_document_id",
+            "chunk_id",
+            "citation"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log.",
+          "test_question": "After the chargeback update, does the assistant include estimated_cost_usd along with prompt_tokens, completion_tokens, model_name, and latency_ms in llm_usage_log?",
+          "answer": false,
+          "keywords": [
+            "estimated_cost_usd",
+            "llm_usage_log",
+            "chargeback",
+            "prompt_tokens",
+            "completion_tokens"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All retrieved chunks passed to LLM context must carry source_document_id and chunk_id metadata.",
+          "test_question": "Does the assistant still preserve both source_document_id and chunk_id in retrieval metadata passed to LLM context?",
+          "answer": true,
+          "keywords": [
+            "source_document_id",
+            "chunk_id",
+            "retrieval metadata",
+            "LLM context"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log.",
+          "test_question": "Does the assistant explicitly include estimated_cost_usd with token and latency fields in llm_usage_log?",
+          "answer": true,
+          "keywords": [
+            "estimated_cost_usd",
+            "llm_usage_log",
+            "latency_ms",
+            "model_name",
+            "chargeback"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All retrieved chunks passed to LLM context must carry source_document_id and chunk_id metadata.",
+          "test_question": "Does the assistant still require both source_document_id and chunk_id before composing the answer context?",
+          "answer": true,
+          "keywords": [
+            "source_document_id",
+            "chunk_id",
+            "answer context",
+            "retrieved chunk"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log.",
+          "test_question": "Does the assistant at this turn continue enforcing llm_usage_log entries with estimated_cost_usd and token/latency fields?",
+          "answer": true,
+          "keywords": [
+            "llm_usage_log",
+            "estimated_cost_usd",
+            "prompt_tokens",
+            "completion_tokens",
+            "latency_ms"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log.",
+          "test_question": "Does the assistant retain the full FinOps logging payload including estimated_cost_usd?",
+          "answer": true,
+          "keywords": [
+            "estimated_cost_usd",
+            "llm_usage_log",
+            "model_name",
+            "prompt_tokens",
+            "completion_tokens"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All production prompt templates must be fetched from prompt_registry via prompt_id and prompt_version, not hardcoded.",
+          "test_question": "Does the assistant avoid hardcoded templates and require loading prompts from prompt_registry with prompt_id and prompt_version?",
+          "answer": false,
+          "keywords": [
+            "prompt_registry",
+            "prompt_id",
+            "prompt_version",
+            "hardcoded template",
+            "auditability"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every LLM API call must log prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log.",
+          "test_question": "Does the final assistant response include full llm_usage_log instrumentation with estimated_cost_usd?",
+          "answer": true,
+          "keywords": [
+            "llm_usage_log",
+            "estimated_cost_usd",
+            "latency_ms",
+            "prompt_tokens",
+            "completion_tokens"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All production prompt templates must be fetched from prompt_registry via prompt_id and prompt_version, not hardcoded.",
+          "test_question": "Does the final assistant response require prompts to be resolved from prompt_registry using prompt_id and prompt_version?",
+          "answer": true,
+          "keywords": [
+            "prompt_registry",
+            "prompt_id",
+            "prompt_version",
+            "template fetch",
+            "audit trail"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I am building a production RAG stack with LangChain, Pinecone, and OpenAI. Can you sketch the end-to-end architecture before we dive into details?",
+      "type": "question"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Use a pipeline with ingestion, chunking, embedding, indexing in Pinecone, hybrid retrieval, reranking, context assembly, generation, and evaluation. In LangChain, model this with LCEL nodes so each stage is observable and replaceable, and keep OpenAI calls isolated behind a client wrapper for retries and telemetry.",
+      "type": "answer"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "Great. For chunking, we have product docs, runbooks, and Jira tickets. What strategy should we start with?",
+      "type": "question"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Start with structure-aware chunking: split markdown by headings, then recursive character splitting to about 400 to 700 tokens with 10 to 15 percent overlap. Keep code blocks and tables intact, and attach metadata for doc type, section path, and updated_at.",
+      "type": "answer"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "How should we configure Pinecone index dimensions and similarity choice?",
+      "type": "question"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Match index dimension to your embedding model and use cosine similarity for OpenAI embeddings. Add namespaces per environment and tenant, and reserve metadata fields for filters like team, product, severity, and date range.",
+      "type": "answer"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "In LangChain should I use a RetrievalQA chain or compose everything in LCEL?",
+      "type": "question"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Compose in LCEL for production because you can control retries, guardrails, and observability at each step. Keep a thin orchestration layer: retriever node, reranker node, context formatter node, and answer node.",
+      "type": "answer"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "Can you give me a phased implementation plan for the first sprint?",
+      "type": "question"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Phase 1: ingestion and chunking baseline. Phase 2: embeddings plus Pinecone indexing. Phase 3: retrieval and reranking. Phase 4: evaluation harness and dashboards. This gives you a stable baseline before optimization.",
+      "type": "answer"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "Constraint update from engineering lead: every LLM API call must log prompt_tokens, completion_tokens, model_name, and latency_ms to an llm_usage_log table for FinOps cost tracking. C1 is active now.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Understood. I will wrap each OpenAI call with middleware that records prompt_tokens, completion_tokens, model_name, and latency_ms into llm_usage_log, including request_id and timestamp for joins with traces.",
+      "type": "answer"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "Now embeddings: compare text-embedding-3-small and text-embedding-3-large for this use case.",
+      "type": "question"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "text-embedding-3-large usually improves semantic recall, especially for longer technical passages, but costs more and may increase latency. Start with 3-small for broad indexing and run an offline recall benchmark against 3-large on difficult queries before deciding.",
+      "type": "answer"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "What should the indexing pipeline look like in practice?",
+      "type": "question"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Pipeline: extract documents, normalize, chunk, embed in batches, upsert to Pinecone, and store chunk manifests in relational storage. Add idempotent upserts by stable chunk hash so re-indexing only touches changed chunks.",
+      "type": "answer"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "Can you suggest metadata schema for each chunk?",
+      "type": "question"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Use chunk metadata with document_id, section_path, chunk_index, created_at, updated_at, tenant_id, and acl_tags. Also include source_document_id and chunk_id to keep stable identifiers from ingestion through retrieval.",
+      "type": "answer"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "New constraint: citation layer requires source_document_id and chunk_id on every retrieved chunk passed into model context. C2 is active, and C1 remains active.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "I will enforce this in the retriever adapter: every retrieval payload sent to context builder must contain source_document_id and chunk_id. Also every OpenAI completion call will continue logging prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log.",
+      "type": "answer"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "Let's move to retrieval quality. How do we combine BM25 and dense retrieval well?",
+      "type": "question"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Use hybrid retrieval with reciprocal rank fusion: gather top candidates from BM25 and dense, normalize scores, and fuse lists. Building on turn 20, preserve source_document_id and chunk_id through fusion before passing context onward.",
+      "type": "answer"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "Where should reranking fit if we use Cohere rerank?",
+      "type": "question"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Run reranking after fusion on the top 30 to 50 candidates and keep final top 6 to 10 chunks. Keep reranker features lightweight and deterministic, and propagate source_document_id and chunk_id with each candidate object.",
+      "type": "answer"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "What MMR settings do you recommend for diversity without hurting relevance?",
+      "type": "question"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Start with lambda around 0.6 and tune between 0.4 and 0.8 using offline nDCG plus answer faithfulness. Apply MMR after reranking on a small candidate set so diversity helps reduce near-duplicate context.",
+      "type": "answer"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "How should top_k and rerank_k be tuned for latency and quality?",
+      "type": "question"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "A practical default is retrieve 40 to 60, rerank 30 to 40, keep 8 for generation. Then profile p95 latency and answer quality, and shrink rerank_k first if latency breaches budget.",
+      "type": "answer"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Should we add query rewriting or multi-query retrieval?",
+      "type": "question"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Yes, generate 2 to 3 rewrites for ambiguous queries and deduplicate candidate chunks by chunk_id before rerank. As in turn 12, log OpenAI usage fields to llm_usage_log, and as in turn 20 include source_document_id and chunk_id on all context candidates.",
+      "type": "answer"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "How do we handle metadata filters like tenant and recency?",
+      "type": "question"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Apply hard filters before retrieval for tenant_id and acl_tags, then soft reweight by updated_at at rerank time. Keep source_document_id and chunk_id attached so filters and citations stay aligned.",
+      "type": "answer"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "What if sparse retrieval returns very little for short queries?",
+      "type": "question"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Use adaptive fallback: if BM25 yields fewer than threshold hits, increase dense top_k and add query expansion. For critical paths, cache high-frequency query embeddings to avoid repeated latency spikes.",
+      "type": "answer"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "Hybrid plus reranking may exceed latency SLO. How do we keep it under control?",
+      "type": "question"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Parallelize dense and sparse retrieval, cap rerank_k dynamically by query class, and use async batching for embedding and rerank requests. Keep p95 budgets per stage and degrade gracefully to dense-only when needed.",
+      "type": "answer"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "How do we dedupe near-duplicate chunks from the same document?",
+      "type": "question"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Cluster candidates by MinHash or embedding similarity and keep one representative per cluster while preserving highest relevance score. Retain original chunk_id references so downstream attribution remains deterministic.",
+      "type": "answer"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Can a query classifier route factoid versus analytical questions differently?",
+      "type": "question"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Yes. Route factoid queries to stricter lexical matching and analytical queries to broader semantic retrieval plus heavier reranking. Keep llm_usage_log instrumentation for prompt_tokens, completion_tokens, model_name, and latency_ms, and carry source_document_id in the context packet.",
+      "type": "answer"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "Now retrieval evaluation. Which metrics should we track first?",
+      "type": "question"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Track recall at k, precision at k, MRR, nDCG, and answer-level groundedness. Separate dashboards by query type so regressions in long-form reasoning do not hide behind factoid averages.",
+      "type": "answer"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "How should we manage context window pressure as documents grow?",
+      "type": "question"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Use a token budget allocator: reserve space for system instructions and user question, then fill with highest marginal-utility chunks. Compress low-salience chunks with extractive summarization before final prompt assembly.",
+      "type": "answer"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "I want a chunk size ablation experiment design.",
+      "type": "question"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Run a grid over chunk sizes 256, 384, 512, 768 with overlaps 10 and 20 percent, keeping embedding model fixed. Compare retrieval metrics, answer faithfulness, and end-to-end latency to identify the Pareto frontier.",
+      "type": "answer"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "Before self-RAG, what hallucination baseline checks should we install?",
+      "type": "question"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Add claim extraction plus evidence matching, citation completeness checks, and unsupported-claim rate. Fail closed on low evidence coverage for high-risk intents like policy and compliance answers.",
+      "type": "answer"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "Can you show a guardrailed LangChain response stage pattern?",
+      "type": "question"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Use a response chain that validates retrieved context objects contain source_document_id and chunk_id before generation, then runs an output validator for unsupported claims. Log each OpenAI call to llm_usage_log with prompt_tokens, completion_tokens, model_name, and latency_ms.",
+      "type": "answer"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "FinOps asked for team chargeback dashboards. How should we prepare data marts?",
+      "type": "question"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Following the instrumentation from turn 12, aggregate llm_usage_log by team_id, model_name, and endpoint to produce daily token and latency trends. Join request traces and retrieval events so you can relate quality regressions to spend spikes.",
+      "type": "answer"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "Constraint change: C1 is extended. llm_usage_log must now include estimated_cost_usd computed from token counts and current model pricing for team chargeback. C2 remains active.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Acknowledged. I will update the logger to write prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd into llm_usage_log, using a versioned pricing table keyed by model_name and date.",
+      "type": "answer"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "For hallucination mitigation, should we use model-based fact checking or rule-based checks first?",
+      "type": "question"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Start with rule-based checks for deterministic coverage, then add model-based fact checking for nuanced claims. Use confidence thresholds and route uncertain outputs to abstain or ask-for-clarification behavior.",
+      "type": "answer"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "How do we quantify faithfulness in a repeatable way?",
+      "type": "question"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Use RAGAS faithfulness and context precision, plus a claim-evidence verifier on sampled traffic. Keep a human audit set for disagreements to calibrate automatic metric drift over time.",
+      "type": "answer"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Can we apply self-RAG patterns without exploding latency?",
+      "type": "question"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Yes, use a single reflection pass only when confidence is low and cap token budgets for critique prompts. Continue logging prompt_tokens, completion_tokens, model_name, and latency_ms to llm_usage_log, and keep source_document_id plus chunk_id on retrieved context objects.",
+      "type": "answer"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "How should we structure a RAGAS evaluation pipeline in CI?",
+      "type": "question"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Build a nightly job that replays benchmark queries, computes RAGAS metrics, and compares against control limits. Block promotion if faithfulness or context precision drops beyond thresholds.",
+      "type": "answer"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "Any guidance for generating a high-quality synthetic test set?",
+      "type": "question"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Generate scenarios from real intent clusters, then adversarially mutate wording, abbreviations, and multi-hop references. Validate each synthetic item with a reviewer pass to remove ambiguous ground truth.",
+      "type": "answer"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "What online metrics should we watch besides offline RAGAS?",
+      "type": "question"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Track citation click-through, user correction rate, abstain rate, escalation rate, and task completion proxy metrics. Segment by tenant and query class so deployment changes can be isolated quickly.",
+      "type": "answer"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "Can you define a practical failure taxonomy for triage?",
+      "type": "question"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Use categories: retrieval miss, retrieval noise, ranking failure, context truncation, generation fabrication, policy violation, and formatting failure. Attach root-cause tags and owner teams to each incident type.",
+      "type": "answer"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "When faithfulness drops, what is your first-response playbook?",
+      "type": "question"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "First, compare retrieval recall and reranker drift, then replay failing samples from turn 46 ablations to see if chunking changed. Keep retrieval context with source_document_id and chunk_id, and ensure llm_usage_log captures prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd for each call.",
+      "type": "answer"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "Constraint update: C2 is removed. Source attribution is now handled by a unified citation middleware that intercepts retrieval results, so retrieval layer no longer needs to enforce source_document_id and chunk_id.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Understood. I will remove C2 checks from retrieval code paths and rely on citation middleware, while keeping C1 logging with estimated_cost_usd active for every LLM call.",
+      "type": "answer"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "How should we redesign evaluation now that attribution moved to middleware?",
+      "type": "question"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Split evaluation into retrieval relevance, answer faithfulness, and middleware attribution correctness as separate test suites. This keeps ownership clear and avoids conflating retrieval quality with citation rendering defects.",
+      "type": "answer"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "I want regression tests in CI before each deploy. What minimum set should we include?",
+      "type": "question"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Include smoke retrieval tests, deterministic prompt-format tests, RAGAS threshold checks, latency budget checks, and FinOps logging assertions. Add gold-case replay for top business intents and one adversarial batch.",
+      "type": "answer"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "How do we detect drift in corpus and query distribution?",
+      "type": "question"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Monitor embedding centroid shifts, document novelty rate, and query intent entropy over time. Trigger re-index or retrain recommendations when drift indicators exceed historical bands.",
+      "type": "answer"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "Canary rollout plan for a new retriever config?",
+      "type": "question"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Run a 5 percent canary with mirrored traffic and compare latency, answer quality, and fallback rate against control. Keep full C1 telemetry in llm_usage_log with prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd during the rollout.",
+      "type": "answer"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "As a back-reference to turn 46, should we keep one global chunk size or intent-specific chunking profiles?",
+      "type": "question"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Use intent-specific profiles if operational complexity is manageable: smaller chunks for factoid lookup, larger chunks for procedural reasoning. Keep one global fallback profile for unknown intents to reduce routing errors.",
+      "type": "answer"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "New audit requirement: C3 is active now. All production prompt templates must be fetched from prompt_registry, referencing prompt_id and prompt_version. No hardcoded prompts in application code.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Acknowledged. I will add a prompt resolver that fetches templates from prompt_registry by prompt_id and prompt_version, caches them with TTL, and records resolved version in request traces.",
+      "type": "answer"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "How do we handle prompt rollback safely during incidents?",
+      "type": "question"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Implement version pinning with a feature flag so traffic can switch from prompt_version N to N-1 quickly. Keep immutable history in prompt_registry and record rollout windows for audit and debugging.",
+      "type": "answer"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "For A/B testing RAG configs, what experiment design would you run first?",
+      "type": "question"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Start with a two-arm test: baseline versus new retriever-reranker stack, stratified by intent class and tenant size. Use sequential testing with guardrails on faithfulness and p95 latency before expanding traffic.",
+      "type": "answer"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "What about prompt template hygiene and secret handling in production?",
+      "type": "question"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Keep prompt template strings in application constants for fast iteration, and inject secrets from your vault at runtime. Continue writing prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd into llm_usage_log for every call.",
+      "type": "answer"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "That sounds like it violates the audit requirement from turn 83. Please correct it and give the compliant approach.",
+      "type": "question"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Correct. Prompt templates must not be hardcoded. Fetch all production templates from prompt_registry using prompt_id and prompt_version, cache by version, and fail closed if registry lookup fails. Keep C1 logging with estimated_cost_usd unchanged.",
+      "type": "answer"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "Can you summarize cost optimization levers without harming quality?",
+      "type": "question"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Based on our earlier hybrid and ablation decisions, optimize by reducing rerank_k adaptively, compressing context, routing easy queries to cheaper models, and caching high-frequency responses. Use llm_usage_log with estimated_cost_usd to quantify savings by team and intent.",
+      "type": "answer"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "Give me a final production readiness checklist for launch week.",
+      "type": "question"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Checklist: ingestion idempotency, index backfill plan, hybrid retrieval tests, rerank calibration, hallucination guardrails, offline and online eval dashboards, canary rollout gates, incident playbooks, and FinOps chargeback reports. Also verify prompt_registry controls, prompt version rollback, and audit logs are enabled.",
+      "type": "answer"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "We still have prototype code paths. What migration plan gets us to full production safely?",
+      "type": "question"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Migrate in phases: freeze interfaces, add compatibility adapters, move prompts to prompt_registry, enforce telemetry contracts, then deprecate prototype endpoints behind feature flags. Validate each phase with replay tests and canary promotion criteria.",
+      "type": "answer"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Final review please. Confirm the must-have controls we committed to across this design.",
+      "type": "question"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Final controls: every LLM call writes prompt_tokens, completion_tokens, model_name, latency_ms, and estimated_cost_usd to llm_usage_log; production prompts are always fetched from prompt_registry using prompt_id and prompt_version; retrieval, reranking, evaluation, and rollout guardrails are continuously regression-tested. This aligns with the updated FinOps and audit requirements while preserving quality targets.",
+      "type": "answer"
+    }
+  ]
+}
