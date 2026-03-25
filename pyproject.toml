@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hiermem"
+version = "0.1.0"
+description = "Hierarchical Paged Context Management for Constraint-Preserving LLM Conversations"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Yash Doke", email = "yashdoke215@gmail.com"},
+]
+keywords = ["llm", "memory", "context-management", "rag", "constraints", "conversational-ai"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "chromadb>=0.4.22,<0.6.0",
+    "sentence-transformers>=2.2.2",
+    "litellm>=1.0.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "tiktoken>=0.5.0",
+]
+
+[project.optional-dependencies]
+eval = [
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "tqdm>=4.65.0",
+    "datasets>=2.14.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-mock>=3.11.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "build",
+    "twine",
+]
+demo = [
+    "streamlit>=1.28.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yashdoke7/llm-hiermem"
+Repository = "https://github.com/yashdoke7/llm-hiermem"
+Documentation = "https://github.com/yashdoke7/llm-hiermem#readme"
+"Bug Tracker" = "https://github.com/yashdoke7/llm-hiermem/issues"
+
+[tool.setuptools.packages.find]
+include = ["core*", "llm*", "memory*", "retrieval*", "baselines*"]
+exclude = ["tests*", "eval*", "demo*", "notebooks*", "docs*", "results*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

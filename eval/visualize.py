@@ -267,18 +267,64 @@ def plot_llm_calls_per_turn(results: dict, output_path: Path):
     print(f"Saved: {output_path / 'hiermem_llm_calls.png'}")
 
 
+def _adapt_research_metrics_for_visualize(payload: dict) -> dict:
+    """Convert metrics_research.json payload to legacy metrics schema used by charts."""
+    systems = payload.get("systems", {}) if isinstance(payload, dict) else {}
+    adapted = {}
+
+    for system_name, row in systems.items():
+        if not isinstance(row, dict):
+            continue
+
+        judge_avg = row.get("judge_score_avg")
+        judge_curve = row.get("degradation_curve") or {}
+        judge_summary = {
+            str(k): float(v) for k, v in judge_curve.items()
+            if isinstance(v, (int, float))
+        }
+
+        # Legacy degradation curve is accuracy in [0,1]. Reuse judged quality as proxy.
+        degradation_curve = {
+            str(k): max(0.0, min(1.0, float(v) / 10.0))
+            for k, v in judge_summary.items()
+        }
+
+        survival = row.get("constraint_survival_rate")
+        task_accuracy = float(survival) if isinstance(survival, (int, float)) else 0.0
+        cvr = max(0.0, 1.0 - task_accuracy)
+
+        adapted[system_name] = {
+            "judge_scores": {
+                "avg_score": float(judge_avg) if isinstance(judge_avg, (int, float)) else 0.0,
+                "summary": judge_summary,
+            },
+            "degradation_curve": degradation_curve,
+            "task_accuracy": task_accuracy,
+            "constraint_violation_rate": cvr,
+        }
+
+    return adapted
+
+
 def generate_all_charts(results_dir: Path):
     """Generate all visualization charts from results directory."""
     metrics_file = results_dir / "metrics_rescored.json"
     if not metrics_file.exists():
         metrics_file = results_dir / "metrics.json"
+    metrics_research_file = results_dir / "metrics_research.json"
     results_file = results_dir / "results.json"
 
-    if not metrics_file.exists():
+    metrics = None
+    if metrics_file.exists():
+        metrics = json.loads(metrics_file.read_text(encoding="utf-8"))
+    elif metrics_research_file.exists():
+        research_payload = json.loads(metrics_research_file.read_text(encoding="utf-8"))
+        metrics = _adapt_research_metrics_for_visualize(research_payload)
+        print(f"Using metrics_research.json from {results_dir}")
+    else:
         print(f"No metrics JSON found in {results_dir}")
         return
 
-    metrics = json.loads(metrics_file.read_text(encoding="utf-8"))
     results = json.loads(results_file.read_text(encoding="utf-8")) if results_file.exists() else {}
 
     plot_degradation_curves(metrics, results_dir)

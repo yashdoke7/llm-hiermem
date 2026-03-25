@@ -239,7 +239,10 @@ def _collect_checkpoints(conv: Dict[str, Any]) -> List[Dict[str, Any]]:
     checkpoints = conv.get("checkpoints", [])
     dedup = {}
     for cp in checkpoints:
+        # Support both legacy and SE checkpoint keys.
         turn = cp.get("turn")
+        if turn is None:
+            turn = cp.get("checkpoint_turn")
         if turn is None:
             continue
         dedup[turn] = cp
@@ -284,34 +287,38 @@ def _load_laaj_scores(laaj_path: Path) -> Dict[Tuple[str, str, int], float]:
             if k != "ranked_reveal"
         }
         meta = payload.get("evaluation_metadata", {})
-        # conversation_id comes from benchmark field in metadata
-        conversation_id = str(meta.get("benchmark", "unknown"))
+        # Conversation ID can be stored under different metadata keys.
+        conversation_id = str(
+            meta.get("benchmark")
+            or meta.get("conversation_id")
+            or meta.get("dataset_id")
+            or "unknown"
+        )
         sys_evals = payload["system_evaluations"]
 
         for sys_key, sys_data in sys_evals.items():
             real_name = identity.get(sys_key, sys_key)
             for cp in sys_data.get("checkpoints", []):
+                cp_turn = cp.get("checkpoint_turn")
+                if cp_turn is not None:
+                    # Modern Schema-B outputs provide canonical global checkpoint turns.
+                    dataset_turn = int(cp_turn)
+                else:
                 # LAAJ prompt stores exchange number in "turn" (10, 20, 30...)
                 # normalized_turn may also be present — use whichever gives an integer
-                raw_turn = cp.get("turn")
-                norm_turn = cp.get("normalized_turn")
+                    raw_turn = cp.get("turn")
+                    norm_turn = cp.get("normalized_turn")
 
-                # Convert exchange number -> dataset user turn ID (odd number)
-                # If normalized_turn is present and raw_turn looks like an exchange number
-                # (i.e., it's small relative to conversation length), convert it.
-                # Rule: if raw_turn is even and <= conversation_length, treat as exchange number.
-                conv_len = int(meta.get("conversation_length", 50))
-                if raw_turn is not None and raw_turn % 2 == 0 and raw_turn <= conv_len:
-                    # Exchange N -> dataset user turn ID = 2N - 1
-                    dataset_turn = 2 * raw_turn - 1
-                elif raw_turn is not None and raw_turn % 2 == 1:
-                    # Already an odd dataset turn ID (shouldn't happen with this prompt, but safe)
-                    dataset_turn = raw_turn
-                elif norm_turn is not None:
-                    # Fall back to normalized_turn if raw is ambiguous
-                    dataset_turn = 2 * norm_turn - 1
-                else:
-                    continue
+                    # Legacy fallback: exchange-number style turns -> odd dataset turns.
+                    conv_len = int(meta.get("conversation_length", 50))
+                    if raw_turn is not None and raw_turn % 2 == 0 and raw_turn <= conv_len:
+                        dataset_turn = 2 * raw_turn - 1
+                    elif raw_turn is not None and raw_turn % 2 == 1:
+                        dataset_turn = raw_turn
+                    elif norm_turn is not None:
+                        dataset_turn = 2 * norm_turn - 1
+                    else:
+                        continue
 
                 # Extract weighted_score — prefer direct field, compute from sub-scores if absent
                 ws = cp.get("weighted_score")
@@ -326,7 +333,10 @@ def _load_laaj_scores(laaj_path: Path) -> Dict[Tuple[str, str, int], float]:
                 if ws is None:
                     continue
 
-                scores[(real_name, conversation_id, int(dataset_turn))] = float(ws)
+                score_val = float(ws)
+                scores[(real_name, conversation_id, int(dataset_turn))] = score_val
+                # Fallback key for schema-B files that do not carry run-benchmark conversation_id.
+                scores[(real_name, "__any__", int(dataset_turn))] = score_val
 
         return scores
 
@@ -434,10 +444,14 @@ def _build_metrics_for_dataset(
 
             for cp in _collect_checkpoints(conv):
                 checkpoint_expected += 1
-                cp_turn = int(cp.get("turn", 0))
+                cp_turn = cp.get("turn")
+                if cp_turn is None:
+                    cp_turn = cp.get("checkpoint_turn", 0)
+                cp_turn = int(cp_turn)
                 key = (system_name, cid, cp_turn)
-                if key in laaj_scores:
-                    score = laaj_scores[key]
+                fallback_key = (system_name, "__any__", cp_turn)
+                if key in laaj_scores or fallback_key in laaj_scores:
+                    score = laaj_scores.get(key, laaj_scores.get(fallback_key))
                     judge_scores.append(score)
                     degradation_by_turn.setdefault(cp_turn, []).append(score)
                     # Track first turn where a violation was judged
@@ -715,6 +729,254 @@ def _plot_token_breakdown(dataset_dir: Path, metrics_payload: Dict[str, Any]) ->
     return True
 
 
+def _plot_degradation_curve(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Line plot of LAAJ score at each checkpoint turn per system.
+
+    THE most important chart — shows exactly when each architecture starts
+    forgetting constraints.  Returns True if written.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plotted = 0
+    for system_name in SYSTEM_ORDER:
+        row = metrics_payload["systems"].get(system_name)
+        if not row:
+            continue
+        curve = row.get("degradation_curve") or {}
+        if not curve:
+            continue
+        turns = sorted(curve.keys(), key=int)
+        scores = [curve[t] for t in turns]
+        turns_int = [int(t) for t in turns]
+        ax.plot(
+            turns_int, scores, marker="o", linewidth=2.2,
+            label=SYSTEM_LABELS.get(system_name, system_name),
+            color=SYSTEM_COLORS.get(system_name, "#888888"),
+            alpha=0.9,
+        )
+        plotted += 1
+
+    if plotted == 0:
+        plt.close(fig)
+        return False
+
+    ax.set_xlabel("Checkpoint Turn", fontsize=12)
+    ax.set_ylabel("LAAJ Score (1–10)", fontsize=12)
+    ax.set_title("Constraint Degradation Over Conversation", fontsize=13)
+    ax.set_ylim(0.5, 10.5)
+    ax.legend(loc="lower left")
+    ax.grid(alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "degradation_curve.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
+def _plot_cumulative_token_cost(
+    dataset_dir: Path,
+    results: Dict[str, List[Dict[str, Any]]],
+) -> bool:
+    """Line plot of cumulative main-LLM tokens over conversation turns.
+
+    Proves HierMem's O(1) flat scaling vs Raw-LLM's O(n²) growth.
+    Uses raw turn_logs directly (not aggregated metrics).
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plotted = 0
+    for system_name in SYSTEM_ORDER:
+        convos = results.get(system_name, [])
+        if not convos:
+            continue
+        # Use first conversation for the per-turn curve
+        turn_logs = convos[0].get("turn_logs", []) if convos else []
+        if not turn_logs:
+            continue
+        cumulative = []
+        running = 0.0
+        turn_nums = []
+        for tl in turn_logs:
+            tc = _estimate_turn_cost(system_name, tl)
+            running += tc.main_tokens
+            cumulative.append(running)
+            turn_nums.append(tl.get("turn", len(cumulative)))
+        ax.plot(
+            turn_nums, cumulative, linewidth=2.2,
+            label=SYSTEM_LABELS.get(system_name, system_name),
+            color=SYSTEM_COLORS.get(system_name, "#888888"),
+            alpha=0.9,
+        )
+        plotted += 1
+
+    if plotted == 0:
+        plt.close(fig)
+        return False
+
+    ax.set_xlabel("Turn Number", fontsize=12)
+    ax.set_ylabel("Cumulative Main-LLM Tokens", fontsize=12)
+    ax.set_title("Cumulative Token Cost Over Conversation", fontsize=13)
+    ax.legend()
+    ax.grid(alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "cumulative_token_cost.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
+def _plot_context_utilization_heatmap(
+    dataset_dir: Path,
+    results: Dict[str, List[Dict[str, Any]]],
+) -> bool:
+    """Heatmap of context_tokens / budget at each turn for each system."""
+    system_names = [s for s in SYSTEM_ORDER if s in results and results[s]]
+    if not system_names:
+        return False
+
+    # Build matrix: rows=systems, cols=turns
+    max_turns = 0
+    data_rows = []
+    for sn in system_names:
+        turns = results[sn][0].get("turn_logs", []) if results[sn] else []
+        budget = results[sn][0].get("config", {}).get("context_budget", 8192) if results[sn] else 8192
+        row = []
+        for tl in turns:
+            pipeline = tl.get("pipeline_details") or {}
+            ctx = pipeline.get("context_tokens_used", 0) or tl.get("context_tokens", 0) or 0
+            row.append(min(1.0, float(ctx) / max(float(budget), 1.0)))
+        data_rows.append(row)
+        max_turns = max(max_turns, len(row))
+
+    if max_turns == 0:
+        return False
+
+    # Pad shorter rows
+    for row in data_rows:
+        while len(row) < max_turns:
+            row.append(0.0)
+
+    matrix = np.array(data_rows)
+    fig, ax = plt.subplots(figsize=(14, max(3, len(system_names) * 0.8 + 1.5)))
+    im = ax.imshow(matrix, aspect="auto", cmap="YlOrRd", vmin=0, vmax=1.0)
+    ax.set_yticks(range(len(system_names)))
+    ax.set_yticklabels([SYSTEM_LABELS.get(s, s) for s in system_names])
+    ax.set_xlabel("Turn Number", fontsize=12)
+    ax.set_title("Context Window Utilization (% of Budget)", fontsize=13)
+    fig.colorbar(im, ax=ax, label="Utilization", shrink=0.8)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "context_utilization_heatmap.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
+def _plot_survival_rate(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Bar chart of constraint survival rate (% checkpoints with score ≥ 5.0)."""
+    labels = []
+    values = []
+    colors = []
+    for system_name in SYSTEM_ORDER:
+        row = metrics_payload["systems"].get(system_name)
+        if not row:
+            continue
+        sr = row.get("constraint_survival_rate")
+        if sr is None:
+            continue
+        labels.append(SYSTEM_LABELS.get(system_name, system_name))
+        values.append(sr * 100.0)
+        colors.append(SYSTEM_COLORS.get(system_name, "#888888"))
+
+    if not values:
+        return False
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    bars = ax.bar(labels, values, color=colors, alpha=0.9, edgecolor="black", linewidth=0.8)
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1.5,
+                f"{val:.0f}%", ha="center", fontsize=11, fontweight="bold")
+    ax.set_ylabel("Constraint Survival Rate (%)", fontsize=12)
+    ax.set_title("Checkpoints Passing Constraint Threshold (≥ 5.0/10)", fontsize=13)
+    ax.set_ylim(0, 110)
+    ax.grid(axis="y", alpha=0.25)
+    plt.xticks(rotation=20)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "constraint_survival.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
+def _plot_cost_per_quality(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Bar chart of cost-per-quality-point (lower = more efficient)."""
+    labels = []
+    values = []
+    colors = []
+    for system_name in SYSTEM_ORDER:
+        row = metrics_payload["systems"].get(system_name)
+        if not row:
+            continue
+        cpq = row.get("cost_per_quality_point")
+        if cpq is None:
+            continue
+        labels.append(SYSTEM_LABELS.get(system_name, system_name))
+        values.append(cpq)
+        colors.append(SYSTEM_COLORS.get(system_name, "#888888"))
+
+    if not values:
+        return False
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    bars = ax.bar(labels, values, color=colors, alpha=0.9, edgecolor="black", linewidth=0.8)
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() * 1.02,
+                f"{val:.4f}", ha="center", fontsize=9)
+    ax.set_ylabel("Cost per Quality Point (lower = better)", fontsize=12)
+    ax.set_title("Cost Efficiency: Token Cost ÷ LAAJ Score", fontsize=13)
+    ax.grid(axis="y", alpha=0.25)
+    plt.xticks(rotation=20)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "cost_per_quality.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
+def _plot_curator_overhead(dataset_dir: Path, metrics_payload: Dict[str, Any]) -> bool:
+    """Pie chart of HierMem's token breakdown: Main vs Curator vs PostProc."""
+    row = metrics_payload["systems"].get("hiermem")
+    if not row:
+        return False
+    main_t = float(row.get("avg_main_tokens") or 0)
+    cur_t = float(row.get("avg_curator_tokens") or 0)
+    emb_t = float(row.get("avg_embedding_tokens") or 0)
+    total = main_t + cur_t + emb_t
+    if total <= 0:
+        return False
+
+    slices = []
+    slice_labels = []
+    slice_colors = []
+    if main_t > 0:
+        slices.append(main_t)
+        slice_labels.append(f"Main LLM\n({main_t:.0f} tok)")
+        slice_colors.append("#3a86ff")
+    if cur_t > 0:
+        slices.append(cur_t)
+        slice_labels.append(f"Curator + PostProc\n({cur_t:.0f} tok)")
+        slice_colors.append("#1f9d55")
+    if emb_t > 0:
+        slices.append(emb_t)
+        slice_labels.append(f"Embedding\n({emb_t:.0f} tok)")
+        slice_colors.append("#ff9f1c")
+
+    fig, ax = plt.subplots(figsize=(7, 7))
+    wedges, texts, autotexts = ax.pie(
+        slices, labels=slice_labels, colors=slice_colors,
+        autopct="%1.1f%%", startangle=90, textprops={"fontsize": 10},
+    )
+    for at in autotexts:
+        at.set_fontweight("bold")
+    ax.set_title("HierMem Token Overhead Breakdown", fontsize=13)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "curator_overhead.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
 def _write_visualization_status(
     dataset_dir: Path,
     metrics_payload: Dict[str, Any],
@@ -723,19 +985,20 @@ def _write_visualization_status(
 ) -> None:
     """Write visualization_status.json explaining which charts exist and why others were skipped."""
     skip_reasons: Dict[str, str] = {}
-    if "cost_vs_quality.png" in charts_skipped:
-        skip_reasons["cost_vs_quality.png"] = (
-            "No systems in this dataset had both a judge_score_avg and "
-            "avg_cost_per_turn_units. Fill laaj.json and re-run to generate."
-        )
-    if "latency_comparison.png" in charts_skipped:
-        skip_reasons["latency_comparison.png"] = (
-            "No avg_latency_seconds data found for any system in this dataset."
-        )
-    if "token_composition.png" in charts_skipped:
-        skip_reasons["token_composition.png"] = (
-            "No systems found in this dataset."
-        )
+    _skip_map = {
+        "cost_vs_quality.png": "No systems had both judge_score_avg and cost data. Fill laaj.json and re-run.",
+        "latency_comparison.png": "No avg_latency_seconds data found for any system.",
+        "token_composition.png": "No systems found in this dataset.",
+        "degradation_curve.png": "No LAAJ degradation_curve data. Fill laaj.json and re-run.",
+        "cumulative_token_cost.png": "No turn_logs found to plot cumulative cost.",
+        "context_utilization_heatmap.png": "No turn_logs found to plot context utilization.",
+        "constraint_survival.png": "No constraint_survival_rate data. Fill laaj.json and re-run.",
+        "cost_per_quality.png": "No cost_per_quality_point data. Fill laaj.json and re-run.",
+        "curator_overhead.png": "HierMem system not present or no token data.",
+    }
+    for chart_name in charts_skipped:
+        if chart_name in _skip_map:
+            skip_reasons[chart_name] = _skip_map[chart_name]
 
     payload = {
         "dataset_status": metrics_payload.get("dataset_status", "unknown"),
@@ -866,6 +1129,12 @@ def process_single_dataset(run_dir: Path) -> Path:
     _record("cost_vs_quality.png",    _plot_quality_cost(run_dir, metrics_payload))
     _record("latency_comparison.png", _plot_latency(run_dir, metrics_payload))
     _record("token_composition.png",  _plot_token_breakdown(run_dir, metrics_payload))
+    _record("degradation_curve.png",  _plot_degradation_curve(run_dir, metrics_payload))
+    _record("cumulative_token_cost.png", _plot_cumulative_token_cost(run_dir, all_system_results))
+    _record("context_utilization_heatmap.png", _plot_context_utilization_heatmap(run_dir, all_system_results))
+    _record("constraint_survival.png",  _plot_survival_rate(run_dir, metrics_payload))
+    _record("cost_per_quality.png",     _plot_cost_per_quality(run_dir, metrics_payload))
+    _record("curator_overhead.png",     _plot_curator_overhead(run_dir, metrics_payload))
 
     _write_visualization_status(run_dir, metrics_payload, charts_written, charts_skipped)
 
