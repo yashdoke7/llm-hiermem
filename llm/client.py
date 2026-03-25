@@ -231,6 +231,8 @@ class LLMClient:
         if "ollama" in model_str:
             # Ensure context window is large enough for long conversations
             extra_kwargs["num_ctx"] = config.OLLAMA_CONTEXT_SIZE
+            # Keep model loaded between calls to avoid repeated load/unload stalls
+            extra_kwargs["keep_alive"] = config.OLLAMA_KEEP_ALIVE
         
         response = litellm.completion(
             model=model_str,
@@ -302,7 +304,12 @@ class LLMClient:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
-                "options": {"temperature": temperature, "num_predict": max_tokens},
+                "options": {
+                    "temperature": temperature,
+                    "num_predict": max_tokens,
+                    "num_ctx": config.OLLAMA_CONTEXT_SIZE,
+                },
+                "keep_alive": config.OLLAMA_KEEP_ALIVE,
                 "stream": False
             }
         )
