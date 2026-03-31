@@ -210,6 +210,7 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
             tests = cp.get("tests", []) if isinstance(cp.get("tests", []), list) else []
             keyword_groups = []
             test_per_group = []
+            expected_per_group = []
             for t in tests:
                 if not isinstance(t, dict):
                     continue
@@ -219,6 +220,8 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
                 else:
                     keyword_groups.append([])
                 test_per_group.append(t.get("test_question") or t.get("test") or "")
+                ans = t.get("answer", True)
+                expected_per_group.append(ans if isinstance(ans, bool) else True)
 
             flat_keywords = []
             for g in keyword_groups:
@@ -241,6 +244,8 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
                 "keyword_groups": keyword_groups,
                 "keywords": flat_keywords,
                 "active_constraints": cp.get("active_constraints", []),
+                "expected_per_group": expected_per_group,
+                "expected": expected_per_group[0] if expected_per_group else True,
             })
         return deduped
 
@@ -253,15 +258,20 @@ def _deduplicate_checkpoints(checkpoints: List[Dict]) -> List[Dict]:
             seen.add(turn)
             keyword_groups = []
             test_per_group = []   # parallel list: test question for each keyword group
+            expected_per_group = []
             for other in checkpoints:
                 if other.get("turn") == turn:
                     kws = other.get("keywords", [])
                     if kws:
                         keyword_groups.append(kws)
                         test_per_group.append(other.get("test", ""))
+                        ans = other.get("answer", True)
+                        expected_per_group.append(ans if isinstance(ans, bool) else True)
             merged = dict(cp)
             merged["keyword_groups"] = keyword_groups
             merged["test_per_group"] = test_per_group  # judge uses these per-dimension
+            merged["expected_per_group"] = expected_per_group
+            merged["expected"] = expected_per_group[0] if expected_per_group else True
             # Keep flat keywords for backward compat (union of all groups)
             merged["keywords"] = list(set(
                 kw for group in keyword_groups for kw in group
@@ -342,6 +352,7 @@ def compute_cvr(conversations: List[Dict]) -> float:
                     cp.get("constraint_tested", ""),
                     cp.get("keywords", []),
                     keyword_groups=cp.get("keyword_groups"),
+                    expected_per_group=cp.get("expected_per_group"),
                     user_message=_find_user_msg_at_turn(results, turn),
                     specific_test=cp.get("test", ""),
                     use_llm_judge=False,
@@ -376,6 +387,7 @@ def compute_task_accuracy(conversations: List[Dict]) -> float:
                     cp.get("constraint_tested", ""),
                     cp.get("keywords", []),
                     keyword_groups=cp.get("keyword_groups"),
+                    expected_per_group=cp.get("expected_per_group"),
                     user_message=_find_user_msg_at_turn(results, turn),
                     specific_test=cp.get("test", ""),
                     use_llm_judge=False,
@@ -427,6 +439,7 @@ def compute_degradation_curve(conversations: List[Dict],
                             cp.get("constraint_tested", ""),
                             cp.get("keywords", []),
                             keyword_groups=cp.get("keyword_groups"),
+                            expected_per_group=cp.get("expected_per_group"),
                             user_message=_find_user_msg_at_turn(results, turn),
                             specific_test=cp.get("test", ""),
                             use_llm_judge=False,
@@ -466,6 +479,7 @@ def compute_per_turn_accuracy(conversations: List[Dict]) -> Dict[str, Any]:
                 cp.get("constraint_tested", ""),
                 cp.get("keywords", []),
                 keyword_groups=cp.get("keyword_groups"),
+                expected_per_group=cp.get("expected_per_group"),
                 user_message=_find_user_msg_at_turn(results, turn),
                 specific_test=cp.get("test", ""),
                 use_llm_judge=False,
@@ -524,6 +538,7 @@ def evaluate_checkpoint(response: str, constraint_text: str,
                         checkpoint_constraint: str,
                         keywords: List[str] = None,
                         keyword_groups: List[List[str]] = None,
+                        expected_per_group: List[bool] = None,
                         user_message: str = "",
                         specific_test: str = "",
                         use_llm_judge: bool = True) -> bool:
@@ -543,11 +558,23 @@ def evaluate_checkpoint(response: str, constraint_text: str,
 
     # Evaluate keyword groups separately if available
     if keyword_groups and len(keyword_groups) > 1:
-        keyword_result = all(
-            _keyword_evaluate(response, group) for group in keyword_groups
-        )
+        keyword_result = True
+        for idx, group in enumerate(keyword_groups):
+            expected_present = (
+                expected_per_group[idx]
+                if isinstance(expected_per_group, list) and idx < len(expected_per_group)
+                else True
+            )
+            if not _keyword_evaluate(response, group, expected_present=expected_present):
+                keyword_result = False
+                break
     else:
-        keyword_result = _keyword_evaluate(response, keywords)
+        expected_present = (
+            expected_per_group[0]
+            if isinstance(expected_per_group, list) and expected_per_group
+            else True
+        )
+        keyword_result = _keyword_evaluate(response, keywords, expected_present=expected_present)
 
     # Try LLM-as-judge if available — judge verdict is authoritative
     if use_llm_judge and _judge_available and _llm_client:
@@ -628,7 +655,39 @@ def _parse_individual_constraints(constraint_text: str) -> str:
     return constraint_text
 
 
-def _keyword_evaluate(response: str, keywords: List[str] = None) -> bool:
+def _normalize_match_text(text: str) -> str:
+    """Normalize text for fuzzy lexical matching."""
+    if not isinstance(text, str):
+        return ""
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+def _keyword_hit(response_lower: str, response_norm: str, response_tokens: set, keyword: str) -> bool:
+    """Robust keyword match: exact, normalized phrase, or token-set containment."""
+    if not isinstance(keyword, str):
+        return False
+    kw = keyword.strip()
+    if not kw:
+        return False
+
+    kw_lower = kw.lower()
+    if kw_lower in response_lower:
+        return True
+
+    kw_norm = _normalize_match_text(kw)
+    if kw_norm and kw_norm in response_norm:
+        return True
+
+    kw_tokens = [t for t in kw_norm.split() if t]
+    if not kw_tokens:
+        return False
+    if len(kw_tokens) == 1:
+        return kw_tokens[0] in response_tokens
+    return all(t in response_tokens for t in kw_tokens)
+
+
+def _keyword_evaluate(response: str, keywords: List[str] = None,
+                      expected_present: bool = True) -> bool:
     """Enhanced keyword matching with positive AND negative checks.
     
     For metric checks: uses a ratio-based approach that accounts for
@@ -646,10 +705,13 @@ def _keyword_evaluate(response: str, keywords: List[str] = None) -> bool:
     is_metric_check = any(kw.lower() in metric_keywords for kw in keywords)
 
     if is_metric_check:
-        return _evaluate_metric_compliance(response_lower, keywords)
+        passed = _evaluate_metric_compliance(response_lower, keywords)
+        return passed if expected_present else not passed
 
-    # General positive check: at least one keyword present
-    return any(kw.lower() in response_lower for kw in keywords)
+    response_norm = _normalize_match_text(response)
+    response_tokens = set(response_norm.split())
+    has_match = any(_keyword_hit(response_lower, response_norm, response_tokens, kw) for kw in keywords)
+    return has_match if expected_present else not has_match
 
 
 def _evaluate_metric_compliance(response_lower: str, keywords: List[str]) -> bool:
@@ -765,7 +827,8 @@ def _extract_test_keywords(test: str) -> List[str]:
 
 
 def score_checkpoint(response: str, keywords: List[str] = None,
-                     keyword_groups: List[List[str]] = None) -> float:
+                     keyword_groups: List[List[str]] = None,
+                     expected_per_group: List[bool] = None) -> float:
     """Score how well a response follows constraints on a 0–100 scale.
     
     Unlike binary evaluate_checkpoint, this returns a gradient:
@@ -778,14 +841,27 @@ def score_checkpoint(response: str, keywords: List[str] = None,
         return 0.0
     
     if keyword_groups and len(keyword_groups) > 1:
-        group_scores = [_score_keyword_group(response, g) for g in keyword_groups]
+        group_scores = []
+        for idx, g in enumerate(keyword_groups):
+            expected_present = (
+                expected_per_group[idx]
+                if isinstance(expected_per_group, list) and idx < len(expected_per_group)
+                else True
+            )
+            group_scores.append(_score_keyword_group(response, g, expected_present=expected_present))
         return round(sum(group_scores) / len(group_scores), 1)
     elif keywords:
-        return round(_score_keyword_group(response, keywords), 1)
+        expected_present = (
+            expected_per_group[0]
+            if isinstance(expected_per_group, list) and expected_per_group
+            else True
+        )
+        return round(_score_keyword_group(response, keywords, expected_present=expected_present), 1)
     return 100.0
 
 
-def _score_keyword_group(response: str, keywords: List[str]) -> float:
+def _score_keyword_group(response: str, keywords: List[str],
+                         expected_present: bool = True) -> float:
     """Score a single keyword group on 0–100 scale."""
     response_lower = response.lower()
     
@@ -796,11 +872,14 @@ def _score_keyword_group(response: str, keywords: List[str]) -> float:
     is_metric_check = any(kw.lower() in metric_keywords for kw in keywords)
     
     if is_metric_check:
-        return _score_metric_compliance(response_lower)
+        score = _score_metric_compliance(response_lower)
+        return score if expected_present else round(100.0 - score, 1)
     
-    # General keywords: score = % of keywords found
-    found = sum(1 for kw in keywords if kw.lower() in response_lower)
-    return round(found / len(keywords) * 100, 1)
+    response_norm = _normalize_match_text(response)
+    response_tokens = set(response_norm.split())
+    found = sum(1 for kw in keywords if _keyword_hit(response_lower, response_norm, response_tokens, kw))
+    ratio = found / len(keywords)
+    return round(ratio * 100, 1) if expected_present else round((1.0 - ratio) * 100, 1)
 
 
 def _score_metric_compliance(response_lower: str) -> float:
@@ -869,16 +948,22 @@ def compute_per_turn_scores(conversations: List[Dict]) -> Dict[str, Any]:
             
             kw_groups = cp.get("keyword_groups")
             keywords = cp.get("keywords", [])
+            expected_per_group = cp.get("expected_per_group")
             
-            score = score_checkpoint(response, keywords, kw_groups)
+            score = score_checkpoint(response, keywords, kw_groups, expected_per_group=expected_per_group)
             
             # Per-group scores for detail
             group_scores = []
             if kw_groups:
-                for g in kw_groups:
+                for idx, g in enumerate(kw_groups):
+                    expected_present = (
+                        expected_per_group[idx]
+                        if isinstance(expected_per_group, list) and idx < len(expected_per_group)
+                        else True
+                    )
                     group_scores.append({
                         "keywords": g[:3],
-                        "score": _score_keyword_group(response, g),
+                        "score": _score_keyword_group(response, g, expected_present=expected_present),
                     })
             
             # Mode detection
@@ -995,7 +1080,12 @@ def compute_judge_scores(conversations: List[Dict],
                                             specific_test=cp.get("test", ""))
             else:
                 # Fallback: scale keyword score from 0-100 to 1-10
-                kw_score = score_checkpoint(response, cp.get("keywords", []), kw_groups)
+                kw_score = score_checkpoint(
+                    response,
+                    cp.get("keywords", []),
+                    kw_groups,
+                    expected_per_group=cp.get("expected_per_group")
+                )
                 score = round(1.0 + (kw_score / 100.0) * 9.0, 1)
 
             # Mode detection

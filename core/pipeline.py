@@ -114,6 +114,7 @@ class HierMemPipeline:
         
         # Initialize stores
         vector_store = VectorStore()
+        vector_store.clear()  # CRITICAL: Prevent cross-contamination across benchmark runs
         constraint_store = ConstraintStore(max_constraints=config.MAX_CONSTRAINTS)
         archive = HierarchicalArchive(
             vector_store=vector_store,

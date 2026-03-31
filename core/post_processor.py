@@ -30,19 +30,18 @@ Assistant: {assistant_msg}
 
 One-sentence summary:"""
 
-CONSTRAINT_EXTRACTOR_PROMPT = """Extract constraints from this user message. A constraint is ANY of these:
-- A rule: "never do X", "always do Y", "don't do Z"
-- A preference: "I prefer X", "use X not Y", "I like X better"
-- A limit: "keep it under X", "max X"
-- A fact to remember: "my name is X", "we use X", "remember that X"
+CONSTRAINT_EXTRACTOR_PROMPT = """Extract constraints from the user message below. A constraint is a rule, preference, or fact that must be followed in future responses.
 
-User message: {user_msg}
+If there are NO clear constraints, you MUST return: []
 
-Return a JSON list. Example:
-[{{"text": "User prefers Python over JavaScript", "category": "PREFERENCE", "priority": 3}}]
+If there are constraints, return a JSON array of objects. Example format:
+[{{"text": "Extracted rule here", "category": "RULE", "priority": 3}}]
 
-If truly NOTHING to extract, return: []
-Return ONLY the JSON list, nothing else."""
+--- USER MESSAGE START ---
+{user_msg}
+--- USER MESSAGE END ---
+
+Return ONLY valid JSON."""
 
 
 class PostProcessor:
