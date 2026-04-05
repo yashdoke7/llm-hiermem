@@ -96,7 +96,8 @@ class ContextCurator:
         self.llm = llm_client
 
     def select_context(self, user_prompt: str, l0_directory_text: str,
-                       constraints_text: str, total_turns: int) -> CuratorDecision:
+                       constraints_text: str, total_turns: int,
+                       max_tokens: int = 500) -> CuratorDecision:
         """
         Decide what context to retrieve for the main LLM.
         
@@ -122,7 +123,7 @@ class ContextCurator:
             user_prompt=prompt,
             model=config.CURATOR_MODEL,
             temperature=config.TEMPERATURE_CURATOR,
-            max_tokens=500
+            max_tokens=max_tokens
         )
 
         return self._parse_decision(response)

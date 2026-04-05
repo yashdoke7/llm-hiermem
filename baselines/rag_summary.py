@@ -139,7 +139,7 @@ Updated summary:"""
             user_prompt=prompt,
             model=config.SUMMARIZER_MODEL,
             temperature=0.0,
-            max_tokens=300
+            max_tokens=config.MAX_TOKENS_SUMMARIZER
         ).strip()
 
     def reset(self):

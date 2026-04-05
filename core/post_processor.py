@@ -165,7 +165,7 @@ class PostProcessor:
                 user_prompt=prompt,
                 model=config.SUMMARIZER_MODEL,
                 temperature=0.0,
-                max_tokens=300
+                max_tokens=config.MAX_TOKENS_CURATOR,
             )
             
             cleaned = response.strip()
@@ -207,11 +207,11 @@ class PostProcessor:
         
         try:
             summary = self.llm.call(
-                system_prompt="You are a concise summarizer.",
+                system_prompt="You summarize conversation turns concisely.",
                 user_prompt=prompt,
                 model=config.SUMMARIZER_MODEL,
                 temperature=0.0,
-                max_tokens=100
+                max_tokens=config.MAX_TOKENS_SUMMARIZER
             )
             # L1 bullet is even shorter — first 100 chars of summary
             bullet = summary.strip()[:100]
@@ -245,7 +245,7 @@ class PostProcessor:
                 user_prompt=prompt,
                 model=config.SUMMARIZER_MODEL,
                 temperature=0.0,
-                max_tokens=50
+                max_tokens=config.MAX_TOKENS_CURATOR
             )
             result = result.strip().upper()
             if "NONE" in result or not result:
@@ -285,6 +285,7 @@ class PostProcessor:
                 user_prompt=retry_prompt,
                 model=config.MAIN_LLM_MODEL,
                 temperature=config.TEMPERATURE_MAIN,
+                max_tokens=config.MAX_TOKENS_MAIN,
             )
             # Verify retry actually fixed it
             still_violated = self._check_violations_llm(retried)
