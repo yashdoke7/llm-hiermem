@@ -182,6 +182,7 @@ class HierMemPipeline:
                 user_prompt=context,
                 model=config.MAIN_LLM_MODEL,
                 temperature=config.TEMPERATURE_MAIN,
+                max_tokens=config.MAX_TOKENS_MAIN,
             )
             response = _strip_hallucinated_continuation(response)
         else:
@@ -198,7 +199,8 @@ class HierMemPipeline:
                 user_prompt=user_message,
                 l0_directory_text=_l0_text,
                 constraints_text=_constraints_text,
-                total_turns=self.turn_count
+                total_turns=self.turn_count,
+                max_tokens=config.MAX_TOKENS_CURATOR,
             )
 
             # Measure REAL curator output tokens (the decision JSON it generated)
@@ -239,6 +241,7 @@ class HierMemPipeline:
                 user_prompt=assembled.full_text,
                 model=config.MAIN_LLM_MODEL,
                 temperature=config.TEMPERATURE_MAIN,
+                max_tokens=config.MAX_TOKENS_MAIN,
             )
             response = _strip_hallucinated_continuation(response)
 

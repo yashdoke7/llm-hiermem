@@ -79,6 +79,7 @@ class RAGBaseline:
             user_prompt=context,
             model=self.model,
             temperature=config.TEMPERATURE_MAIN,
+            max_tokens=config.MAX_TOKENS_MAIN,
         )
 
         # Store this turn for future retrieval

@@ -76,6 +76,7 @@ class MemGPTStyleBaseline:
             user_prompt=context,
             model=self.model,
             temperature=config.TEMPERATURE_MAIN,
+            max_tokens=config.MAX_TOKENS_MAIN,
         )
 
         # Parse action and response

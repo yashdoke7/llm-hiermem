@@ -98,6 +98,11 @@ ENABLE_AUTO_SUMMARIZE = True
 TEMPERATURE_MAIN = 0.3
 TEMPERATURE_CURATOR = 0.0     # Deterministic curator
 TEMPERATURE_SUMMARIZER = 0.0  # Deterministic summarization
+
+MAX_TOKENS_MAIN = int(os.getenv("MAX_TOKENS_MAIN", "2048"))
+MAX_TOKENS_CURATOR = int(os.getenv("MAX_TOKENS_CURATOR", "1024"))
+MAX_TOKENS_SUMMARIZER = int(os.getenv("MAX_TOKENS_SUMMARIZER", "512"))
+
 MAX_RETRIES = 5
 RATE_LIMIT_DELAY = {
     "groq": 20.0,
