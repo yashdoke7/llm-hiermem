@@ -174,9 +174,10 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                     mode = " [pass]"
                 elif hasattr(result, 'curator_decision') and result.curator_decision:
                     mode = f" [{result.curator_decision.retrieval_strategy}]"
-            tokens = result.tokens_used if hasattr(result, 'tokens_used') else \
-                     result.context_tokens if hasattr(result, 'context_tokens') else ""
-            tokens_str = f" {tokens}tok" if tokens else ""
+            # Format tokens for display
+            pk = result.prompt_tokens if hasattr(result, 'prompt_tokens') else 0
+            rk = result.response_tokens if hasattr(result, 'response_tokens') else 0
+            tokens_str = f" [P:{pk},R:{rk}]" if pk > 0 else f" {result.tokens_used}tok" if hasattr(result, 'tokens_used') else ""
             
             # Estimate remaining time
             turns_done = len(turn_logs) + 1
@@ -208,7 +209,9 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                     "semantic_queries":    cd.semantic_queries if cd else [],
                     "fetch_full_turns":   cd.fetch_full_turns if cd else [],
                     "curator_reasoning":   cd.reasoning if cd else "",
-                    "context_tokens_used": result.tokens_used,
+                    "context_tokens_used": result.prompt_tokens,
+                    "response_tokens":     result.response_tokens,
+                    "prompt_tokens_est":   result.prompt_tokens,
                     "sources_used":        result.assembled_context.sources_used if result.assembled_context else [],
                     "zone_breakdown":      result.assembled_context.zone_breakdown if result.assembled_context else {},
                     "warnings":            result.warnings,

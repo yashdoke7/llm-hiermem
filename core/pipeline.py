@@ -44,7 +44,9 @@ class TurnResult:
     curator_decision: Optional[CuratorDecision]
     assembled_context: Optional[AssembledContext]
     warnings: List[str] = field(default_factory=list)
-    tokens_used: int = 0
+    prompt_tokens: int = 0
+    response_tokens: int = 0
+    tokens_used: int = 0  # Total (prompt + response)
     pipeline_telemetry: dict = field(default_factory=dict)
     """
     pipeline_telemetry keys (all numeric unless noted):
@@ -294,7 +296,9 @@ class HierMemPipeline:
             curator_decision=curator_decision,
             assembled_context=assembled,
             warnings=warnings,
-            tokens_used=assembled.total_tokens_est,
+            prompt_tokens=assembled.total_tokens_est,
+            response_tokens=count_tokens(final_response),
+            tokens_used=assembled.total_tokens_est + count_tokens(final_response),
             pipeline_telemetry=pipeline_telemetry,
         )
         self.history.append(result)
