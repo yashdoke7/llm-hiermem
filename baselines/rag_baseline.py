@@ -19,6 +19,8 @@ class RAGTurnResult:
     turn_number: int
     user_message: str
     assistant_response: str
+    prompt_tokens: int
+    response_tokens: int
     context_tokens: int
     chunks_retrieved: int
     pipeline_details: dict = None
@@ -89,6 +91,8 @@ class RAGBaseline:
             turn_number=self.turn_count,
             user_message=user_message,
             assistant_response=response,
+            prompt_tokens=count_tokens(context),
+            response_tokens=count_tokens(response),
             context_tokens=count_tokens(context),
             chunks_retrieved=len(retrieved),
             pipeline_details={
@@ -101,6 +105,7 @@ class RAGBaseline:
                 "semantic_queries": [user_message] if retrieval_query_count else [],
                 "sources_used": [f"semantic:turn_{r.get('metadata',{}).get('turn','?')}" for r in retrieved],
                 "context_tokens_used": count_tokens(context),
+                "response_tokens": count_tokens(response),
             }
         )
 

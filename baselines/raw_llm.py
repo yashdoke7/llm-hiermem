@@ -27,7 +27,9 @@ class RawLLMTurnResult:
     turn_number: int
     user_message: str
     assistant_response: str
-    context_tokens: int
+    prompt_tokens: int
+    response_tokens: int
+    context_tokens: int  # for legacy support
 
 
 class RawLLMBaseline:
@@ -68,6 +70,8 @@ class RawLLMBaseline:
             turn_number=self.turn_count,
             user_message=user_message,
             assistant_response=response,
+            prompt_tokens=count_tokens(context),
+            response_tokens=count_tokens(response),
             context_tokens=count_tokens(context)
         )
 

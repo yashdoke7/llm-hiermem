@@ -36,6 +36,8 @@ class MemGPTTurnResult:
     turn_number: int
     user_message: str
     assistant_response: str
+    prompt_tokens: int
+    response_tokens: int
     context_tokens: int
     memory_action: str
 
@@ -86,6 +88,8 @@ class MemGPTStyleBaseline:
             turn_number=self.turn_count,
             user_message=user_message,
             assistant_response=response,
+            prompt_tokens=count_tokens(context),
+            response_tokens=count_tokens(response),
             context_tokens=count_tokens(context),
             memory_action=action.get("action", "none") if isinstance(action, dict) else "none"
         )
