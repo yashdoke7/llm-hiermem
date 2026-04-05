@@ -1,0 +1,23 @@
+{
+  "timestamp": "20260405_152947",
+  "benchmark": "constraint_tracking",
+  "systems": [
+    "hiermem",
+    "raw_llm",
+    "rag",
+    "rag_summary"
+  ],
+  "num_conversations": 1,
+  "provider": "ollama",
+  "models": {
+    "main": "qwen2.5:14b",
+    "curator": "qwen2.5:3b",
+    "summarizer": "qwen2.5:3b"
+  },
+  "config": {
+    "context_budget": 32768,
+    "max_l0_entries": 20,
+    "segment_size": 10,
+    "max_constraints": 20
+  }
+}
