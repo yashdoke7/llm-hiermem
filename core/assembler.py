@@ -71,22 +71,38 @@ class ContextAssembler:
         zone1 = self._build_zone_1(constraints_text)
         sections.append(zone1)
         token_counts["constraints"] = len(zone1) // 4
+        
+        seen_texts = set()
+        
+        def is_duplicate(text: str) -> bool:
+            # Simple content-based deduplication
+            # We strip whitespace and use the first 100 chars as a fingerprint
+            fingerprint = " ".join(text.split())[:200]
+            if fingerprint in seen_texts:
+                return True
+            seen_texts.add(fingerprint)
+            return False
 
         # Recent turns (after constraints, before retrieved context)
         if recent_turns:
-            recent_text = self._build_recent_turns(recent_turns)
+            # Filter out duplicates (shouldn't happen here but safe)
+            unique_recent = [c for c in recent_turns if not is_duplicate(c.text)]
+            recent_text = self._build_recent_turns(unique_recent)
             sections.append(recent_text)
             token_counts["recent_turns"] = len(recent_text) // 4
 
         # Zone 2: Retrieved relevant context (UPPER-MIDDLE)
-        zone2 = self._build_zone_2(relevant_chunks)
+        # CRITICAL: Filter out any retrieved chunks that were already in "Recent"
+        unique_relevant = [c for c in relevant_chunks if not is_duplicate(c.text)]
+        zone2 = self._build_zone_2(unique_relevant)
         if zone2:
             sections.append(zone2)
             token_counts["relevant_context"] = len(zone2) // 4
 
         # Zone 3: Peripheral awareness (LOWER-MIDDLE — lowest attention)
         if peripheral_summaries:
-            zone3 = self._build_zone_3(peripheral_summaries)
+            unique_summaries = [s for s in peripheral_summaries if not is_duplicate(s)]
+            zone3 = self._build_zone_3(unique_summaries)
             sections.append(zone3)
             token_counts["peripheral"] = len(zone3) // 4
 
