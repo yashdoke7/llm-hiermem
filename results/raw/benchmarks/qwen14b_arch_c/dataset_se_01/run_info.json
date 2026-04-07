@@ -1,5 +1,5 @@
 {
-  "timestamp": "20260405_152947",
+  "timestamp": "20260405_213439",
   "benchmark": "constraint_tracking",
   "systems": [
     "hiermem",
@@ -10,9 +10,9 @@
   "num_conversations": 1,
   "provider": "ollama",
   "models": {
-    "main": "qwen2.5:14b",
-    "curator": "qwen2.5:3b",
-    "summarizer": "qwen2.5:3b"
+    "main": "ollama/qwen2.5:14b",
+    "curator": "ollama/qwen2.5:3b",
+    "summarizer": "ollama/qwen2.5:3b"
   },
   "config": {
     "context_budget": 32768,

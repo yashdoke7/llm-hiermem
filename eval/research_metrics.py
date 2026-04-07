@@ -57,11 +57,11 @@ SYSTEM_COLORS = {
     "memgpt_style": "#8338ec",
 }
 
-# Relative unit pricing (you can update per paper setup).
+# Relative unit pricing (typical API market rates for Qwen2.5 models).
 COST_PER_1M_TOKENS = {
-    "main": 1.00,
-    "curator": 0.50,
-    "embedding": 0.10,
+    "main": 0.40,      # Qwen2.5-14B
+    "curator": 0.10,   # Qwen2.5-3B
+    "embedding": 0.05, # Standard embeddings
 }
 
 # Relative retrieval-op pricing (vector search requests/chunk fetches).
