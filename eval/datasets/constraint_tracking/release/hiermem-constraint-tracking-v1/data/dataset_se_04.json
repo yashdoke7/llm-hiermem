@@ -1,0 +1,1010 @@
+{
+  "conversation_id": "dataset_se_04",
+  "domain": "software_engineering",
+  "domain_name": "Software Engineering",
+  "topic": "Distributed Event-Driven Architecture — Kafka, Flink, Spring Boot, Saga Pattern",
+  "constraint_log": [
+    {
+      "turn": 11,
+      "constraint_id": "C1",
+      "action": "add",
+      "text": "All Kafka event schemas must use Avro and be registered in Schema Registry; every producer must call schemaRegistryClient.register(subject, schema) before sending any message."
+    },
+    {
+      "turn": 19,
+      "constraint_id": "C2",
+      "action": "add",
+      "text": "All Flink jobs must configure env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+    },
+    {
+      "turn": 53,
+      "constraint_id": "C1",
+      "action": "modify",
+      "text": "All Kafka event schemas must use Avro and be registered in Schema Registry, and registration must explicitly set compatibility mode BACKWARD_TRANSITIVE in the registration flow."
+    },
+    {
+      "turn": 73,
+      "constraint_id": "C3",
+      "action": "add",
+      "text": "All saga compensation steps must write an audit row to saga_audit with saga_id, step, status, and timestamp before compensation logic executes."
+    },
+    {
+      "turn": 87,
+      "constraint_id": "C2",
+      "action": "remove",
+      "text": "Flink restart strategy moved to cluster default; job-level restart strategy code no longer required."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [],
+      "note": "no active constraints — baseline coherence check only",
+      "tests": []
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce.",
+          "test_question": "Does the assistant explicitly require Avro plus a producer-side call to schemaRegistryClient.register(subject, schema) before sending records?",
+          "answer": true,
+          "keywords": [
+            "Avro",
+            "Schema Registry",
+            "schemaRegistryClient.register(subject, schema)",
+            "before send"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant include the exact Flink restart strategy call env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))?",
+          "answer": true,
+          "keywords": [
+            "env.setRestartStrategy",
+            "RestartStrategies.fixedDelayRestart(3, Time.seconds(10))",
+            "Flink job"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce.",
+          "test_question": "Does the assistant still state producer registration with schemaRegistryClient.register(subject, schema) before publish?",
+          "answer": true,
+          "keywords": [
+            "schemaRegistryClient.register(subject, schema)",
+            "producer",
+            "Avro"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant explicitly include env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))) in this turn?",
+          "answer": false,
+          "keywords": [
+            "env.setRestartStrategy",
+            "fixedDelayRestart(3, Time.seconds(10))",
+            "ops runbook"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce.",
+          "test_question": "Does the assistant include Avro plus Schema Registry registration call before event production?",
+          "answer": true,
+          "keywords": [
+            "Avro",
+            "schemaRegistryClient.register(subject, schema)",
+            "Schema Registry"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant include the exact fixed-delay restart strategy line for Flink job resilience?",
+          "answer": true,
+          "keywords": [
+            "env.setRestartStrategy",
+            "RestartStrategies.fixedDelayRestart",
+            "Time.seconds(10)"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with Schema Registry via schemaRegistryClient.register(subject, schema) before produce.",
+          "test_question": "Does the assistant preserve the C1 requirement by naming Avro and schemaRegistryClient.register(subject, schema) before send?",
+          "answer": true,
+          "keywords": [
+            "Avro",
+            "schemaRegistryClient.register(subject, schema)",
+            "before sending"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant preserve C2 by specifying env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))?",
+          "answer": true,
+          "keywords": [
+            "env.setRestartStrategy",
+            "fixedDelayRestart(3, Time.seconds(10))",
+            "Flink"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow.",
+          "test_question": "Does the assistant explicitly set BACKWARD_TRANSITIVE compatibility (not just BACKWARD) when describing schema registration?",
+          "answer": false,
+          "keywords": [
+            "BACKWARD_TRANSITIVE",
+            "setCompatibility",
+            "register(subject, schema)",
+            "Schema Registry policy"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant include env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))) in this turn?",
+          "answer": true,
+          "keywords": [
+            "env.setRestartStrategy",
+            "RestartStrategies.fixedDelayRestart(3, Time.seconds(10))",
+            "job resilience"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow.",
+          "test_question": "Does the assistant use BACKWARD_TRANSITIVE compatibility and keep pre-send schema registration requirements?",
+          "answer": true,
+          "keywords": [
+            "BACKWARD_TRANSITIVE",
+            "schemaRegistryClient.register(subject, schema)",
+            "Avro"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant include the exact fixed-delay restart strategy call in job code?",
+          "answer": true,
+          "keywords": [
+            "env.setRestartStrategy",
+            "fixedDelayRestart(3, Time.seconds(10))",
+            "Flink runbook"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10)))."
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Before compensation logic, insert audit row into saga_audit(saga_id, step, status, timestamp)."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow.",
+          "test_question": "Does the assistant include explicit BACKWARD_TRANSITIVE compatibility in schema registration?",
+          "answer": true,
+          "keywords": [
+            "BACKWARD_TRANSITIVE",
+            "Schema Registry",
+            "register(subject, schema)"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Flink jobs must set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))).",
+          "test_question": "Does the assistant include env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))) while C2 is still active?",
+          "answer": true,
+          "keywords": [
+            "env.setRestartStrategy",
+            "RestartStrategies.fixedDelayRestart(3, Time.seconds(10))",
+            "Flink"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Before compensation logic, insert audit row into saga_audit(saga_id, step, status, timestamp).",
+          "test_question": "Does the assistant require a pre-compensation insert into saga_audit with saga_id, step, status, and timestamp?",
+          "answer": true,
+          "keywords": [
+            "saga_audit",
+            "saga_id",
+            "step",
+            "status",
+            "timestamp",
+            "before compensation"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow."
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Before compensation logic, insert audit row into saga_audit(saga_id, step, status, timestamp)."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow.",
+          "test_question": "Does the assistant keep explicit BACKWARD_TRANSITIVE compatibility and producer registration in this turn?",
+          "answer": true,
+          "keywords": [
+            "BACKWARD_TRANSITIVE",
+            "schemaRegistryClient.register(subject, schema)",
+            "Avro"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Before compensation logic, insert audit row into saga_audit(saga_id, step, status, timestamp).",
+          "test_question": "Does the assistant state that saga_audit insert happens before compensation execution with all required columns?",
+          "answer": false,
+          "keywords": [
+            "saga_audit",
+            "before compensation",
+            "saga_id",
+            "step",
+            "status",
+            "timestamp"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow."
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Before compensation logic, insert audit row into saga_audit(saga_id, step, status, timestamp)."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Avro schemas must be registered with explicit BACKWARD_TRANSITIVE compatibility in registration flow.",
+          "test_question": "Does the assistant include Avro, explicit BACKWARD_TRANSITIVE compatibility, and schema registration before send?",
+          "answer": true,
+          "keywords": [
+            "Avro",
+            "BACKWARD_TRANSITIVE",
+            "schemaRegistryClient.register(subject, schema)",
+            "Schema Registry"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Before compensation logic, insert audit row into saga_audit(saga_id, step, status, timestamp).",
+          "test_question": "Does the assistant enforce inserting into saga_audit with saga_id, step, status, timestamp before compensation runs?",
+          "answer": true,
+          "keywords": [
+            "saga_audit",
+            "saga_id",
+            "step",
+            "status",
+            "timestamp",
+            "before compensation"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I need to design a distributed order management system. Can you give me a high-level event-driven architecture with Kafka, Flink, Spring Boot, and PostgreSQL?",
+      "type": "question"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Use Spring Boot microservices for Order, Payment, Inventory, and Shipping; publish domain events to Kafka topics; process real-time views and anomaly streams in Flink; persist command-side transactions in PostgreSQL and materialized read models in separate Postgres schemas.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "What core topics should I create first?",
+      "type": "question"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Start with order.created, payment.authorized, payment.failed, inventory.reserved, inventory.rejected, shipment.created, and order.status.updated. Keep one business event type per topic for cleaner retention and ACL boundaries.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "How should I partition these topics?",
+      "type": "question"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Partition by order_id so all events for a single order stay ordered in one partition. For initial capacity, use 24 partitions on high-volume topics and 6 to 12 on low-volume topics, then rebalance as traffic grows.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "Any producer-side guidelines in Spring Boot?",
+      "type": "question"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Use a shared producer library with standard headers: event_id, event_type, event_version, trace_id, and produced_at. Configure retries with bounded backoff and keep a deterministic key serializer for order_id.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "What about consumers and service boundaries?",
+      "type": "question"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Map one consumer group per bounded context, like payment-service-cg and inventory-service-cg, and keep handlers idempotent using event_id dedupe in PostgreSQL. This aligns with your partitioning choice from turn 6 and avoids cross-domain coupling.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "Our architecture team mandates Avro + Schema Registry for all event schemas. Every producer must call schemaRegistryClient.register(subject, schema) before sending any message.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Understood. Every topic payload should be Avro, and each producer path must call schemaRegistryClient.register(subject, schema) before publish so schema IDs are resolved consistently.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "Now help me configure consumer groups for scale and isolation.",
+      "type": "question"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "Use separate groups for real-time commands, analytics, and reconciliation. Keep max.poll.interval.ms tuned by handler latency and use cooperative-sticky assignor to reduce rebalance impact.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "How should we manage offsets safely?",
+      "type": "question"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Disable auto-commit and commit offsets only after database write and side effects complete. For critical consumers, use an inbox table keyed by event_id to guarantee idempotent replays.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "What lag monitoring setup do you recommend?",
+      "type": "question"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Track consumer lag per partition, time lag in seconds, and rebalance frequency. Alert if lag exceeds SLO for 5 minutes, and annotate deploy events so you can correlate lag spikes to releases.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Ops runbook says all Flink jobs need env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))) for resilience. Keep previous Avro requirement too.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "For exactly-once pipelines, keep Avro with Schema Registry and call schemaRegistryClient.register(subject, schema) before producing records. In every Flink job, configure env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))) exactly as in the runbook.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "Walk me through exactly-once semantics end to end.",
+      "type": "question"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Enable Kafka idempotent producer and transactions, then consume with read_committed and checkpointed sinks. Pair that with idempotent DB writes keyed by event_id so retries do not duplicate business effects.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "How do I configure transactional producers in Spring?",
+      "type": "question"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Set transactional.id per producer instance, enable idempotence, acks=all, and max.in.flight.requests.per.connection up to 5. Keep Avro payloads and register schemas via schemaRegistryClient.register(subject, schema) before sending.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "Should I combine outbox with Kafka transactions?",
+      "type": "question"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Yes for reliability boundaries: write domain state and outbox row in one PostgreSQL transaction, then relay to Kafka transactionally. This complements the lag strategy from turn 18 and simplifies replay audits.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "What about consumer-side transactions with PostgreSQL?",
+      "type": "question"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "Wrap handler logic, dedupe insert, and offset commit marker in one local DB transaction where possible, then commit Kafka offset after success. If failure occurs, rollback and retry safely due to dedupe keys.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Give me a concise implementation checklist for exactly-once service paths.",
+      "type": "question"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Checklist: Avro event contracts, Schema Registry registration with schemaRegistryClient.register(subject, schema) before publish, producer idempotence, Kafka transactions, consumer read_committed, and dedupe tables. Also keep replay tooling and tracing to validate no duplicate side effects.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "How do we test for duplicate prevention under failures?",
+      "type": "question"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Inject broker failover and consumer restarts while replaying the same event batch twice. Assert one business row per event_id and unchanged aggregate totals after both runs.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "Any recommendation for event versioning policy?",
+      "type": "question"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Use backward-compatible schema evolution with explicit event_version header and deprecation windows. Keep writer and reader schema tests in CI and block incompatible merges.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "Can we align this with our earlier partitioning decisions?",
+      "type": "question"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Yes, the order_id partition key from turn 6 should remain unchanged across versions, otherwise ordering breaks during migrations. Maintain topic-level compatibility checks before rollout and preserve key hash stability.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "I want a boilerplate Flink job config section for this stack.",
+      "type": "question"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "In job bootstrap set checkpointing mode EXACTLY_ONCE, define state backend, and call env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))). For source records, deserialize Avro and ensure producers already called schemaRegistryClient.register(subject, schema) before upstream send.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Before we move on, summarize the guardrails currently in force.",
+      "type": "question"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Active guardrails: all Kafka schemas are Avro and each producer calls schemaRegistryClient.register(subject, schema) before sending; all Flink jobs set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))). This is consistent with your directives from turns 11 and 19.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "Great, now shift to stream processing design in Flink.",
+      "type": "question"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Model the pipeline as source -> validation -> enrichment -> stateful aggregation -> sink. Keep keyed state by order_id and emit late-event corrections with changelog semantics.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "How should we handle event time and watermarks?",
+      "type": "question"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Use bounded out-of-orderness watermarks, for example 30 seconds, based on produced_at timestamp. Route very late records to a side output for reconciliation jobs.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "What windowing approach fits order lifecycle metrics?",
+      "type": "question"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Use tumbling windows for throughput dashboards and session windows for user-driven order bursts. Keep aggregation state compact by storing only counters and minimal histograms.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "I also need state recovery expectations documented.",
+      "type": "question"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Define RPO as last completed checkpoint and RTO bounded by recovery plus fixed-delay retries. Keep incremental checkpoints on durable storage and validate restore in weekly game days.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "Give me a stream-processing snippet checklist that still honors current constraints.",
+      "type": "question"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Checklist snippet: producers use Avro and call schemaRegistryClient.register(subject, schema) before write; Flink jobs set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))); jobs use event-time watermarks and exactly-once checkpoints. This extends the foundations we outlined in turn 42.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "Let's move to saga pattern for cross-service order transactions.",
+      "type": "question"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Use orchestration for predictable control: Order Saga orchestrator issues commands to Payment, Inventory, and Shipping and listens for outcomes. Keep each step idempotent and store saga state transitions in PostgreSQL.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "Schema registry policy changed: registration must now explicitly set compatibility mode BACKWARD_TRANSITIVE in the registration flow, or registry rejects it.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Acknowledged. Update producer bootstrap to set BACKWARD_TRANSITIVE compatibility explicitly before schema registration, then call schemaRegistryClient.register(subject, schema) prior to publish.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "Can you compare choreography vs orchestration for this order domain?",
+      "type": "question"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Orchestration gives clearer visibility and timeout handling, while choreography reduces central coupling but can hide failure paths. For your compliance-heavy order flow, orchestration is usually safer.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "How should compensation logic be modeled?",
+      "type": "question"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Model each forward step with a deterministic inverse, like reserveInventory -> releaseInventory and createShipment -> cancelShipment. Persist step status and retry counters in saga state so compensation is resumable.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Give me a code-oriented saga setup summary with active constraints included.",
+      "type": "question"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Use Avro contracts and set Schema Registry compatibility to BACKWARD before calling schemaRegistryClient.register(subject, schema), keep Flink jobs with env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))), and coordinate saga steps with persistent state. Add timeout-driven compensation handlers for long-running payment flows.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "How do I prevent double compensation when retries happen?",
+      "type": "question"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Assign a unique compensation_event_id and lock saga step transitions with compare-and-set semantics in PostgreSQL. If a retry sees status already compensated, it no-ops and records duplicate attempt metrics.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "Should compensation emit events too?",
+      "type": "question"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Yes, emit explicit compensation events for observability and downstream projections. Keep Avro schemas, set BACKWARD_TRANSITIVE compatibility in registration flow, and register with schemaRegistryClient.register(subject, schema) before emission.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "What persistence model should saga orchestrator use?",
+      "type": "question"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Store one saga_instance row plus saga_step rows with state, attempts, and last_error. Use optimistic locking to protect concurrent updates from duplicate Kafka deliveries.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "Need a concise policy statement for developers.",
+      "type": "question"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Policy: producers must use Avro and explicitly set BACKWARD_TRANSITIVE compatibility in Schema Registry registration flow, then call schemaRegistryClient.register(subject, schema) before send; Flink jobs must include env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))); saga handlers must be idempotent. This builds directly on the exactly-once checklist from turn 30.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "Before DLQ, restate the mandatory code lines we should lint for.",
+      "type": "question"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Lint for explicit BACKWARD_TRANSITIVE compatibility setting in schema registration path plus schemaRegistryClient.register(subject, schema) before produce, and lint every Flink job for env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))). These enforce the active architecture controls.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "Now design dead-letter queue handling for poison pills.",
+      "type": "question"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Create per-domain DLQ topics like order.dlq and payment.dlq with original headers plus error_class and stack_fingerprint. Preserve original payload bytes and include retry_count for deterministic triage.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "Compliance review flagged our saga. New rule: every compensation step must write to saga_audit with saga_id, step, status, and timestamp before compensation logic runs.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Accepted. Before each compensation action, insert into saga_audit(saga_id, step, status, timestamp), then execute compensation; keep BACKWARD_TRANSITIVE schema registration and Flink restart strategy requirements unchanged.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "How should retries interact with DLQ now?",
+      "type": "question"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Use tiered retries: immediate retries in-memory, delayed retries on retry topics, then DLQ after max attempts. For compensation-triggered failures, write saga_audit first, then attempt compensation, and only route to DLQ when retry budget is exhausted.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "Can we define alert thresholds for DLQ depth?",
+      "type": "question"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Alert at two levels: warning when DLQ depth exceeds baseline by 3x for 10 minutes, critical when consumer lag plus DLQ growth accelerates together. Attach service and error fingerprint dimensions for routing to the right team.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "Give me an integrated snippet checklist for retries, DLQ, and constraints.",
+      "type": "question"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Integrated checklist: producer path sets BACKWARD_TRANSITIVE compatibility and calls schemaRegistryClient.register(subject, schema) before publish; Flink jobs set env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.seconds(10))); each compensation first inserts saga_audit(saga_id, step, status, timestamp) before running rollback logic; DLQ handler preserves headers and retry metadata. This aligns with your turn-73 compliance addition.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "How do we replay DLQ safely?",
+      "type": "question"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Replay through a quarantine consumer group that validates schema and business preconditions before re-publish. Rate-limit replay to avoid backpressure spikes and tag replayed messages with replay_origin and replay_batch_id.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "Any advice for operational dashboards?",
+      "type": "question"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Build dashboards for end-to-end latency percentile, partition lag heatmap, Flink checkpoint duration, DLQ inflow, and saga compensation count. Include a panel for saga_audit insertion failures because they now gate compensation execution.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "Can you connect this back to our earlier exactly-once discussion?",
+      "type": "question"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Exactly-once from turn 22 still depends on idempotent state transitions, transactional publishing, and deterministic retries. DLQ replay should preserve event_id so dedupe logic continues to prevent duplicate side effects.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "Ops promoted Flink restart strategy to a cluster default. Individual job code no longer needs env.setRestartStrategy in every job.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Acknowledged, we will remove job-level restart strategy enforcement and rely on cluster defaults. Avro registration with explicit BACKWARD_TRANSITIVE and pre-compensation saga_audit insertion remain mandatory.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "Let's finish with latency profiling and runbook guidance.",
+      "type": "question"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Profile producer-to-consumer latency with trace_id propagation and segment by topic-partition hotspots. Keep Avro with explicit BACKWARD_TRANSITIVE registration via schemaRegistryClient.register(subject, schema), and after each compensation completes insert saga_audit(saga_id, step, status, timestamp) for compliance traces.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "How should we diagnose backpressure across Kafka and Flink?",
+      "type": "question"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Correlate Kafka lag slope, Flink busyTimeMsPerSecond, and sink commit latency; then identify whether source, operator, or sink is the bottleneck. Apply targeted scaling and window/state tuning before raising partition counts.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "What should be in the on-call runbook for incidents?",
+      "type": "question"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Runbook sections: detect, contain, recover, and verify. Include steps for schema incompatibility rollback, DLQ replay procedures, and saga compensation verification with saga_audit pre-write checks.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "Can we add deployment gates to enforce current rules?",
+      "type": "question"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Yes, add CI gates that reject producer code unless it sets BACKWARD_TRANSITIVE in schema registration flow and calls schemaRegistryClient.register(subject, schema) before send. Add saga tests that fail when compensation executes without a prior saga_audit(saga_id, step, status, timestamp) insert.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "Give me a final architecture summary with the latest constraints and operational priorities.",
+      "type": "question"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Final architecture: Spring Boot services emit Avro events to Kafka, Flink handles real-time stateful processing, PostgreSQL stores transactional and saga state, and DLQ plus replay pipelines handle poison events. Current mandatory controls are explicit BACKWARD_TRANSITIVE schema registration before publish and pre-compensation saga_audit logging, while restart strategy is now cluster-managed as stated in turn 87.",
+      "type": "assistant_response"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Close with an implementation checklist the team can execute this sprint.",
+      "type": "question"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Sprint checklist: enforce Avro schemas, set BACKWARD_TRANSITIVE in Schema Registry registration flow, and call schemaRegistryClient.register(subject, schema) before every producer send; implement saga compensation hooks that first insert saga_audit(saga_id, step, status, timestamp) then run compensation; ship DLQ retry tiers, replay tooling, latency dashboards, and incident runbook drills. This ties back to your governance updates from turns 53 and 73.",
+      "type": "assistant_response"
+    }
+  ]
+}

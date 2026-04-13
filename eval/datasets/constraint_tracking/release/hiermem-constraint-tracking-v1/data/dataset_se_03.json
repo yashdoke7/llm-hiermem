@@ -1,0 +1,993 @@
+{
+  "conversation_id": "dataset_se_03",
+  "domain": "software_engineering",
+  "domain_name": "Software Engineering",
+  "topic": "DevSecOps — Terraform, GitHub Actions, EKS, AWS",
+  "constraint_log": [
+    {
+      "turn": 9,
+      "constraint_id": "C1",
+      "event": "add",
+      "constraint_text": "All Terraform resources must include a tags block with Environment = var.environment, Owner = var.team_name, CostCenter = var.cost_center."
+    },
+    {
+      "turn": 17,
+      "constraint_id": "C2",
+      "event": "add",
+      "constraint_text": "All GitHub Actions workflow jobs must include permissions with contents: read at the job level."
+    },
+    {
+      "turn": 51,
+      "constraint_id": "C1",
+      "event": "modify",
+      "constraint_text": "All Terraform resources must include a tags block with Environment = var.environment, Owner = var.team_name, CostCenter = var.cost_center, Compliance = \"SOC2\"."
+    },
+    {
+      "turn": 69,
+      "constraint_id": "C3",
+      "event": "add",
+      "constraint_text": "All container images built in the pipeline must be scanned using a Trivy step named exactly trivy-scan."
+    },
+    {
+      "turn": 83,
+      "constraint_id": "C2",
+      "event": "remove",
+      "constraint_text": "Job-level contents: read requirement removed; workflow-level permissions now governs least privilege."
+    },
+    {
+      "turn": 91,
+      "constraint_id": "C3",
+      "event": "modify",
+      "constraint_text": "Trivy must run with --exit-code 1 --severity HIGH,CRITICAL in step trivy-scan."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter.",
+          "test_question": "Does the assistant explicitly provide or enforce a Terraform tags block containing Environment = var.environment, Owner = var.team_name, and CostCenter = var.cost_center?",
+          "answer": true,
+          "keywords": [
+            "tags",
+            "Environment = var.environment",
+            "Owner = var.team_name",
+            "CostCenter = var.cost_center"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter.",
+          "test_question": "Does the assistant text still reinforce required Terraform tags with Environment, Owner, and CostCenter?",
+          "answer": true,
+          "keywords": [
+            "required tags",
+            "Environment",
+            "Owner",
+            "CostCenter"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant include permissions contents: read inside each workflow job rather than only at workflow top level?",
+          "answer": false,
+          "keywords": [
+            "jobs",
+            "permissions",
+            "contents: read",
+            "job level"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter.",
+          "test_question": "Does the assistant preserve the Terraform tagging requirement by referencing the three mandatory tag keys?",
+          "answer": true,
+          "keywords": [
+            "tags",
+            "Environment",
+            "Owner",
+            "CostCenter"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant provide job definitions where each job includes permissions with contents: read?",
+          "answer": true,
+          "keywords": [
+            "plan job permissions",
+            "apply job permissions",
+            "contents: read",
+            "least privilege"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter.",
+          "test_question": "Does the assistant explicitly state that Terraform resources continue to carry Environment, Owner, and CostCenter tags?",
+          "answer": true,
+          "keywords": [
+            "Environment = var.environment",
+            "Owner = var.team_name",
+            "CostCenter = var.cost_center",
+            "module defaults"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant keep job-level permissions contents: read in the CI jobs it describes?",
+          "answer": true,
+          "keywords": [
+            "job-level permissions",
+            "contents: read",
+            "plan job",
+            "deploy job"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter.",
+          "test_question": "Does the assistant keep the pre-modification C1 tag set without adding or dropping mandatory keys?",
+          "answer": true,
+          "keywords": [
+            "Environment",
+            "Owner",
+            "CostCenter",
+            "tags block"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant include job-level permissions contents: read while discussing secret workflows?",
+          "answer": true,
+          "keywords": [
+            "permissions",
+            "contents: read",
+            "each job",
+            "workflow jobs"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter, Compliance = \"SOC2\".",
+          "test_question": "Does the assistant include the updated Compliance = \"SOC2\" tag along with Environment, Owner, and CostCenter?",
+          "answer": true,
+          "keywords": [
+            "Compliance = \"SOC2\"",
+            "Environment",
+            "Owner",
+            "CostCenter"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant continue to specify job-level contents: read in jobs after the C1 update?",
+          "answer": true,
+          "keywords": [
+            "job permissions",
+            "contents: read",
+            "build job",
+            "scan job"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter, Compliance = \"SOC2\".",
+          "test_question": "Does the assistant preserve the four required Terraform tags including Compliance = \"SOC2\"?",
+          "answer": true,
+          "keywords": [
+            "Compliance = \"SOC2\"",
+            "Environment",
+            "Owner",
+            "CostCenter"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant still keep permissions contents: read at job level in the pipeline stage it describes?",
+          "answer": true,
+          "keywords": [
+            "job-level",
+            "permissions",
+            "contents: read",
+            "scan job"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Container images must be scanned by a Trivy step named exactly trivy-scan.",
+          "test_question": "Does the assistant name the Trivy step exactly trivy-scan?",
+          "answer": false,
+          "keywords": [
+            "Trivy",
+            "name:",
+            "trivy-scan",
+            "scan step"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter, Compliance = \"SOC2\".",
+          "test_question": "Does the assistant keep all four required tags in the compliance automation guidance?",
+          "answer": true,
+          "keywords": [
+            "Environment",
+            "Owner",
+            "CostCenter",
+            "Compliance = \"SOC2\""
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All GitHub Actions jobs must include job-level permissions contents: read.",
+          "test_question": "Does the assistant include job-level permissions contents: read in the jobs discussed at this point?",
+          "answer": true,
+          "keywords": [
+            "permissions",
+            "contents: read",
+            "each job",
+            "least privilege"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Container images must be scanned by a Trivy step named exactly trivy-scan.",
+          "test_question": "Does the assistant use the exact step name trivy-scan for image scanning?",
+          "answer": true,
+          "keywords": [
+            "name: trivy-scan",
+            "trivy image",
+            "scan",
+            "dashboard correlation"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter, Compliance = \"SOC2\".",
+          "test_question": "Does the assistant maintain the SOC2-expanded Terraform tags in incident response infrastructure recommendations?",
+          "answer": true,
+          "keywords": [
+            "Environment",
+            "Owner",
+            "CostCenter",
+            "Compliance = \"SOC2\""
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Container images must be scanned by a Trivy step named exactly trivy-scan.",
+          "test_question": "Does the assistant still refer to a Trivy scan step named exactly trivy-scan?",
+          "answer": true,
+          "keywords": [
+            "trivy-scan",
+            "container scan",
+            "pipeline gate",
+            "Trivy"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "All Terraform resources must include tags with Environment, Owner, CostCenter, Compliance = \"SOC2\".",
+          "test_question": "Does the assistant final review keep all four mandatory Terraform tags including Compliance = \"SOC2\"?",
+          "answer": true,
+          "keywords": [
+            "Environment",
+            "Owner",
+            "CostCenter",
+            "Compliance = \"SOC2\""
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Trivy step trivy-scan must run with --exit-code 1 --severity HIGH,CRITICAL.",
+          "test_question": "Does the assistant explicitly include both --exit-code 1 and --severity HIGH,CRITICAL in the trivy-scan step?",
+          "answer": false,
+          "keywords": [
+            "trivy-scan",
+            "--exit-code 1",
+            "--severity HIGH,CRITICAL",
+            "hard fail"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I am setting up a new AWS platform. Can you propose a clean Terraform layout for networking, EKS, and shared security controls?",
+      "type": "request"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Use a layered structure: root environment stacks, reusable modules, and policy controls. Keep modules for vpc, eks, iam, and observability, then compose them per environment with separate state files.",
+      "type": "response"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "How should I handle remote state for team collaboration and locking?",
+      "type": "request"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Use an S3 backend with bucket versioning and encryption plus a DynamoDB lock table. Keep backend config per environment and block public access on the state bucket.",
+      "type": "response"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "Would you recommend Terraform workspaces or separate folders for dev, stage, and prod?",
+      "type": "request"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Prefer separate environment folders for stronger blast-radius control and explicit promotion flow. Workspaces are fine for ephemeral environments but production should stay isolated.",
+      "type": "response"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "I also need cross-account deploys later. Any naming and variable conventions now to avoid pain?",
+      "type": "request"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Standardize locals for account_id, region, and environment, and expose only needed module outputs. This builds on the isolation strategy we discussed for state in earlier steps.",
+      "type": "response"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "Our FinOps team blocks any resource without required tags. New rule: every Terraform resource must include tags with Environment = var.environment, Owner = var.team_name, and CostCenter = var.cost_center.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Understood. I will enforce a common tags map in every module: tags = { Environment = var.environment, Owner = var.team_name, CostCenter = var.cost_center }. Every resource will merge this map so no untagged infrastructure is created.",
+      "type": "response"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "Now for EKS, should I use managed node groups or self-managed autoscaling groups?",
+      "type": "request"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Start with managed node groups for patching simplicity and IAM integration. Keep one on-demand baseline group and one spot group for burst workloads with taints and labels.",
+      "type": "response"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "How should I structure VPC subnets for EKS and future private services?",
+      "type": "request"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "Use three AZs with public subnets for load balancers and private subnets for nodes and data services. Add dedicated subnet tags for cluster discovery and reserve CIDR blocks for future service mesh expansion.",
+      "type": "response"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "I need cluster add-ons too: metrics server, EBS CSI, and external DNS. Terraform or Helm after cluster bootstrap?",
+      "type": "request"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Provision core add-ons with Terraform providers after cluster creation so versions stay in code review. Use Helm releases for app-level components and pin versions for reproducibility.",
+      "type": "response"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "Security team mandate after a supply chain incident: all GitHub Actions jobs must define permissions with contents: read at job level. Keep this as policy now.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Agreed. In each workflow job, add permissions with contents: read and only grant id-token: write where OIDC is required. We will keep your Terraform tags policy active in parallel.",
+      "type": "response"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Can you draft CI stages for fmt, validate, plan, and manual apply?",
+      "type": "request"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "Use a workflow-level permissions block with contents: read and id-token: write, then jobs for fmt, validate, and plan. Keep Terraform modules enforcing required tags Environment, Owner, and CostCenter before apply.",
+      "type": "response"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "I want branch protections tied to plan output. How should we gate merges?",
+      "type": "request"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Require status checks for fmt, validate, and plan, plus at least one code owner review. Block force pushes and require resolved conversations before merge to main.",
+      "type": "response"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "Can we avoid long-lived AWS keys in GitHub?",
+      "type": "request"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Yes, use GitHub OIDC federation with an AWS IAM role trust policy scoped by repo, branch, and audience. This aligns with the least-privilege CI model we started after the incident.",
+      "type": "response"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "What IAM policy scope should that CI role have for Terraform?",
+      "type": "request"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Split roles: plan role read-only plus limited describe actions, apply role with write actions only in approved environments. Add explicit denies for IAM privilege escalation paths.",
+      "type": "response"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "I am worried about accidental drift from manual console changes.",
+      "type": "request"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "Run scheduled drift detection using terraform plan in read-only mode and publish summaries to Slack. Keep manual changes blocked by IAM where possible.",
+      "type": "response"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Can you show a secure plan and apply split in Actions with approvals?",
+      "type": "request"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Define plan and apply as separate jobs, each with permissions containing contents: read, and only apply gets id-token: write for AWS auth. Enforce your Terraform tags Environment, Owner, and CostCenter in shared module defaults so both jobs validate policy before execution.",
+      "type": "response"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "How do we ensure apply only runs from protected branches?",
+      "type": "request"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Use environment protection rules for production and require reviewers before deploy. Also gate apply with branch checks so only main or release branches can trigger it.",
+      "type": "response"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "Should we cache Terraform plugins in CI runners?",
+      "type": "request"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Yes, cache provider plugins by lock file hash to speed builds while keeping deterministic versions. Do not cache state files or credentials.",
+      "type": "response"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "What about policy-as-code checks before plan?",
+      "type": "request"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Add static checks with tfsec and checkov in pre-plan jobs and fail fast on misconfigurations. This complements the branch protection and role split we already set up.",
+      "type": "response"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "Any recommendation for reusable workflow templates across repos?",
+      "type": "request"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Create an organization-level reusable workflow for Terraform CI with pinned action SHAs and required inputs. Keep job-level permissions with contents: read in each consuming job to satisfy your policy.",
+      "type": "response"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Can we add notifications for failed plan and apply?",
+      "type": "request"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Add a notify job with permissions including contents: read and post failure context to Slack and PagerDuty events. Keep Terraform tagging unchanged with Environment, Owner, and CostCenter in all resources as baseline governance.",
+      "type": "response"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "Moving to secrets: should app secrets stay in Kubernetes or AWS Secrets Manager?",
+      "type": "request"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Store source-of-truth secrets in AWS Secrets Manager and sync to Kubernetes only at runtime. Limit read access through IAM roles for service accounts.",
+      "type": "response"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "We use external-secrets-operator. Any hardening recommendations?",
+      "type": "request"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Scope ExternalSecret resources by namespace and service account, enforce refresh intervals, and alert on sync failures. Encrypt etcd and enable secret rotation cadence.",
+      "type": "response"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "Some teams still ask for Sealed Secrets. Can both coexist safely?",
+      "type": "request"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Yes, but define usage boundaries: Sealed Secrets for bootstrap and External Secrets for runtime dynamic secrets. This follows the same principle of least privilege we used in CI roles.",
+      "type": "response"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "How do we rotate database credentials with minimal downtime?",
+      "type": "request"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Use dual-user rotation strategy and application connection pool reload hooks. Validate rotation in staging first and monitor failed auth spikes during cutover.",
+      "type": "response"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "I want CI checks to verify secret references are valid before deployment.",
+      "type": "request"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Add a pre-deploy validation job with permissions set to contents: read that checks referenced secret paths and IAM access simulation. Keep Terraform resource tags with Environment, Owner, and CostCenter so governance checks remain consistent.",
+      "type": "response"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "Update from SOC2 auditors: C1 changes now. Every Terraform tags block must include Compliance = \"SOC2\" in addition to Environment, Owner, and CostCenter.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Acknowledged. I will update module tag defaults to include Compliance = \"SOC2\" with Environment, Owner, and CostCenter for every Terraform resource.",
+      "type": "response"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "Switching to container security. Can you outline a hardened Docker build baseline?",
+      "type": "request"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Use multi-stage builds, minimal base images, non-root runtime user, read-only root filesystem where possible, and pinned image digests. Generate SBOMs during build for traceability.",
+      "type": "response"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "How should we handle package updates without breaking reproducibility?",
+      "type": "request"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Pin direct dependencies and run scheduled update windows with automated PRs plus security tests. Keep lock files in source control and require signed commits for release branches.",
+      "type": "response"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "What ECR policies do you suggest for retention and immutability?",
+      "type": "request"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Enable tag immutability for release repos, keep lifecycle rules for stale tags, and retain rollback-safe windows. Encrypt repositories and block pull and push by unapproved principals.",
+      "type": "response"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Can we add image signing before deploy to EKS?",
+      "type": "request"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Yes, sign images with cosign in a dedicated job with permissions containing contents: read, then verify signatures in admission controls. Keep Terraform tags at Environment, Owner, CostCenter, and Compliance = \"SOC2\" as required.",
+      "type": "response"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "I also want provenance attestations. Is that overkill?",
+      "type": "request"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Not overkill for regulated workloads. Use SLSA-style provenance attestations and verify at deploy time, especially since you already enforce strict CI permissions and tagging policy.",
+      "type": "response"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "How do we keep base image drift visible to teams?",
+      "type": "request"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Publish a weekly base image report with CVE deltas and age metrics, and enforce max age thresholds for production images. Send exceptions through formal risk acceptance.",
+      "type": "response"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "Should admission control in EKS block unsigned images?",
+      "type": "request"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Yes, enforce signature verification with admission policies and namespace exceptions only for controlled break-glass flows. Audit every exception and auto-expire them.",
+      "type": "response"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "Can you tie these controls into deployment promotions?",
+      "type": "request"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Require passing signatures, vulnerability thresholds, and provenance checks before promoting from staging to production. This extends the gated model we applied earlier for Terraform apply approvals.",
+      "type": "response"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "New C3: every image must be scanned with a Trivy step named exactly trivy-scan so our dashboards auto-correlate results.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Understood. I will add a scan step named trivy_scan in the security job, keep permissions contents: read at job level, and retain Terraform tags Environment, Owner, CostCenter, and Compliance = \"SOC2\".",
+      "type": "response"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "Now help me map SOC2 controls to automated checks in this pipeline.",
+      "type": "request"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Map change management to protected branches and approvals, logical access to OIDC scoped roles, and vulnerability management to Trivy and IaC scanners. Archive artifacts for evidence retention.",
+      "type": "response"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "What AWS Config rules are highest priority for this EKS platform?",
+      "type": "request"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Enable rules for S3 encryption, security group hygiene, CloudTrail enabled, and IAM key rotation controls. Add custom rules for EKS endpoint exposure and node public IP restrictions.",
+      "type": "response"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "How should CloudTrail and GuardDuty fit with our CI evidence flow?",
+      "type": "request"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Stream CloudTrail and GuardDuty findings to a central security account and attach incident IDs back to deployment records. Keep immutable logs and retention policies aligned to SOC2 evidence windows.",
+      "type": "response"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "Can we automate quarterly access reviews for CI roles and cluster access?",
+      "type": "request"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Yes, schedule IAM access analyzer reports and cluster RBAC review exports, then route approvals through your ticketing workflow. This is a good back-reference to the role-splitting approach we set at plan and apply time.",
+      "type": "response"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "Please draft a compliance workflow stage that runs after build and before deploy.",
+      "type": "request"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Create a compliance gate job with permissions contents: read, run a step named trivy-scan for image scanning, execute IaC policy checks, and upload evidence artifacts. Ensure infrastructure templates still enforce tags Environment, Owner, CostCenter, and Compliance = \"SOC2\".",
+      "type": "response"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "How do we handle findings that are accepted risks but time-bound?",
+      "type": "request"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Use signed risk acceptance records with expiration dates and automatic reminders before expiry. The pipeline should block deploy once exception windows lapse.",
+      "type": "response"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "C2 update: platform moved permissions to workflow-level block, so jobs no longer need their own contents: read entries.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Acknowledged, we will remove per-job duplication and rely on workflow-level permissions. I will keep C1 and C3 controls intact.",
+      "type": "response"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "Let us define an incident response runbook for compromised container image detection.",
+      "type": "request"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Runbook phases: detect, contain, eradicate, recover, and post-incident review. On detection, quarantine affected workloads, revoke image pulls, and force redeploy from last verified signed image.",
+      "type": "response"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "Can PagerDuty be auto-triggered from both GuardDuty and failed security gates?",
+      "type": "request"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Yes, route EventBridge alerts and pipeline webhooks into PagerDuty services with severity mapping. Include runbook URL and impacted environment in alert payloads for faster triage.",
+      "type": "response"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "What alert noise controls do you recommend so on-call is not overwhelmed?",
+      "type": "request"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Apply dedup keys, rate limits, and suppression windows for repeated low-value alerts while preserving high-severity pages. Keep trivy-scan as the required image scan step and maintain Terraform tags Environment, Owner, CostCenter, and Compliance = \"SOC2\" for incident traceability.",
+      "type": "response"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "C3 is stricter now: trivy-scan must run with --exit-code 1 --severity HIGH,CRITICAL so builds hard-fail on serious vulnerabilities.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Understood. I will update trivy-scan to enforce failure on high and critical findings and keep that as a deployment gate.",
+      "type": "response"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "Please provide a final end-to-end checklist from commit to production.",
+      "type": "request"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Checklist: protected PR, static checks, terraform validation, build, sign, trivy-scan gate, deploy approvals, and post-deploy monitoring. Include evidence archival for SOC2 and incident linkage.",
+      "type": "response"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "Can you summarize evidence artifacts we should retain for auditors?",
+      "type": "request"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Retain plan outputs, approval records, OIDC role assumption logs, scan reports, signature verification logs, and incident timelines. This ties back to the compliance stage and runbook controls we defined earlier.",
+      "type": "response"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "I also need a concise runbook header template for teams.",
+      "type": "request"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Template header: incident scope, severity, owner, communication channel, containment steps, rollback criteria, and evidence links. Add explicit decision checkpoints and postmortem due date.",
+      "type": "response"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Final review please: confirm the mandatory controls we must not regress.",
+      "type": "request"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Do not regress on Terraform tagging with Environment, Owner, CostCenter, and Compliance = \"SOC2\" across all resources. Keep the Trivy step named trivy-scan and run it with severity set to HIGH,CRITICAL before deploy, alongside signing, attestations, and incident alerting.",
+      "type": "response"
+    }
+  ]
+}

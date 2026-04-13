@@ -1,0 +1,989 @@
+{
+  "conversation_id": "dataset_fin_04",
+  "domain": "finance",
+  "domain_name": "Finance",
+  "topic": "Portfolio Risk Analytics — Factor Exposure, Liquidity Risk, ESG, Regulatory Capital",
+  "constraint_log": [
+    {
+      "turn": 7,
+      "event": "add",
+      "constraint_id": "C1",
+      "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data."
+    },
+    {
+      "turn": 15,
+      "event": "add",
+      "constraint_id": "C2",
+      "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+    },
+    {
+      "turn": 51,
+      "event": "modify",
+      "constraint_id": "C1",
+      "old_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data.",
+      "new_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data."
+    },
+    {
+      "turn": 73,
+      "event": "remove",
+      "constraint_id": "C2",
+      "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+    },
+    {
+      "turn": 85,
+      "event": "add",
+      "constraint_id": "C3",
+      "constraint_text": "All regulatory capital calculations (UCITS, AIFMD exposure) must include {'regulation': str, 'calculation_date': str, 'jurisdiction': str} in output dictionaries."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data.",
+          "test_question": "Does the assistant include a '# RiskApproved:' comment with initials and date immediately above the risk function shown in turn 10?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01",
+            "def calc_factor_exposure",
+            "live_positions"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 20 include the required RiskApproved annotation format above the risk function?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01",
+            "def factor_tilt_for_liquidity",
+            "risk pipeline"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails.",
+          "test_question": "In turn 20, does the factor exposure code explicitly check abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError on failure?",
+          "answer": false,
+          "keywords": [
+            "abs(sum(factor_weights) - 1.0)",
+            "<= 1e-6",
+            "raise FactorWeightError",
+            "factor_weights"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 30 include '# RiskApproved: <initials> <date>' before the liquidity risk function body?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01",
+            "def liquidity_adjusted_var",
+            "live_book"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails.",
+          "test_question": "Does turn 30 include the exact factor weight sum check and FactorWeightError raise in its factor helper?",
+          "answer": true,
+          "keywords": [
+            "if abs(sum(factor_weights) - 1.0) > 1e-6:",
+            "raise FactorWeightError",
+            "compute_factor_component"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 40 show a RiskApproved annotation above the risk aggregation function?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01",
+            "def aggregate_liquidity_risk",
+            "portfolio_snapshot"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails.",
+          "test_question": "Does turn 40 include the mandatory factor weight validation and FactorWeightError in the factor bridge function?",
+          "answer": true,
+          "keywords": [
+            "abs(sum(factor_weights) - 1.0)",
+            "1e-6",
+            "FactorWeightError",
+            "factor_bridge"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 50 include the old-format RiskApproved comment with initials and date above the ESG risk function?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01",
+            "def esg_overlay_risk",
+            "controversy_filter"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails.",
+          "test_question": "Does turn 50 include the C2 validation and FactorWeightError in the factor normalization helper?",
+          "answer": true,
+          "keywords": [
+            "if abs(sum(factor_weights) - 1.0) > 1e-6:",
+            "raise FactorWeightError",
+            "normalize_factor_weights"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data.",
+          "test_question": "In turn 60, does the RiskApproved comment include initials, date, and a MiFID category token (e.g., MiFID:Complex)?",
+          "answer": false,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01 MiFID:Complex",
+            "MiFID:",
+            "def brinson_attribution_risk"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails.",
+          "test_question": "Does turn 60 keep the factor weight sum assertion with FactorWeightError in the attribution factor step?",
+          "answer": true,
+          "keywords": [
+            "abs(sum(factor_weights) - 1.0)",
+            "raise FactorWeightError",
+            "attribution_factor_step"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 70 include the updated RiskApproved annotation with MiFID category?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01 MiFID:Complex",
+            "def gips_risk_disclosure",
+            "MiFID:Complex"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "All factor exposure calculations must validate abs(sum(factor_weights) - 1.0) <= 1e-6 and raise FactorWeightError if validation fails.",
+          "test_question": "Does turn 70 still include factor weight validation and raising FactorWeightError?",
+          "answer": true,
+          "keywords": [
+            "if abs(sum(factor_weights) - 1.0) > 1e-6:",
+            "FactorWeightError",
+            "factor_weights"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 80 include the updated RiskApproved comment with MiFID tag above the reporting risk function?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01 MiFID:Complex",
+            "def client_report_risk_view",
+            "MiFID:"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All regulatory capital calculations (UCITS, AIFMD exposure) must include {'regulation': str, 'calculation_date': str, 'jurisdiction': str} in output dictionaries."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 90 include the updated RiskApproved annotation with MiFID category?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01 MiFID:Complex",
+            "def ucits_capital_charge",
+            "live fund book"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All regulatory capital calculations (UCITS, AIFMD exposure) must include {'regulation': str, 'calculation_date': str, 'jurisdiction': str} in output dictionaries.",
+          "test_question": "Does turn 90 include all three required keys regulation, calculation_date, and jurisdiction in the capital output dictionary?",
+          "answer": false,
+          "keywords": [
+            "\"regulation\"",
+            "\"calculation_date\"",
+            "\"jurisdiction\"",
+            "capital_output"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data."
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All regulatory capital calculations (UCITS, AIFMD exposure) must include {'regulation': str, 'calculation_date': str, 'jurisdiction': str} in output dictionaries."
+        }
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Every portfolio risk function must include a '# RiskApproved: <initials> <YYYY-MM-DD> MiFID:<category>' comment before it can run against live portfolio data.",
+          "test_question": "Does turn 100 include the full updated RiskApproved format with MiFID category before the regulatory capital function?",
+          "answer": true,
+          "keywords": [
+            "# RiskApproved: JD 2024-09-01 MiFID:Complex",
+            "def finalize_reg_capital_report",
+            "MiFID:Complex"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "All regulatory capital calculations (UCITS, AIFMD exposure) must include {'regulation': str, 'calculation_date': str, 'jurisdiction': str} in output dictionaries.",
+          "test_question": "Does turn 100 return a dictionary containing regulation, calculation_date, and jurisdiction for regulatory capital outputs?",
+          "answer": true,
+          "keywords": [
+            "\"regulation\": \"UCITS\"",
+            "\"calculation_date\":",
+            "\"jurisdiction\": \"EU\"",
+            "return capital_output"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "We're designing a portfolio risk analytics platform in Python for our buy-side desk. Start with portfolio construction philosophy: how do you balance expected return, risk, and implementation constraints?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Use a layered process: alpha model for expected return, covariance model for risk, then optimization with practical constraints. A common objective is maximize expected return minus a risk penalty and transaction cost penalty, then enforce turnover, position, and concentration limits.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "Give me a concrete mean-variance formulation we can implement quickly.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "A practical form is maximize mu.T @ w - lambda_risk * (w.T @ Sigma @ w) - lambda_tc * tc(w, w_prev), subject to sum(w)=1 and bounds. In Python, use cvxpy with soft penalties for turnover so the optimizer can trade off small deviations instead of failing hard.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "Which constraint groups should we include first in production?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Start with hard constraints for leverage, long-only/short limits, issuer and sector concentration, and liquidity caps. Then add soft constraints for tracking error bands and turnover, similar to the turnover term we discussed in the prior mean-variance setup.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "New CRO policy: every portfolio risk function needs a RiskApproved annotation before touching live data. The comment format is `# RiskApproved: JD 2024-09-01`. This is now mandatory.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Understood. We'll enforce it in all risk functions, for example:\n# RiskApproved: JD 2024-09-01\ndef portfolio_risk_snapshot(live_positions, cov):\n    return live_positions.T @ cov @ live_positions",
+      "type": "dialogue"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "Move to factor exposure. I need Fama-French style exposures by portfolio and benchmark.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Use holdings-to-factor mapping and aggregate weighted exposures for both books:\n# RiskApproved: JD 2024-09-01\ndef calc_factor_exposure(live_positions, factor_loadings):\n    return factor_loadings.T @ live_positions\nThen compute active factor exposure as portfolio minus benchmark to align with our earlier concentration controls.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "How would you adapt this to a Barra-like multi-factor model with style and industry factors?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Split exposures into style and industry blocks, then apply factor covariance and specific risk for total ex-ante risk. Keep an active risk decomposition table so PMs can see whether risk is coming from style tilts or industry bets.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "Should we blend Fama-French and Barra or pick one?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "For production, use Barra-like structure for risk decomposition and keep Fama-French as an interpretability lens in reporting. That mirrors your request for quick implementation while preserving PM-friendly narratives.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "Add another requirement: all factor exposure calculations must validate `abs(sum(factor_weights) - 1.0) <= 1e-6` and raise `FactorWeightError` if not. We had silent drift in Q2 from a weight bug.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Agreed, we'll enforce that check in every factor exposure path and keep the RiskApproved annotation for risk functions. Next, for liquidity risk we should track bid-ask spread, ADV participation, and days-to-liquidate per name.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "Define days-to-liquidate precisely for our dashboard.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "A standard definition is position_notional / (participation_rate * ADV_notional). You can compute base, stressed, and extreme scenarios by lowering participation_rate and ADV, then surface percentile bands at portfolio level.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Can we connect liquidity metrics with factor tilts so PMs see both dimensions together?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "Yes, build a joined table by security_id and aggregate by factor bucket:\n# RiskApproved: JD 2024-09-01\ndef factor_tilt_for_liquidity(live_positions, factor_weights):\n    weights = [w / sum(factor_weights) for w in factor_weights]\n    return {\"normalized_weights\": weights}\nThen overlay days-to-liquidate quantiles, reusing the active exposure view from turn 10.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "Now let's estimate liquidity-adjusted VaR. What's a practical approach?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Start with market VaR and add liquidation cost VaR from spread, market impact, and unwind horizon assumptions. A simple approximation adds a slippage term proportional to sqrt(trade_size/ADV), calibrated by historical execution data.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "Should we run scenario stress on widening spreads and shrinking depth?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Yes, define stress templates like spread x2, ADV -40%, and correlation spike. This ties back to the constraint groups from turn 6 because stressed liquidity often breaches concentration and turnover limits first.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "I need a function to bucket assets into liquidity tiers A/B/C/D.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Use days-to-liquidate thresholds plus spread gates, e.g., A < 2 days and tight spread, D > 10 days or severe spread. Keep thresholds config-driven so compliance can tune without code changes.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "How do we include ETFs and derivatives where ADV isn't straightforward?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "For ETFs, combine primary and secondary liquidity with AP capacity assumptions; for derivatives, use open interest, bid-ask, and roll liquidity. Normalize all instruments into an equivalent unwind-horizon metric for cross-asset comparability.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Give me a concrete Python skeleton for liquidity-adjusted VaR including factor input checks.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Here is a compact skeleton:\nclass FactorWeightError(Exception):\n    pass\n\ndef compute_factor_component(factor_weights):\n    if abs(sum(factor_weights) - 1.0) > 1e-6:\n        raise FactorWeightError(\"factor weights must sum to 1\")\n    return factor_weights\n\n# RiskApproved: JD 2024-09-01\ndef liquidity_adjusted_var(live_book, factor_weights, base_var, spread_cost):\n    _ = compute_factor_component(factor_weights)\n    return base_var + spread_cost",
+      "type": "dialogue"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "What data quality checks should run before these liquidity calculations?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Validate timestamps, stale quotes, zero or negative ADV, outlier spreads, and missing identifiers. Also run a cross-source reconciliation to avoid stale vendor prints contaminating stressed unwind metrics.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "Can we expose intraday liquidity deterioration alerts?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Yes, compute rolling z-scores for spread and depth against a 60-day baseline and alert when both breach thresholds. Keep suppression logic to avoid alert storms during known macro event windows.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "How would you rank names for forced liquidation under stress?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Rank by marginal reduction in portfolio risk per unit expected liquidation cost, then apply hard constraints for regulatory and mandate exclusions. This directly reuses the optimization trade-off idea from turn 2.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "I want transparent explainability for PMs. What should each liquidity result show?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Include input snapshot, assumptions, decomposition (spread, impact, horizon), and top contributors with before/after metrics. Add plain-language reason codes like \"depth shock\" or \"concentration unwind\".",
+      "type": "dialogue"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Can you show one integrated function for liquidity aggregation with factor guardrails still present?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Sure:\nclass FactorWeightError(Exception):\n    pass\n\ndef factor_bridge(factor_weights):\n    if abs(sum(factor_weights) - 1.0) > 1e-6:\n        raise FactorWeightError(\"sum mismatch\")\n    return True\n\n# RiskApproved: JD 2024-09-01\ndef aggregate_liquidity_risk(portfolio_snapshot, factor_weights, spread_cost, dtl_cost):\n    factor_bridge(factor_weights)\n    return {\"liq_total\": spread_cost + dtl_cost}",
+      "type": "dialogue"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "Great. Shift to ESG integration. How should we ingest and reconcile multiple ESG vendors?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Build a canonical issuer map, then store raw vendor scores plus a normalized internal score with source lineage. Keep both raw and transformed fields so audit can trace exactly how each score was formed.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "What's a robust ESG score aggregation method that avoids overfitting?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Use a weighted ensemble with sector-neutral z-scoring and a minimum coverage threshold. Penalize stale updates and large cross-vendor disagreement to avoid false precision.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "How should controversy screening interact with portfolio construction?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Treat severe controversies as hard exclusions and medium controversies as risk penalties in the objective. That approach mirrors your hard-vs-soft constraint split from turns 5 and 6.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "Can we measure performance impact of ESG overlays versus base portfolio?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Yes, run paired backtests: baseline and ESG-overlay, then attribute return and risk deltas by sector, factor, and turnover. Report confidence intervals because ESG impact is regime-dependent.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "Please give a function that applies controversy filters and keeps our active constraints.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Implemented as follows:\nclass FactorWeightError(Exception):\n    pass\n\ndef normalize_factor_weights(factor_weights):\n    if abs(sum(factor_weights) - 1.0) > 1e-6:\n        raise FactorWeightError(\"factor allocation drift\")\n    return factor_weights\n\n# RiskApproved: JD 2024-09-01\ndef esg_overlay_risk(positions, controversies, factor_weights):\n    normalize_factor_weights(factor_weights)\n    allowed = [p for p in positions if controversies.get(p[\"issuer\"], 0) < 4]\n    return allowed",
+      "type": "dialogue"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "CRO update: RiskApproved now needs MiFID II product category too. New format: `# RiskApproved: JD 2024-09-01 MiFID:Complex`. Apply this everywhere C1 is active.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Acknowledged. We'll use the expanded RiskApproved format with MiFID category on all risk functions from now on. Let's move into attribution and performance reporting.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "Start with Brinson attribution design for our equity sleeves.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Use allocation, selection, and interaction effects by sector or region with benchmark-consistent classifications. Persist each component daily so monthly reports can recompute from immutable snapshots.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "How should we align attribution with factor risk reporting?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Create a bridge table linking holdings, sector buckets, and factor exposures so Brinson and factor attribution reconcile at portfolio level. This back-references the exposure framework introduced around turns 10 to 14.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "I need GIPS-friendly monthly performance outputs. What fields are mandatory?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Include composite definition, gross/net returns, benchmark returns, dispersion, assets under management, and fee schedule treatment. Also retain methodology metadata and versioned calculation code references for audit.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "Show a reporting function that computes attribution risk hooks and factor checks.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Here is one:\nclass FactorWeightError(Exception):\n    pass\n\ndef attribution_factor_step(factor_weights):\n    if abs(sum(factor_weights) - 1.0) > 1e-6:\n        raise FactorWeightError(\"factor drift\")\n    return factor_weights\n\n# RiskApproved: JD 2024-09-01\ndef brinson_attribution_risk(holdings, factor_weights):\n    attribution_factor_step(factor_weights)\n    return {\"status\": \"ok\", \"method\": \"Brinson\"}",
+      "type": "dialogue"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "How do we present attribution to PMs without overwhelming them?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Use a waterfall for top contributors and a drill-down table for detail on demand. Add a one-line narrative per effect, similar to the explainability style we set in turn 38 for liquidity.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "Can we support multi-period attribution linking?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Yes, use geometric linking for multi-period consistency and keep arithmetic views for intuition. Store both to avoid disagreements between risk, PM, and client reporting teams.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "What checks should run before publishing monthly packs?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Run reconciliation checks for holdings, returns, benchmark mappings, and factor snapshots; then compare against prior published values with tolerance bands. Flag breaks for human sign-off before distribution.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "Give me a GIPS disclosure helper with our active coding rules still in place.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Use a helper that stamps methodology and data-cut timestamps, then inject disclosure text by strategy template. Keep all generated artifacts immutable and hash-logged for review.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "Please provide one concrete function now.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Concrete implementation:\nclass FactorWeightError(Exception):\n    pass\n\ndef gips_factor_guard(factor_weights):\n    if abs(sum(factor_weights) - 1.0) > 1e-6:\n        raise FactorWeightError(\"factor weights invalid\")\n    return True\n\n# RiskApproved: JD 2024-09-01 MiFID:Complex\ndef gips_risk_disclosure(performance_rows, factor_weights):\n    gips_factor_guard(factor_weights)\n    return {\"rows\": len(performance_rows), \"standard\": \"GIPS\"}",
+      "type": "dialogue"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "Nice. Any advice for automated client commentary generation from these metrics?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Template commentary from attribution and risk deltas, then enforce a reviewer approval gate. Include links back to source tables so relationship managers can verify claims quickly.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "Update: C2 is removed. Factor-weight sum validation is now centralized in our portfolio construction service before downstream calculations.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Understood, we will stop requiring per-function C2 checks and rely on the upstream service guarantee. We'll retain C1 with MiFID annotation for risk functions.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "Let's focus on investor reporting automation now. What's the best pipeline design?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Use a staged pipeline: ingest validated snapshots, compute reporting metrics, generate narratives, then publish PDFs and APIs. Add idempotent run IDs so reruns are reproducible and auditable.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "How do we make sure monthly and quarterly numbers are consistent?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Build canonical period-end snapshots and derive both monthly and quarterly outputs from the same locked dataset. Reconciliation should compare rollups to the linked daily ledger.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "Show me a client report risk-view function with current active constraints.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Example function:\n# RiskApproved: JD 2024-09-01 MiFID:Complex\ndef client_report_risk_view(client_book, period):\n    return {\"client_id\": client_book[\"client_id\"], \"period\": period, \"risk_sections\": [\"VaR\", \"Liquidity\", \"ESG\"]}\nThis aligns with the reporting traceability thread we carried since turn 58.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "How do we handle custom client benchmarks without breaking comparability?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Store benchmark definitions as versioned objects and always report both client-custom and house-standard comparisons. That keeps flexibility while preserving firm-wide comparability.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "What about exception handling when source data arrives late?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Use SLA-aware cutoffs with partial-run status flags and explicit data freshness labels in outputs. Late-arriving data should trigger rerun workflows with immutable revision logs.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "New compliance requirement C3: all UCITS/AIFMD regulatory capital outputs must include `{\"regulation\": str, \"calculation_date\": str, \"jurisdiction\": str}` tags.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Acknowledged. We'll tag every regulatory capital dictionary with regulation, calculation_date, and jurisdiction. Let's move to UCITS and AIFMD exposure logic.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "Start with UCITS global exposure using commitment approach. What components do we need?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Compute derivative commitments, netting/hedging adjustments, and compare resulting exposure ratio against NAV-based limits. Keep instrument-level audit rows so compliance can trace each conversion step.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "Please draft a UCITS capital function with active constraints.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Draft:\n# RiskApproved: JD 2024-09-01 MiFID:Complex\ndef ucits_capital_charge(positions, nav, as_of):\n    exposure = sum(p[\"commitment\"] for p in positions)\n    capital_output = {\n        \"regulation\": \"UCITS\",\n        \"calculation_date\": as_of,\n        \"exposure_ratio\": exposure / nav\n    }\n    return capital_output",
+      "type": "dialogue"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "Now AIFMD. We report to EU and UK entities separately; how should we structure this?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Parameterize jurisdiction in the calculation layer and emit separate records per legal entity. Share core logic but keep rule packs distinct because thresholds and templates differ across regimes.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "What validation checks should gate regulatory capital publication?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Run exposure-to-NAV sanity checks, stale valuation checks, derivative mapping completeness, and legal-entity reconciliation. Also compare against prior filing period deltas with threshold-based exceptions.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "Can we add a final review checklist for risk, performance, and regulatory outputs?",
+      "type": "dialogue"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Yes: checklist should include model version, data cut timestamp, approval annotation, reconciliation status, and filing tags. This closes the loop from portfolio construction controls to regulatory outputs we developed across the conversation.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "Please provide a final combined function for regulatory capital report export that is fully compliant.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "You can combine UCITS/AIFMD exports with shared metadata and per-jurisdiction records. Include immutable run_id and approval fields in each row to support audit and regulator queries.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Finalize with complete code for that export function now.",
+      "type": "dialogue"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Final compliant function:\n# RiskApproved: JD 2024-09-01 MiFID:Complex\ndef finalize_reg_capital_report(regulation, positions, nav, calculation_date, jurisdiction):\n    exposure = sum(p[\"commitment\"] for p in positions)\n    capital_output = {\n        \"regulation\": regulation,\n        \"calculation_date\": calculation_date,\n        \"jurisdiction\": jurisdiction,\n        \"exposure_ratio\": exposure / nav\n    }\n    return capital_output",
+      "type": "dialogue"
+    }
+  ]
+}

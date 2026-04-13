@@ -1,0 +1,909 @@
+{
+  "conversation_id": "dataset_legal_02",
+  "domain": "legal",
+  "domain_name": "Legal",
+  "topic": "eDiscovery Platform — Predictive Coding, Privilege Detection, Chain of Custody",
+  "constraint_log": [
+    {
+      "turn": 13,
+      "event": "add",
+      "constraint_id": "C1",
+      "constraint_text": "Every document processed through the review pipeline must receive a review_hash (SHA-256 of file content) stored in the document_registry table at ingest time."
+    },
+    {
+      "turn": 27,
+      "event": "add",
+      "constraint_id": "C2",
+      "constraint_text": "All predictive coding model predictions must include a reviewer_override_flag boolean with default false in the output."
+    },
+    {
+      "turn": 55,
+      "event": "modify",
+      "constraint_id": "C1",
+      "old_constraint_text": "Every document processed through the review pipeline must receive a review_hash (SHA-256 of file content) stored in the document_registry table at ingest time.",
+      "new_constraint_text": "Every document must log review_hash with custodian_id and collection_date for full provenance in chain of custody."
+    },
+    {
+      "turn": 69,
+      "event": "remove",
+      "constraint_id": "C2",
+      "constraint_text": "All predictive coding model predictions must include a reviewer_override_flag boolean with default false in the output."
+    },
+    {
+      "turn": 81,
+      "event": "add",
+      "constraint_id": "C3",
+      "constraint_text": "All production set exports must write a production_manifest.json containing file count, date range, custodians, and a SHA-256 hash of the entire production set before export completion."
+    }
+  ],
+  "num_turns": 50,
+  "num_checkpoints": 10,
+  "checkpoints": [
+    {
+      "checkpoint_turn": 10,
+      "active_constraints": [],
+      "tests": []
+    },
+    {
+      "checkpoint_turn": 20,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Store SHA-256 review_hash in document_registry at ingest time.",
+          "test_question": "Does the assistant explicitly require writing review_hash (SHA-256 of file content) to document_registry during ingest, not after processing?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "SHA-256",
+            "document_registry",
+            "ingest transaction"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 30,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Store SHA-256 review_hash in document_registry at ingest time.",
+          "test_question": "Does the assistant response preserve the ingest-time review_hash requirement tied to document_registry?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "SHA-256",
+            "document_registry",
+            "ingest"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Include reviewer_override_flag boolean default false in predictive output.",
+          "test_question": "Does the assistant include reviewer_override_flag with a boolean default false in the prediction output example?",
+          "answer": false,
+          "keywords": [
+            "reviewer_override_flag",
+            "false",
+            "prediction payload",
+            "model output"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 40,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Store SHA-256 review_hash in document_registry at ingest time.",
+          "test_question": "Does the assistant include review_hash as an ingest-time persisted field in document_registry for custody integrity?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "document_registry",
+            "ingest",
+            "chain-of-custody"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Include reviewer_override_flag boolean default false in predictive output.",
+          "test_question": "Does the assistant API contract explicitly list reviewer_override_flag as boolean with default false?",
+          "answer": true,
+          "keywords": [
+            "reviewer_override_flag",
+            "boolean",
+            "default false",
+            "scoring API"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 50,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Store SHA-256 review_hash in document_registry at ingest time.",
+          "test_question": "Does the fallback plan still keep ingest-time persistence of review_hash in document_registry?",
+          "answer": true,
+          "keywords": [
+            "ingest write",
+            "review_hash",
+            "document_registry",
+            "SHA-256"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Include reviewer_override_flag boolean default false in predictive output.",
+          "test_question": "Does the assistant keep reviewer_override_flag in output even when model scoring is degraded mode?",
+          "answer": true,
+          "keywords": [
+            "reviewer_override_flag",
+            "default false",
+            "degraded mode",
+            "output schema"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 60,
+      "active_constraints": [
+        "C1",
+        "C2"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Log review_hash with custodian_id and collection_date for every document.",
+          "test_question": "Does the assistant include all three provenance fields together: review_hash, custodian_id, and collection_date?",
+          "answer": false,
+          "keywords": [
+            "review_hash",
+            "custodian_id",
+            "collection_date",
+            "provenance"
+          ]
+        },
+        {
+          "constraint_id": "C2",
+          "constraint_text": "Include reviewer_override_flag boolean default false in predictive output.",
+          "test_question": "Does the assistant keep reviewer_override_flag boolean default false in model output for privilege triage?",
+          "answer": true,
+          "keywords": [
+            "reviewer_override_flag",
+            "boolean",
+            "false",
+            "model output"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 70,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Log review_hash with custodian_id and collection_date for every document.",
+          "test_question": "After C2 removal, does the assistant still require review_hash plus custodian_id and collection_date in registry logging?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "custodian_id",
+            "collection_date",
+            "document_registry"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 80,
+      "active_constraints": [
+        "C1"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Log review_hash with custodian_id and collection_date for every document.",
+          "test_question": "Does the assistant keep the updated C1 provenance trio in pre-production QA guidance?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "custodian_id",
+            "collection_date",
+            "QA"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 90,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Log review_hash with custodian_id and collection_date for every document.",
+          "test_question": "Does the assistant continue enforcing review_hash, custodian_id, and collection_date together in final checklist context?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "custodian_id",
+            "collection_date",
+            "chain report"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Write production_manifest.json with file count, date range, custodians, and set SHA-256 hash before completion.",
+          "test_question": "Does the assistant include date range along with file count, custodians, and set hash in production_manifest.json requirements?",
+          "answer": false,
+          "keywords": [
+            "production_manifest.json",
+            "file_count",
+            "date_range",
+            "set_hash"
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint_turn": 100,
+      "active_constraints": [
+        "C1",
+        "C3"
+      ],
+      "tests": [
+        {
+          "constraint_id": "C1",
+          "constraint_text": "Log review_hash with custodian_id and collection_date for every document.",
+          "test_question": "Does the final assistant sign-off retain the updated provenance requirement with review_hash, custodian_id, and collection_date?",
+          "answer": true,
+          "keywords": [
+            "review_hash",
+            "custodian_id",
+            "collection_date",
+            "provenance"
+          ]
+        },
+        {
+          "constraint_id": "C3",
+          "constraint_text": "Write production_manifest.json with file count, date range, custodians, and set SHA-256 hash before completion.",
+          "test_question": "Does the final assistant sign-off require production_manifest.json to contain file count, date range, custodians, and full-set SHA-256 before marking complete?",
+          "answer": true,
+          "keywords": [
+            "production_manifest.json",
+            "file count",
+            "date range",
+            "custodians",
+            "SHA-256"
+          ]
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "I am designing an eDiscovery platform. Can you outline the end-to-end workflow from collection to production?",
+      "type": "normal"
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "Use an EDRM-aligned flow: legal hold and collection, ingest and normalization, deduplication, analytics and predictive coding, privilege review, production packaging, and defensible audit reporting.",
+      "type": "response"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "Map that to concrete system services so I can split teams.",
+      "type": "normal"
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Create services for source connectors, ingest pipeline, processing and OCR, review index, TAR scoring, privilege classifier, production exporter, and chain-of-custody ledger. This mirrors the EDRM phases we just set.",
+      "type": "response"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "For collection, we need M365, Slack, and file shares. What should the ingest contract include?",
+      "type": "normal"
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "text": "Capture source_system, source_id, custodian, collected_at, timezone, collector_version, and raw binary pointer. Also include preservation_hold_id so your legal hold mapping is explicit from day one.",
+      "type": "response"
+    },
+    {
+      "turn": 7,
+      "role": "user",
+      "text": "How do we preserve originals while still enabling fast review?",
+      "type": "normal"
+    },
+    {
+      "turn": 8,
+      "role": "assistant",
+      "text": "Store immutable originals in object storage with write-once retention, then generate review derivatives like text, thumbnails, and metadata records. Keep a pointer from derivative to original for traceability.",
+      "type": "response"
+    },
+    {
+      "turn": 9,
+      "role": "user",
+      "text": "What event trail is minimum for defensibility?",
+      "type": "normal"
+    },
+    {
+      "turn": 10,
+      "role": "assistant",
+      "text": "Log collection start and stop, transfer completion, ingest completion, processing jobs, reviewer actions, and export approvals, each with actor, timestamp, and reason code.",
+      "type": "response"
+    },
+    {
+      "turn": 11,
+      "role": "user",
+      "text": "Moving into processing, let's discuss deduplication strategy.",
+      "type": "normal"
+    },
+    {
+      "turn": 12,
+      "role": "assistant",
+      "text": "Do exact dedupe first using binary fingerprints, then near-duplicate clustering via shingling or MinHash on extracted text. Keep family-level controls so email attachments are not orphaned.",
+      "type": "response"
+    },
+    {
+      "turn": 13,
+      "role": "user",
+      "text": "The lead litigation partner says every document processed through the review pipeline must receive a review_hash (SHA-256 of file content) stored in the document_registry table at ingest time, for chain-of-custody integrity. It is non-negotiable after the last case.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 14,
+      "role": "assistant",
+      "text": "Understood. At ingest, compute SHA-256 from raw bytes and persist it as review_hash in document_registry before the document is admitted to downstream queues.",
+      "type": "response"
+    },
+    {
+      "turn": 15,
+      "role": "user",
+      "text": "Show me the schema change and migration notes.",
+      "type": "normal"
+    },
+    {
+      "turn": 16,
+      "role": "assistant",
+      "text": "Add review_hash CHAR(64) NOT NULL to document_registry, backfill legacy rows with a controlled re-ingest job, and block scoring until review_hash exists. Index review_hash for exact-duplicate lookup.",
+      "type": "response"
+    },
+    {
+      "turn": 17,
+      "role": "user",
+      "text": "How should the ingest worker enforce this so no one bypasses it?",
+      "type": "normal"
+    },
+    {
+      "turn": 18,
+      "role": "assistant",
+      "text": "Use a single transaction: read file bytes, compute SHA-256 review_hash, insert into document_registry, then enqueue processing only after commit. Reject and alert if hash generation fails.",
+      "type": "response"
+    },
+    {
+      "turn": 19,
+      "role": "user",
+      "text": "Can you state a validation check we can run nightly?",
+      "type": "normal"
+    },
+    {
+      "turn": 20,
+      "role": "assistant",
+      "text": "Run a nightly SQL control that flags any record created that day without review_hash in document_registry; expected result is zero rows because ingest transaction writes SHA-256 before queueing.",
+      "type": "response"
+    },
+    {
+      "turn": 21,
+      "role": "user",
+      "text": "Now near-duplicates: we cannot merge records in a way that breaks custody tracking.",
+      "type": "normal"
+    },
+    {
+      "turn": 22,
+      "role": "assistant",
+      "text": "Do not collapse records physically. Keep separate document_registry rows, attach near_dup_cluster_id as analytic metadata, and preserve independent custody history per item.",
+      "type": "response"
+    },
+    {
+      "turn": 23,
+      "role": "user",
+      "text": "What about email threading with inclusive email detection?",
+      "type": "normal"
+    },
+    {
+      "turn": 24,
+      "role": "assistant",
+      "text": "Build conversation trees by normalized subject plus message-id links, then tag inclusive emails. As in your earlier family-level rule, keep thread suppression reversible for attorney review.",
+      "type": "response"
+    },
+    {
+      "turn": 25,
+      "role": "user",
+      "text": "We also need custodian scoping for targeted review sets.",
+      "type": "normal"
+    },
+    {
+      "turn": 26,
+      "role": "assistant",
+      "text": "Maintain custodian-to-document mapping table and allow set expressions like custodian IN (...) AND date range AND thread_depth <= n. Keep scoped sets immutable after review starts.",
+      "type": "response"
+    },
+    {
+      "turn": 27,
+      "role": "user",
+      "text": "All predictive coding model predictions must include a reviewer_override_flag boolean default false in the output, so attorneys can flip it without re-running the model and re-triggering full scoring.",
+      "type": "constraint_stack"
+    },
+    {
+      "turn": 28,
+      "role": "assistant",
+      "text": "Agreed. Every prediction payload will include reviewer_override_flag: false by default, and reviewers can set it later without rescoring.",
+      "type": "response"
+    },
+    {
+      "turn": 29,
+      "role": "user",
+      "text": "Give me a concrete prediction output example we can hand to frontend.",
+      "type": "normal"
+    },
+    {
+      "turn": 30,
+      "role": "assistant",
+      "text": "Example: {\"document_id\":\"D-1042\",\"review_hash\":\"b9f...\",\"relevance_score\":0.92,\"predicted_label\":\"responsive\",\"model_version\":\"tar2.3\"}. Keep this lightweight for queue latency.",
+      "type": "response"
+    },
+    {
+      "turn": 31,
+      "role": "user",
+      "text": "Should we run TAR 1.0 seed-set loops or TAR 2.0 continuous active learning?",
+      "type": "normal"
+    },
+    {
+      "turn": 32,
+      "role": "assistant",
+      "text": "Use TAR 2.0 continuous active learning for faster convergence, with periodic control-set checks. Keep output schema stable with reviewer_override_flag boolean default false.",
+      "type": "response"
+    },
+    {
+      "turn": 33,
+      "role": "user",
+      "text": "How often should we retrain the ranking model?",
+      "type": "normal"
+    },
+    {
+      "turn": 34,
+      "role": "assistant",
+      "text": "Retrain on each meaningful review batch, for example every 2,000 coded docs or drift trigger. Keep model lineage with dataset snapshot IDs and calibration reports.",
+      "type": "response"
+    },
+    {
+      "turn": 35,
+      "role": "user",
+      "text": "Queue management is tricky. We have hot docs from executives and cold docs from backups.",
+      "type": "normal"
+    },
+    {
+      "turn": 36,
+      "role": "assistant",
+      "text": "Use a priority queue blending relevance_score, custodian priority, and thread inclusiveness. Persist review_hash at ingest in document_registry and include reviewer_override_flag in each prediction for manual lift.",
+      "type": "response"
+    },
+    {
+      "turn": 37,
+      "role": "user",
+      "text": "What metrics should we report weekly to litigation leadership?",
+      "type": "normal"
+    },
+    {
+      "turn": 38,
+      "role": "assistant",
+      "text": "Report review velocity, precision at top-k, recall estimates from control set, override rate, and cost per responsive document. Add confidence intervals so decisions are statistically grounded.",
+      "type": "response"
+    },
+    {
+      "turn": 39,
+      "role": "user",
+      "text": "Summarize the scoring API contract in one response.",
+      "type": "normal"
+    },
+    {
+      "turn": 40,
+      "role": "assistant",
+      "text": "Scoring API input references documents already ingested with review_hash in document_registry; output includes document_id, score, label, and reviewer_override_flag boolean default false. This aligns with the schema decisions we set at turns 16 and 28.",
+      "type": "response"
+    },
+    {
+      "turn": 41,
+      "role": "user",
+      "text": "How do we decide when to stop active learning?",
+      "type": "normal"
+    },
+    {
+      "turn": 42,
+      "role": "assistant",
+      "text": "Stop when marginal gain in recall stabilizes across two rounds and control-set error bands meet case protocol thresholds. Keep a defensibility memo for the stop decision.",
+      "type": "response"
+    },
+    {
+      "turn": 43,
+      "role": "user",
+      "text": "Reviewers sometimes disagree with model labels. How should audit capture look?",
+      "type": "normal"
+    },
+    {
+      "turn": 44,
+      "role": "assistant",
+      "text": "Log original prediction, reviewer decision, reviewer_override_flag transition, reviewer identity, and timestamp. Store rationale codes for disputes to support later testimony.",
+      "type": "response"
+    },
+    {
+      "turn": 45,
+      "role": "user",
+      "text": "Can we make override conflict resolution deterministic?",
+      "type": "normal"
+    },
+    {
+      "turn": 46,
+      "role": "assistant",
+      "text": "Yes: first-level reviewer sets status, second-level QC can confirm or reverse, and final attorney decision is authoritative. Persist all transitions as immutable events.",
+      "type": "response"
+    },
+    {
+      "turn": 47,
+      "role": "user",
+      "text": "Batch scoring windows are causing SLA spikes. Suggestions?",
+      "type": "normal"
+    },
+    {
+      "turn": 48,
+      "role": "assistant",
+      "text": "Switch to micro-batches with autoscaling workers and cache feature vectors. Keep prediction schema unchanged, including reviewer_override_flag default false.",
+      "type": "response"
+    },
+    {
+      "turn": 49,
+      "role": "user",
+      "text": "If the model service is down, what fallback preserves review continuity?",
+      "type": "normal"
+    },
+    {
+      "turn": 50,
+      "role": "assistant",
+      "text": "Use rule-based triage fallback and mark source=\"fallback\" while still emitting reviewer_override_flag: false in output. Do not bypass ingest controls that write SHA-256 review_hash to document_registry.",
+      "type": "response"
+    },
+    {
+      "turn": 51,
+      "role": "user",
+      "text": "We are shifting to privilege detection next. Can you stage the transition?",
+      "type": "normal"
+    },
+    {
+      "turn": 52,
+      "role": "assistant",
+      "text": "Phase 1: attorney-client and work-product classifiers in shadow mode. Phase 2: assistive tags in review queue. Phase 3: redaction suggestions with attorney confirmation.",
+      "type": "response"
+    },
+    {
+      "turn": 53,
+      "role": "user",
+      "text": "Need a baseline approach for identifying privileged communications in email corpora.",
+      "type": "normal"
+    },
+    {
+      "turn": 54,
+      "role": "assistant",
+      "text": "Combine domain lexicons, counsel-domain detection, and transformer-based classification over body plus thread context. Keep false negatives low using conservative thresholds.",
+      "type": "response"
+    },
+    {
+      "turn": 55,
+      "role": "user",
+      "text": "C1 update: opposing counsel challenged our chain-of-custody in Smith v. Acme, so every hash record must now include custodian_id and collection_date alongside review_hash. C2 remains active.",
+      "type": "constraint_modify"
+    },
+    {
+      "turn": 56,
+      "role": "assistant",
+      "text": "Acknowledged. We will log review_hash plus custodian_id and collection_date for each document provenance record, and keep reviewer_override_flag in prediction outputs.",
+      "type": "response"
+    },
+    {
+      "turn": 57,
+      "role": "user",
+      "text": "For privilege detection, should we do a two-stage model?",
+      "type": "normal"
+    },
+    {
+      "turn": 58,
+      "role": "assistant",
+      "text": "Yes: stage one high-recall screen, stage two precision model with explanation snippets. Feed both outputs to attorney review with confidence bands.",
+      "type": "response"
+    },
+    {
+      "turn": 59,
+      "role": "user",
+      "text": "How do we wire redaction automation while preserving provenance?",
+      "type": "normal"
+    },
+    {
+      "turn": 60,
+      "role": "assistant",
+      "text": "Store provenance with review_hash and custodian_id on each redaction candidate, then emit prediction metadata including reviewer_override_flag: false unless changed by counsel. Keep redaction overlays separate from originals.",
+      "type": "response"
+    },
+    {
+      "turn": 61,
+      "role": "user",
+      "text": "What is the safest clawback workflow if privileged docs slip into a draft production set?",
+      "type": "normal"
+    },
+    {
+      "turn": 62,
+      "role": "assistant",
+      "text": "Create a hold-and-recall action that freezes dissemination, issues notice templates, and records jurisdiction-specific clawback rule citations. Keep full event history for court disclosure if required.",
+      "type": "response"
+    },
+    {
+      "turn": 63,
+      "role": "user",
+      "text": "Should privilege propagate across document families automatically?",
+      "type": "normal"
+    },
+    {
+      "turn": 64,
+      "role": "assistant",
+      "text": "Propagate as a suggested tag only, then require attorney confirmation at parent and child levels. This mirrors your earlier reversible suppression approach for threads.",
+      "type": "response"
+    },
+    {
+      "turn": 65,
+      "role": "user",
+      "text": "Can we tune confidence thresholds differently for external counsel and in-house counsel communications?",
+      "type": "normal"
+    },
+    {
+      "turn": 66,
+      "role": "assistant",
+      "text": "Yes, maintain policy tiers by counsel type and jurisdiction, with stricter recall targets for external counsel communications. Version and log every threshold policy change.",
+      "type": "response"
+    },
+    {
+      "turn": 67,
+      "role": "user",
+      "text": "How do we handle overlap between privacy redactions and privilege redactions?",
+      "type": "normal"
+    },
+    {
+      "turn": 68,
+      "role": "assistant",
+      "text": "Use layered redaction reasons with precedence rules, then collapse visually into one redaction box while retaining all underlying reason codes in metadata.",
+      "type": "response"
+    },
+    {
+      "turn": 69,
+      "role": "user",
+      "text": "C2 is removed. The case management system UI now handles reviewer override, so reviewer_override_flag no longer needs to come from model output.",
+      "type": "constraint_remove"
+    },
+    {
+      "turn": 70,
+      "role": "assistant",
+      "text": "Confirmed. Model output can drop reviewer_override_flag, but custody logging remains strict: every document record must include review_hash with custodian_id and collection_date.",
+      "type": "response"
+    },
+    {
+      "turn": 71,
+      "role": "user",
+      "text": "Now help me design privilege log generation fields.",
+      "type": "normal"
+    },
+    {
+      "turn": 72,
+      "role": "assistant",
+      "text": "Include doc_id, family_id, date, author, recipients, privilege basis, matter description, and withholding status. Keep descriptions specific enough for rules compliance but not revealing privileged substance.",
+      "type": "response"
+    },
+    {
+      "turn": 73,
+      "role": "user",
+      "text": "Need an attorney review queue for log entries before finalization.",
+      "type": "normal"
+    },
+    {
+      "turn": 74,
+      "role": "assistant",
+      "text": "Create a three-lane queue: drafted, attorney-reviewed, partner-approved. Require reason codes for edits and lock approved entries from silent changes.",
+      "type": "response"
+    },
+    {
+      "turn": 75,
+      "role": "user",
+      "text": "What logging format should we use for withheld document events?",
+      "type": "normal"
+    },
+    {
+      "turn": 76,
+      "role": "assistant",
+      "text": "Use append-only JSONL events with event_id, actor, action, timestamp, and references to doc_id. Keep provenance context including review_hash, custodian_id, and collection_date.",
+      "type": "response"
+    },
+    {
+      "turn": 77,
+      "role": "user",
+      "text": "Can we output privilege logs in both CSV and PDF?",
+      "type": "normal"
+    },
+    {
+      "turn": 78,
+      "role": "assistant",
+      "text": "Yes, generate CSV for opposing counsel exchange and PDF for filing packets, both from the same canonical records. Sign exported artifacts with version and generation timestamp.",
+      "type": "response"
+    },
+    {
+      "turn": 79,
+      "role": "user",
+      "text": "Before production, what QA checks are mandatory?",
+      "type": "normal"
+    },
+    {
+      "turn": 80,
+      "role": "assistant",
+      "text": "Run Bates continuity checks, load-file validation, redaction burn-in verification, and custody completeness checks ensuring review_hash, custodian_id, and collection_date exist for all produced docs.",
+      "type": "response"
+    },
+    {
+      "turn": 81,
+      "role": "user",
+      "text": "New C3: all production exports must write production_manifest.json with file count, date range, custodians, and SHA-256 hash of the entire production set before marking export complete.",
+      "type": "constraint_add"
+    },
+    {
+      "turn": 82,
+      "role": "assistant",
+      "text": "Accepted. Export completion now depends on generating production_manifest.json containing file count, date range, custodians, and full set SHA-256, while still preserving document-level review_hash with custodian_id and collection_date.",
+      "type": "response"
+    },
+    {
+      "turn": 83,
+      "role": "user",
+      "text": "We deliver mainly to Relativity. How should packaging work?",
+      "type": "normal"
+    },
+    {
+      "turn": 84,
+      "role": "assistant",
+      "text": "Build Relativity package with DAT, OPT, native links, extracted text, and image references. Include production_manifest.json at package root before status can become complete.",
+      "type": "response"
+    },
+    {
+      "turn": 85,
+      "role": "user",
+      "text": "And for Concordance exports?",
+      "type": "normal"
+    },
+    {
+      "turn": 86,
+      "role": "assistant",
+      "text": "Produce Concordance DAT plus image cross-reference files and normalized field delimiters. Reuse the same manifest process so both formats share one completion gate.",
+      "type": "response"
+    },
+    {
+      "turn": 87,
+      "role": "user",
+      "text": "How do we compute and verify full production set hash efficiently?",
+      "type": "normal"
+    },
+    {
+      "turn": 88,
+      "role": "assistant",
+      "text": "Create a deterministic file ordering, stream all bytes into a SHA-256 digest, and store digest in production_manifest.json. Verify digest immediately after export write and before handoff.",
+      "type": "response"
+    },
+    {
+      "turn": 89,
+      "role": "user",
+      "text": "Give me a final go/no-go checklist for release managers.",
+      "type": "normal"
+    },
+    {
+      "turn": 90,
+      "role": "assistant",
+      "text": "Checklist: load files validate, Bates ranges contiguous, privilege exclusions approved, custody fields review_hash + custodian_id + collection_date complete, and production_manifest.json includes file count, custodians, and set SHA-256.",
+      "type": "response"
+    },
+    {
+      "turn": 91,
+      "role": "user",
+      "text": "I also need a chain-of-custody report template for post-production challenges.",
+      "type": "normal"
+    },
+    {
+      "turn": 92,
+      "role": "assistant",
+      "text": "Template sections: collection summary, ingest controls, document-level provenance (review_hash, custodian_id, collection_date), processing history, review actions, and production manifest verification with date range and set hash.",
+      "type": "response"
+    },
+    {
+      "turn": 93,
+      "role": "user",
+      "text": "Can you tie this closeout package back to our original EDRM mapping for leadership briefing?",
+      "type": "normal"
+    },
+    {
+      "turn": 94,
+      "role": "assistant",
+      "text": "Yes. The closeout maps directly to the service model from turn 4 and custody controls from turns 14 and 56, then finalizes with manifest gating from turn 82.",
+      "type": "response"
+    },
+    {
+      "turn": 95,
+      "role": "user",
+      "text": "If production hash verification fails at the last minute, what is incident procedure?",
+      "type": "normal"
+    },
+    {
+      "turn": 96,
+      "role": "assistant",
+      "text": "Trigger incident state, block release, re-run deterministic hashing, compare file inventory diff, and require dual approval before retrying export. Preserve all failed hash attempts in audit logs.",
+      "type": "response"
+    },
+    {
+      "turn": 97,
+      "role": "user",
+      "text": "Give me a concise final architecture summary I can send to the litigation partner.",
+      "type": "normal"
+    },
+    {
+      "turn": 98,
+      "role": "assistant",
+      "text": "Architecture: defensible ingest with per-document provenance, analytics-driven review and privilege workflows, and controlled production pipelines for Relativity and Concordance. Governance is enforced through immutable logs, QC checkpoints, and completion gates.",
+      "type": "response"
+    },
+    {
+      "turn": 99,
+      "role": "user",
+      "text": "Provide a final sign-off statement with mandatory controls explicitly named.",
+      "type": "normal"
+    },
+    {
+      "turn": 100,
+      "role": "assistant",
+      "text": "Sign-off: No export is complete unless each document has review_hash, custodian_id, and collection_date recorded for provenance, and production_manifest.json contains file count, date range, custodians, and full production-set SHA-256 verification.",
+      "type": "response"
+    }
+  ]
+}
