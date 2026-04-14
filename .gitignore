@@ -75,3 +75,6 @@ MCP_NEXT_REPO_PLAN.local.md
 
 # Legacy duplicate architecture filename (keep canonical docs/ArchitectureDiagram.png)
 docs/Architecture Diagram.png
+
+# Private presentation/faculty defense files
+docs/faculty_defense_cheat_sheet.md
