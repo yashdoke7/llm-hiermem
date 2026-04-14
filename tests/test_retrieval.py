@@ -33,6 +33,7 @@ class TestRetrievalRouter:
             segments_to_fetch=["seg_001"],
             semantic_queries=[],
             peripheral_segments=[],
+            fetch_full_turns=[],
             reasoning="test"
         )
         chunks, peripheral = self.router.retrieve(decision)
@@ -47,6 +48,7 @@ class TestRetrievalRouter:
             segments_to_fetch=[],
             semantic_queries=["database configuration"],
             peripheral_segments=[],
+            fetch_full_turns=[],
             reasoning="test"
         )
         chunks, peripheral = self.router.retrieve(decision)

@@ -16,21 +16,27 @@ class TestMetrics:
         assert not evaluate_checkpoint(
             "I used MySQL for the database",
             "Does response use PostgreSQL?",
-            True
+            "Technical constraint check",
+            keywords=["PostgreSQL"],
+            expected_per_group=[True]
         )
 
     def test_bullet_point_check(self):
         assert evaluate_checkpoint(
             "• Item 1\n• Item 2\n• Item 3",
             "Is response in bullet points?",
-            True
+            "Formatting constraint check",
+            keywords=["•"],
+            expected_per_group=[True]
         )
 
     def test_no_bullet_points(self):
         assert not evaluate_checkpoint(
             "This is a plain paragraph response.",
             "Is response in bullet points?",
-            True
+            "Formatting constraint check",
+            keywords=["•"],
+            expected_per_group=[True]
         )
 
     def test_empty_conversations(self):
