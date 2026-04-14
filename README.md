@@ -36,6 +36,60 @@ Aggregate across 15 datasets:
 | RAG | 6.439 | 0.0242 | 1.208 | 0.667 |
 | RAG Summary | 7.148 | 0.0250 | 1.249 | 0.760 |
 
+Computed deltas versus Raw LLM baseline:
+
+| Metric | HierMem | Raw LLM | Delta |
+|---|---:|---:|---:|
+| Mean judge score | 8.461 | 6.908 | +1.553 |
+| Mean compute cost/turn | 0.0176 | 0.0264 | -33.3% |
+| Mean session compute cost | 0.881 | 1.322 | -33.3% |
+| Constraint survival | 0.933 | 0.740 | +0.193 |
+
+## Evaluation Credibility (How Scores Were Produced)
+
+These results are not arbitrary dashboard numbers. Quality and adherence were scored checkpoint-by-checkpoint using an explicit LLM-as-judge protocol.
+
+Judge setup:
+- Judge model: Gemini 3.1 Pro (Google AI Studio)
+- Evaluation granularity: 10 checkpoints per conversation
+- Systems compared per checkpoint: HierMem, Raw LLM, RAG, RAG Summary
+
+Judge rubric (weighted):
+
+| Sub-score | Weight | Meaning |
+|---|---:|---|
+| Constraint adherence | 0.50 | Whether active rules were followed |
+| Response quality & accuracy | 0.30 | Correctness, technical usefulness, directness |
+| Conversational coherence & memory | 0.20 | Cross-turn continuity and memory stability |
+
+Prompt-level anti-gaming controls in the judge rubric include:
+- Vagueness penalty for generic safe responses with low technical utility
+- Domain drift penalty for invented or incorrect domain entities
+- Fairness rule that gives partial credit when a system attempts logic but misses a domain-specific detail
+
+Transparency artifacts:
+- Judge prompt used in evaluations: [multi_system_judge_prompt.txt](multi_system_judge_prompt.txt)
+- Paper snapshot code tag: https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.0-paper
+- Dataset release: https://huggingface.co/datasets/yashdoke7/hiermem-constraint-tracking
+
+## Benchmark Graphs
+
+Overall quality trend:
+
+![Overall quality trend](docs/figures/overall_quality.png)
+
+Overall Pareto frontier:
+
+![Overall Pareto frontier](docs/figures/overall_pareto.png)
+
+Overall cost breakdown:
+
+![Overall cost breakdown](docs/figures/overall_cost_breakdown.png)
+
+Overall latency trend:
+
+![Overall latency trend](docs/figures/overall_latency_trend.png)
+
 Representative plots:
 - [Overall quality trend](results/raw/benchmarks/qwen14b_arch_c/publish_graphs/Overall_1_Quality.png)
 - [Overall Pareto frontier](results/raw/benchmarks/qwen14b_arch_c/publish_graphs/Overall_3_Pareto.png)
@@ -228,6 +282,10 @@ Overleaf-ready figures copied for paper:
 - [docs/figures/overall_cost_breakdown.png](docs/figures/overall_cost_breakdown.png)
 - [docs/figures/overall_latency_trend.png](docs/figures/overall_latency_trend.png)
 
+Artifact links:
+- Code release tag (paper snapshot): https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.0-paper
+- Dataset release (HF): https://huggingface.co/datasets/yashdoke7/hiermem-constraint-tracking
+
 ## PyPI Packaging and Release
 
 Release checklist is documented in:
@@ -246,7 +304,7 @@ python -m twine check dist/*
 ```bibtex
 @software{doke2026hiermem,
   title={HierMem: Constraint-Preserving Hierarchical Context Management for Long-Horizon LLM Conversations},
-  author={Doke, Yash},
+  author={Yash Doke},
   year={2026},
   url={https://github.com/yashdoke7/llm-hiermem}
 }

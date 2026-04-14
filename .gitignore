@@ -50,6 +50,10 @@ docs/HierMem_Benchmark_Plan.docx
 docs/DEPLOYMENT_PLAN.md
 docs/paper.tex
 docs/pypi_deployment_guide.md
+docs/architecture_diagram_prompt.md
+docs/overleaf_figure_guide.md
+docs/paper_evidence_notes.md
+docs/ResearchPaper.pdf
 
 # Real chat exports (private data — never push)
 eval/datasets/*/real_exports/
@@ -58,7 +62,6 @@ results/smoke_test.json
 
 prompt.txt
 multi_system_judge_prompt_v1.txt
-multi_system_judge_prompt.txt
 runpod_dataset_commands.txt
 runpod_execution_plan.sh
 # Temp test and check files

@@ -1,3 +1,19 @@
+---
+pretty_name: HierMem Constraint Tracking Release v1
+license: cc-by-4.0
+language:
+- en
+viewer: false
+homepage: https://github.com/yashdoke7/llm-hiermem
+citation: |
+  @software{doke2026hiermem,
+    title={HierMem: Constraint-Preserving Hierarchical Context Management for Long-Horizon LLM Conversations},
+    author={Yash Doke},
+    year={2026},
+    url={https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.1-paper}
+  }
+---
+
 # HierMem Constraint Tracking Release v1
 
 Canonical release bundle for the synthetic long-horizon constraint-tracking dataset used in the HierMem paper.
@@ -18,3 +34,8 @@ Canonical release bundle for the synthetic long-horizon constraint-tracking data
 ## Notes
 - The `temp/` folder was excluded from this release bundle.
 - Use the manifest checksums to verify integrity after upload.
+- This release is a heterogeneous benchmark bundle (nested JSON with evolving fields), so Hugging Face tabular preview is intentionally disabled.
+
+## Links
+- Code release tag: https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.1-paper
+- Dataset page: https://huggingface.co/datasets/yashdoke7/hiermem-constraint-tracking

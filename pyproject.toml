@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hiermem"
-version = "0.1.0"
+version = "1.0.1"
 description = "Hierarchical Paged Context Management for Constraint-Preserving LLM Conversations"
 readme = "README.md"
 license = "MIT"
@@ -31,6 +31,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "python-dotenv>=1.0.0",
     "tiktoken>=0.5.0",
+    "requests>=2.31.0",
 ]
 
 [project.optional-dependencies]
