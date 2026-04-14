@@ -66,3 +66,9 @@ tmp_*.py
 tmp_*.txt
 *.log
 results/raw
+
+# Local handoff notes for future chats
+MCP_NEXT_REPO_PLAN.local.md
+
+# Legacy duplicate architecture filename (keep canonical docs/ArchitectureDiagram.png)
+docs/Architecture Diagram.png

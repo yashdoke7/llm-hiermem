@@ -7,6 +7,8 @@ HierMem is a Python library that keeps conversation quality stable over long ses
 - a four-level memory hierarchy
 - a lightweight curator model for context selection
 
+Current maturity: alpha research-grade runtime package with CLI and multi-provider support.
+
 ## Why HierMem
 
 Long conversations degrade because critical constraints get buried or truncated. HierMem addresses this at the systems level.
@@ -15,6 +17,11 @@ Core ideas:
 - Constraint-first prompt assembly: active rules always occupy a protected zone.
 - Hierarchical memory: L0 topic index, L1 summaries, L2 embeddings, L3 raw turns.
 - Curator orchestration: a smaller model selects what to retrieve, reducing expensive main-model context load.
+
+Hybrid behavior note:
+- Retrieval strategy (NONE/KEYWORD/HIERARCHY/SEMANTIC/HYBRID) is selected dynamically by the curator at runtime.
+- Users do not need to manually select HYBRID for normal operation.
+- The pipeline auto-switches between passthrough mode and curated mode based on token-threshold logic.
 
 ## Current Benchmark Snapshot (Architecture C, Qwen2.5-14B)
 
@@ -142,6 +149,24 @@ Important:
 - Treat code defaults as safety guards, not authoritative account limits.
 - Verify current RPM/TPM/RPD directly in provider dashboards before large runs.
 
+## Deployment Framing
+
+HierMem is best treated as a memory-orchestration runtime library for long-horizon LLM apps.
+
+It is not yet an IDE-agent integration product (for example, MCP tool ecosystem parity with code-review graph style integrations). If you are publishing this package today, position it as:
+- a reusable pipeline + CLI for constraint-preserving conversations
+- benchmark-backed architecture code
+- local-first memory storage with configurable cloud/local inference providers
+
+and not as a turnkey enterprise assistant platform.
+
+## Operational Defaults That Matter
+
+- Vector store reset on startup is disabled by default (`CLEAR_VECTOR_ON_START=false`).
+- Archive state persists under `HIERMEM_STATE_DIR` by default.
+- For clean benchmark reruns, set `CLEAR_VECTOR_ON_START=true`.
+- Local data directories default to user-local storage (`HIERMEM_DATA_DIR`), with optional overrides via `CHROMA_DB_PATH` and `HIERMEM_STATE_DIR`.
+
 ## .env Example
 
 Use [.env.example](.env.example) as a starting point.
@@ -182,6 +207,7 @@ SUMMARIZER_MODEL=ollama/qwen2.5:3b
 - [eval/run_benchmark.py](eval/run_benchmark.py): benchmark runner
 - [eval/research_metrics.py](eval/research_metrics.py): metrics and research plots
 - [eval/paper_plots.py](eval/paper_plots.py): publication-style figures
+- [docs/ArchitectureDiagram.png](docs/ArchitectureDiagram.png): canonical architecture figure used in paper
 
 ## Testing
 
@@ -193,6 +219,8 @@ python -m pytest tests -v
 
 Draft manuscript:
 - [docs/paper.tex](docs/paper.tex)
+
+Claim scope note: current reported gains are from controlled synthetic benchmark conversations and should be interpreted as architecture-level evidence, not final proof of production generalization.
 
 Overleaf-ready figures copied for paper:
 - [docs/figures/overall_quality.png](docs/figures/overall_quality.png)

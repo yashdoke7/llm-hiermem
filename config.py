@@ -12,9 +12,14 @@ load_dotenv()
 
 # === Paths ===
 PROJECT_ROOT = Path(__file__).parent
-CHROMA_DB_PATH = PROJECT_ROOT / "chroma_data"
+_default_data_root = Path(os.getenv("LOCALAPPDATA", str(Path.home()))) / "HierMem"
+HIERMEM_DATA_DIR = Path(os.getenv("HIERMEM_DATA_DIR", str(_default_data_root)))
+CHROMA_DB_PATH = Path(os.getenv("CHROMA_DB_PATH", str(HIERMEM_DATA_DIR / "chroma_data")))
 RESULTS_PATH = PROJECT_ROOT / "results"
 PROMPTS_PATH = PROJECT_ROOT / "llm" / "prompts"
+HIERMEM_STATE_DIR = Path(os.getenv("HIERMEM_STATE_DIR", str(HIERMEM_DATA_DIR / "state")))
+CHROMA_COLLECTION_NAME = os.getenv("CHROMA_COLLECTION_NAME", "hiermem")
+CLEAR_VECTOR_ON_START = os.getenv("CLEAR_VECTOR_ON_START", "false").lower() in ("1", "true", "yes", "on")
 
 # === LLM Provider Settings ===
 DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "ollama")
@@ -103,7 +108,7 @@ MAX_TOKENS_MAIN = int(os.getenv("MAX_TOKENS_MAIN", "4096"))
 MAX_TOKENS_CURATOR = int(os.getenv("MAX_TOKENS_CURATOR", "1024"))
 MAX_TOKENS_SUMMARIZER = int(os.getenv("MAX_TOKENS_SUMMARIZER", "512"))
 
-MAX_RETRIES = 5
+MAX_RETRIES = int(os.getenv("MAX_RETRIES", "5"))
 RATE_LIMIT_DELAY = {
     "groq": 20.0,
     "openai": 0.5,

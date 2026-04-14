@@ -102,11 +102,19 @@ class HierMemPipeline:
 
     @classmethod
     def create(cls, main_model: str = None, curator_model: str = None,
-               provider: str = None) -> "HierMemPipeline":
-        """Factory method to create a fully initialized pipeline."""
+               provider: str = None, reset_storage: Optional[bool] = None,
+               persist_archive: bool = True) -> "HierMemPipeline":
+        """Factory method to create a fully initialized pipeline.
+
+        Args:
+            reset_storage: If True, clears vector storage at startup.
+                Defaults to config.CLEAR_VECTOR_ON_START.
+            persist_archive: If True, persists L0/L1 archive state on disk.
+        """
         from memory.vector_store import VectorStore
         
         provider = provider or config.MAIN_PROVIDER
+        reset_storage = config.CLEAR_VECTOR_ON_START if reset_storage is None else reset_storage
         
         # Initialize LLM clients — each role can use a different provider
         # e.g. main on Groq, curator/summarizer on local ollama
@@ -115,13 +123,16 @@ class HierMemPipeline:
         summarizer_llm = LLMClient(provider=config.SUMMARIZER_PROVIDER)
         
         # Initialize stores
-        vector_store = VectorStore()
-        vector_store.clear()  # CRITICAL: Prevent cross-contamination across benchmark runs
+        vector_store = VectorStore(collection_name=config.CHROMA_COLLECTION_NAME)
+        if reset_storage:
+            # Useful for clean benchmark runs; disabled by default for library sessions.
+            vector_store.clear()
         constraint_store = ConstraintStore(max_constraints=config.MAX_CONSTRAINTS)
         archive = HierarchicalArchive(
             vector_store=vector_store,
             max_l0_entries=config.MAX_L0_ENTRIES,
-            segment_size=config.SEGMENT_SIZE
+            segment_size=config.SEGMENT_SIZE,
+            persist_dir=config.HIERMEM_STATE_DIR if persist_archive else None,
         )
         
         # Initialize agents
