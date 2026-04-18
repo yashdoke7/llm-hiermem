@@ -108,6 +108,12 @@ class RAGSummaryBaseline:
             context_tokens=count_tokens(context),
             summary_tokens=count_tokens(self.rolling_summary),
             pipeline_details={
+                "baseline_variant": "lightweight_rag_plus_summary",
+                "retrieval_strategy": "SEMANTIC",
+                "chunking_enabled": False,
+                "reranking_enabled": False,
+                "query_rewriting_enabled": False,
+                "summary_enabled": True,
                 # Legacy field kept for backward compatibility with old analysis scripts.
                 "vector_queries": len(retrieved),
                 # New explicit retrieval telemetry for compute accounting.
@@ -115,6 +121,9 @@ class RAGSummaryBaseline:
                 "retrieved_chunks_count": len(retrieved),
                 "embedding_requests": retrieval_query_count,
                 "semantic_queries": [user_message] if retrieval_query_count else [],
+                "segments_to_fetch": [],
+                "peripheral_segments": [],
+                "fetch_full_turns": [],
                 "sources_used": [f"semantic:turn_{r.get('metadata',{}).get('turn','?')}" for r in retrieved],
                 "context_tokens_used": count_tokens(context),
                 "response_tokens": count_tokens(response),
