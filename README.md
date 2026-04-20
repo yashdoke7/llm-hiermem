@@ -197,7 +197,7 @@ HierMem achieves profound efficiency and reliability enhancements, validated by 
 
 Our rigorous synthetic benchmarks reveal strong architectural integrity against memory decay in lengthy contexts. Find the draft manuscript in the repository under `docs/paper.tex`.
 
-- **Release Paper Snapshot:** [v1.0.0-paper Release Tag](https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.0-paper)
+- **Release Paper Snapshot:** [v1.0.3-paper Release Tag](https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.3-paper)
 - **Dataset Access:** [HF Datasets: hiermem-constraint-tracking](https://huggingface.co/datasets/yashdoke7/hiermem-constraint-tracking)
 
 ### Citation
