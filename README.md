@@ -12,12 +12,13 @@
 
 </div>
 
-## 📌 Release Summary (v1.0.1)
+## 📌 Release Summary (v1.0.3)
 
-The v1.0.1 release marks our transition to a stable, research-grade python package available on PyPI while solidifying the architecture for the upcoming research paper publication. It introduces:
+The v1.0.3 release marks our transition to a stable, research-grade python package available on PyPI while solidifying the architecture for the upcoming research paper publication. It introduces:
 - **Full multi-provider support** (Ollama, OpenAI, Anthropic, Google Gemini, Groq) via integrated LiteLLM routing.
 - **Rigorous constraint-adherence benchmarking**, proving efficiency gains over standard RAG and baseline LLM techniques.
 - **Dynamic Context Pacing**, automatically balancing L0-L3 memory access via the underlying curator model.
+- **Context Pressure Tracking**, visually proving an overall **4.7x architectural compression ratio** on conversation context management.
 
 ---
 
@@ -171,9 +172,12 @@ HierMem achieves profound efficiency and reliability enhancements, validated by 
 | **Mean Judge Score** (out of 10) | **8.461** | 6.908 | +1.553 |
 | **Constraint Survival** | **0.933** | 0.740 | +0.193 |
 | **Mean Compute Cost/Turn** | **$0.0176** | $0.0264 | -33.3% |
-| **Mean Session Cost** | **$0.881** | $1.322 | -33.3% |
+| **Compression Ratio** | **4.7x** | 3.2x (Truncated) | +46.8% |
 
 ### Evaluation Metrics Breakdown
+
+**Context Pressure \& Compression Ratio**  
+<img src="https://raw.githubusercontent.com/yashdoke7/llm-hiermem/main/docs/figures/overall_context_pressure.png" alt="Context Pressure Trend" width="100%"/>
 
 **Overall Quality Trend**  
 <img src="https://raw.githubusercontent.com/yashdoke7/llm-hiermem/main/docs/figures/overall_quality.png" alt="Overall Quality Trend" width="100%"/>

@@ -34,6 +34,7 @@ SYSTEM_COLORS = {
 PRICE_MAIN = 0.40    # 14B Model ($/1M)
 PRICE_CURATOR = 0.10 # 3B Model ($/1M)
 PRICE_EMBED = 0.05   # Embedding ($/1M)
+CONTEXT_BUDGET = 32768  # 32k KV cache ceiling
 
 def load_all_data(results_root: Path):
     dataset_dirs = [d for d in results_root.glob("dataset_*") if d.is_dir()]
@@ -128,6 +129,19 @@ def load_all_data(results_root: Path):
                         "Cumulative Cost ($)": cumulative_cost
                     })
 
+                # --- Accumulated context: total user+assistant text generated so far ---
+                accumulated = 0
+                for j, tl2 in enumerate(run.get("turn_logs", run.get("results", []))):
+                    user_text = tl2.get("user", "")
+                    resp_text = tl2.get("response", "")
+                    accumulated += max(1, len(user_text) // 4) + max(1, len(resp_text) // 4)
+                    turn_records.append({
+                        "Dataset": d.name,
+                        "System": "Accumulated (All)",
+                        "Turn": tl2.get("turn", 0),
+                        "Accumulated Tokens": accumulated,
+                    })
+
                 # Map Judge scores to correct turns
                 system_alias = next((a for a, r in reverse_map.items() if r == system_name), "")
                 checkpoints = eval_dict.get(system_alias, {}).get("checkpoints", [])
@@ -138,7 +152,12 @@ def load_all_data(results_root: Path):
                         "Checkpoint Turn": cp["checkpoint_turn"],
                         "Judge Score": cp["weighted_score"]
                     })
-                
+
+                # Compute compression ratio and token savings
+                avg_ctx_sent = total_main_tokens / max(len(run.get("turn_logs", [1])), 1)
+                compression_ratio = accumulated / max(avg_ctx_sent, 1) if accumulated > 0 else 1.0
+                savings_vs_raw = 0.0  # computed later in aggregate
+
                 run_records.append({
                     "Dataset": d.name,
                     "System": human_label,
@@ -149,7 +168,9 @@ def load_all_data(results_root: Path):
                     "14B Tokens": total_main_tokens,
                     "3B Tokens": total_curator_tokens,
                     "Avg Latency (s)": np.mean(latencies) if latencies else 0.0,
-                    "Final Judge Score": judge_scores_map.get(system_name, 0.0)
+                    "Final Judge Score": judge_scores_map.get(system_name, 0.0),
+                    "Accumulated Tokens": accumulated,
+                    "Compression Ratio": round(compression_ratio, 2),
                 })
 
     return pd.DataFrame(turn_records), pd.DataFrame(run_records)
@@ -230,6 +251,66 @@ def generate_visuals(df_turn, df_run, out_dir, prefix="Overall"):
         plt.tight_layout(); plt.savefig(out_dir / "Overall_6_Latency_Boxplot.png", dpi=300)
         plt.close()
 
+    # 7. Context Pressure: Accumulated vs Sent vs 32k Ceiling
+    df_ctx_sent = df_turn.dropna(subset=["Context Tokens"])
+    df_accum = df_turn.dropna(subset=["Accumulated Tokens"]) if "Accumulated Tokens" in df_turn.columns else pd.DataFrame()
+    if not df_ctx_sent.empty:
+        plt.figure(figsize=(10, 6))
+
+        # Plot per-system context sent lines
+        for sys_name in ["HierMem", "Raw LLM", "RAG", "RAG Summary"]:
+            sys_data = df_ctx_sent[df_ctx_sent["System"] == sys_name]
+            if sys_data.empty:
+                continue
+            if prefix == "Overall":
+                agg = sys_data.groupby("Turn")["Context Tokens"].mean().reset_index()
+            else:
+                agg = sys_data.sort_values("Turn")
+            plt.plot(agg["Turn"], agg["Context Tokens"], linewidth=2.2,
+                     label=sys_name, color=SYSTEM_COLORS.get(sys_name, "#888888"), alpha=0.9)
+
+        # Plot accumulated context (dashed gray)
+        if not df_accum.empty:
+            accum_data = df_accum.drop_duplicates(subset=["Dataset", "Turn"])
+            if prefix == "Overall":
+                accum_agg = accum_data.groupby("Turn")["Accumulated Tokens"].mean().reset_index()
+            else:
+                accum_agg = accum_data.sort_values("Turn")
+            plt.plot(accum_agg["Turn"], accum_agg["Accumulated Tokens"],
+                     linewidth=2.5, linestyle="--", color="#666666", alpha=0.8,
+                     label="Total Conversation")
+
+        # 32k ceiling line
+        plt.axhline(y=CONTEXT_BUDGET, color="#dc2626", linestyle=":", linewidth=2.0,
+                    label=f"{CONTEXT_BUDGET//1024}k Context Limit", alpha=0.7)
+
+        plt.title(f"{prefix}: Context Pressure — Sent vs Total Generated", fontweight="bold")
+        plt.xlabel("Turn Number"); plt.ylabel("Tokens")
+        plt.legend(fontsize=10, loc="upper left")
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(out_dir / f"{prefix}_7_Context_Pressure.png", dpi=300)
+        plt.close()
+
+    # 8. Compression Ratio Bar Chart
+    if not df_run.empty and "Compression Ratio" in df_run.columns:
+        agg_run = df_run.groupby("System").mean(numeric_only=True).reset_index()
+        agg_run = agg_run[agg_run["Compression Ratio"] > 0]
+        if not agg_run.empty and prefix == "Overall":
+            plt.figure(figsize=(9, 5))
+            bars = plt.bar(agg_run["System"], agg_run["Compression Ratio"],
+                          color=[SYSTEM_COLORS.get(s, "#888888") for s in agg_run["System"]],
+                          alpha=0.9, edgecolor="black", linewidth=0.8)
+            for bar, val in zip(bars, agg_run["Compression Ratio"]):
+                plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.1,
+                         f"{val:.1f}x", ha="center", fontsize=12, fontweight="bold")
+            plt.title("Context Compression Ratio (Higher = More Efficient)", fontweight="bold")
+            plt.ylabel("Compression Ratio (Accumulated / Avg Sent)")
+            plt.grid(axis="y", alpha=0.3)
+            plt.tight_layout()
+            plt.savefig(out_dir / "Overall_8_Compression_Ratio.png", dpi=300)
+            plt.close()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=str, required=True, help="Root benchmarks directory")
@@ -264,11 +345,13 @@ def main():
     agg_run = df_run.groupby("System").mean(numeric_only=True).reset_index()
     
     # Format terminal output
-    header = f"{'System':<20} | {'14B Tokens':>12} | {'3B Tokens':>10} | {'Total Cost':>10} | {'Avg Latency':>12}"
+    header = f"{'System':<20} | {'14B Tokens':>12} | {'3B Tokens':>10} | {'Total Cost':>10} | {'Avg Latency':>12} | {'Compress':>10}"
     print(header)
-    print("-" * 75)
+    print("-" * 90)
     for i, row in agg_run.iterrows():
-        print(f"{row['System']:<20} | {int(row['14B Tokens']):>12,} | {int(row['3B Tokens']):>10,} | ${row['Total Cost ($)']:>9.2f} | {row['Avg Latency (s)']:>10.2f}s")
+        cr = row.get('Compression Ratio', 0)
+        cr_str = f"{cr:.1f}x" if cr > 0 else "N/A"
+        print(f"{row['System']:<20} | {int(row['14B Tokens']):>12,} | {int(row['3B Tokens']):>10,} | ${row['Total Cost ($)']:>9.2f} | {row['Avg Latency (s)']:>10.2f}s | {cr_str:>10}")
     print("="*80)
     print(f"\n✅ All graphs saved to: {out_dir}")
 

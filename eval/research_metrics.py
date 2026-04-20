@@ -416,10 +416,22 @@ def _build_metrics_for_dataset(
         # A weighted_score < 5.0 on the [1,10] scale signals a constraint violation
         VIOLATION_THRESHOLD = 5.0
 
+        # Track per-turn context sent for accumulated context analysis
+        per_turn_context_sent: List[float] = []
+        accumulated_context_total: float = 0.0
+
         for conv in convos:
             cid = conv.get("conversation_id", "unknown")
             turns = _iter_turn_logs(conv)
             budget = conv.get("config", {}).get("context_budget", 8192)
+
+            # Compute accumulated raw conversation tokens for this conversation
+            conv_accumulated = 0.0
+            for t in turns:
+                user_text = t.get("user", "")
+                resp_text = t.get("response", "")
+                conv_accumulated += max(1, len(user_text) // 4) + max(1, len(resp_text) // 4)
+            accumulated_context_total = max(accumulated_context_total, conv_accumulated)
 
             for t in turns:
                 lat = t.get("latency_seconds")
@@ -439,6 +451,7 @@ def _build_metrics_for_dataset(
 
                 pipeline = t.get("pipeline_details") or {}
                 ctx_used = pipeline.get("context_tokens_used", 0) or t.get("context_tokens", 0) or 0
+                per_turn_context_sent.append(float(ctx_used))
                 if budget and ctx_used:
                     context_util.append(min(1.0, float(ctx_used) / float(budget)))
 
@@ -531,6 +544,15 @@ def _build_metrics_for_dataset(
             "first_violation_turn": first_violation_turn,
             "constraint_survival_rate": survival_rate,
             "degradation_curve": degradation_curve,
+            # --- NEW: Accumulated context & compression metrics ---
+            "total_accumulated_tokens": round(accumulated_context_total, 0),
+            "avg_context_sent_per_turn": round(mean(per_turn_context_sent), 2) if per_turn_context_sent else None,
+            "compression_ratio": round(
+                accumulated_context_total / max(mean(per_turn_context_sent), 1), 2
+            ) if per_turn_context_sent and accumulated_context_total > 0 else None,
+            "token_savings_vs_full_history_pct": round(
+                100.0 * (1.0 - mean(per_turn_context_sent) / max(accumulated_context_total, 1)), 1
+            ) if per_turn_context_sent and accumulated_context_total > 0 else None,
         }
 
     # --- Dataset-level status and confidence flags (written after all systems) ---
@@ -977,6 +999,80 @@ def _plot_curator_overhead(dataset_dir: Path, metrics_payload: Dict[str, Any]) -
     return True
 
 
+def _plot_context_pressure(
+    dataset_dir: Path,
+    results: Dict[str, List[Dict[str, Any]]],
+) -> bool:
+    """Line plot showing context tokens sent per turn vs total accumulated conversation.
+
+    Demonstrates the compression ratio: the gap between what the conversation
+    generated and what the system actually sends to the model. A 32k ceiling
+    line shows the KV cache / VRAM limit.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plotted = 0
+
+    # Plot per-system context sent per turn
+    for system_name in SYSTEM_ORDER:
+        convos = results.get(system_name, [])
+        if not convos:
+            continue
+        turn_logs = convos[0].get("turn_logs", []) if convos else []
+        if not turn_logs:
+            continue
+        ctx_vals = []
+        turn_nums = []
+        for tl in turn_logs:
+            pipeline = tl.get("pipeline_details") or {}
+            ctx = pipeline.get("context_tokens_used", 0) or tl.get("context_tokens", 0) or 0
+            ctx_vals.append(float(ctx))
+            turn_nums.append(tl.get("turn", len(ctx_vals)))
+        ax.plot(
+            turn_nums, ctx_vals, linewidth=2.2,
+            label=SYSTEM_LABELS.get(system_name, system_name),
+            color=SYSTEM_COLORS.get(system_name, "#888888"),
+            alpha=0.9,
+        )
+        plotted += 1
+
+    # Plot accumulated context from any system (same conversation content)
+    any_system = next((s for s in SYSTEM_ORDER if s in results and results[s]), None)
+    if any_system:
+        turn_logs = results[any_system][0].get("turn_logs", [])
+        accumulated = 0.0
+        accum_vals = []
+        turn_nums_accum = []
+        for tl in turn_logs:
+            user_text = tl.get("user", "")
+            resp_text = tl.get("response", "")
+            accumulated += max(1, len(user_text) // 4) + max(1, len(resp_text) // 4)
+            accum_vals.append(accumulated)
+            turn_nums_accum.append(tl.get("turn", len(accum_vals)))
+        ax.plot(
+            turn_nums_accum, accum_vals, linewidth=2.5, linestyle="--",
+            color="#666666", alpha=0.8, label="Total Conversation",
+        )
+        plotted += 1
+
+    if plotted == 0:
+        plt.close(fig)
+        return False
+
+    # 32k ceiling line
+    ax.axhline(y=32768, color="#dc2626", linestyle=":", linewidth=2.0,
+               label="32k Context Limit", alpha=0.7)
+
+    ax.set_xlabel("Turn Number", fontsize=12)
+    ax.set_ylabel("Tokens", fontsize=12)
+    ax.set_title("Context Pressure: Sent vs Total Generated", fontsize=13)
+    ax.legend(loc="upper left", fontsize=9)
+    ax.grid(alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(dataset_dir / "context_pressure.png", dpi=220)
+    plt.close(fig)
+    return True
+
+
 def _write_visualization_status(
     dataset_dir: Path,
     metrics_payload: Dict[str, Any],
@@ -1135,6 +1231,7 @@ def process_single_dataset(run_dir: Path) -> Path:
     _record("constraint_survival.png",  _plot_survival_rate(run_dir, metrics_payload))
     _record("cost_per_quality.png",     _plot_cost_per_quality(run_dir, metrics_payload))
     _record("curator_overhead.png",     _plot_curator_overhead(run_dir, metrics_payload))
+    _record("context_pressure.png",     _plot_context_pressure(run_dir, all_system_results))
 
     _write_visualization_status(run_dir, metrics_payload, charts_written, charts_skipped)
 
