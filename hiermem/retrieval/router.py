@@ -7,11 +7,11 @@ curator agent decided.
 
 from typing import List, Tuple, Optional
 
-from core.curator import CuratorDecision
-from core.archive import HierarchicalArchive
-from core.assembler import ContextChunk
-from memory.vector_store import VectorStore
-import config
+from hiermem.core.curator import CuratorDecision
+from hiermem.core.archive import HierarchicalArchive
+from hiermem.core.assembler import ContextChunk
+from hiermem.memory.vector_store import VectorStore
+from hiermem import config
 
 
 class RetrievalRouter:

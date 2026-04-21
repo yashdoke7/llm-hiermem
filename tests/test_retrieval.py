@@ -1,10 +1,10 @@
 """Tests for the Retrieval Router."""
 
 import pytest
-from core.curator import CuratorDecision
-from core.archive import HierarchicalArchive
-from retrieval.router import RetrievalRouter
-from memory.vector_store import VectorStore
+from hiermem.core.curator import CuratorDecision
+from hiermem.core.archive import HierarchicalArchive
+from hiermem.retrieval.router import RetrievalRouter
+from hiermem.memory.vector_store import VectorStore
 
 
 class TestRetrievalRouter:

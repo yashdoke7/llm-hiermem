@@ -7,9 +7,9 @@ import time
 from pathlib import Path
 from datetime import datetime
 
-from core.pipeline import HierMemPipeline
+from hiermem.core.pipeline import HierMemPipeline
 from baselines.raw_llm import RawLLMBaseline
-import config
+from hiermem import config
 
 # Load first 2 constraint conversations
 dataset_path = Path("eval/datasets/constraint_tracking/conversations.json")

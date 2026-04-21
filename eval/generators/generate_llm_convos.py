@@ -308,7 +308,7 @@ def generate_with_ollama(
     model: str = "ollama/llama3.1:8b",
 ) -> Optional[Dict]:
     """Generate a conversation using Ollama."""
-    from llm.client import LLMClient
+    from hiermem.llm.client import LLMClient
 
     prompt = build_generation_prompt(domain, scenario_idx, num_turns)
     client = LLMClient(provider="ollama")

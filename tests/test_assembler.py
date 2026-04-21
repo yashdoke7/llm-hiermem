@@ -1,7 +1,7 @@
 """Tests for the Context Assembler."""
 
 import pytest
-from core.assembler import ContextAssembler, ContextChunk
+from hiermem.core.assembler import ContextAssembler, ContextChunk
 
 
 class TestContextAssembler:

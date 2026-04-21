@@ -49,8 +49,8 @@ def init_llm_judge(provider: str = None, model: str = None):
     global _llm_client, _judge_available, _judge_model, _judge_cache
     _judge_cache = {}  # Clear cache on re-init
     try:
-        import config as cfg
-        from llm.client import LLMClient
+        import hiermem.config as cfg
+        from hiermem.llm.client import LLMClient
         judge_provider = provider or cfg.DEFAULT_PROVIDER
         
         # Skip LLM judge if no explicit provider and default is ollama

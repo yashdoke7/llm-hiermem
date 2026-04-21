@@ -3,7 +3,7 @@ Hierarchical Retrieval — Tree traversal through L0 → L1 → L2 → L3.
 """
 
 from typing import List, Dict, Optional
-from core.archive import HierarchicalArchive
+from hiermem.core.archive import HierarchicalArchive
 
 
 def hierarchical_retrieve(archive: HierarchicalArchive,

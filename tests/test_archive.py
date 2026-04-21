@@ -1,8 +1,8 @@
 """Tests for the Hierarchical Archive."""
 
 import pytest
-from core.archive import HierarchicalArchive
-from memory.vector_store import VectorStore
+from hiermem.core.archive import HierarchicalArchive
+from hiermem.memory.vector_store import VectorStore
 
 
 class TestHierarchicalArchive:

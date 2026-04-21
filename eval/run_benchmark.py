@@ -11,13 +11,13 @@ from typing import List, Dict
 
 from tqdm import tqdm
 
-from core.pipeline import HierMemPipeline
+from hiermem.core.pipeline import HierMemPipeline
 from baselines.raw_llm import RawLLMBaseline
 from baselines.rag_baseline import RAGBaseline
 from baselines.rag_summary import RAGSummaryBaseline
 from baselines.memgpt_style import MemGPTStyleBaseline
 from eval.metrics import compute_all_metrics, init_llm_judge
-import config
+from hiermem import config
 
 
 SYSTEMS = {
@@ -120,8 +120,8 @@ def run_system_on_conversation(system, system_name: str, conversation: Dict,
                             # so passthrough mode builds full context and token estimates are correct.
                             # constraint_store / archive won't be rebuilt, but passthrough will
                             # include the full prior conversation (including constraint turn 1).
-                            from core.pipeline import TurnResult
-                            from core.assembler import AssembledContext
+                            from hiermem.core.pipeline import TurnResult
+                            from hiermem.core.assembler import AssembledContext
                             system.history.append(TurnResult(
                                 turn_number=tl.get("turn", system.turn_count + 1),
                                 user_message=u,

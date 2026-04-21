@@ -9,9 +9,9 @@ import re
 from typing import List, Tuple
 from dataclasses import dataclass
 
-from llm.client import LLMClient
-from llm.token_counter import count_tokens
-import config
+from hiermem.llm.client import LLMClient
+from hiermem.llm.token_counter import count_tokens
+from hiermem import config
 
 
 def _strip_hallucinated_continuation(text: str) -> str:

@@ -14,7 +14,7 @@ to the beginning and end of their context window.
 from typing import List, Optional
 from dataclasses import dataclass
 
-import config
+from hiermem import config
 
 
 @dataclass

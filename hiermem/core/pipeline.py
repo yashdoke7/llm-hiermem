@@ -14,15 +14,15 @@ import logging
 from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 
-from llm.client import LLMClient
-from llm.token_counter import count_tokens
-from core.constraint_store import ConstraintStore
-from core.archive import HierarchicalArchive
-from core.curator import ContextCurator, CuratorDecision
-from core.assembler import ContextAssembler, ContextChunk, AssembledContext
-from core.post_processor import PostProcessor
-from retrieval.router import RetrievalRouter
-import config
+from hiermem.llm.client import LLMClient
+from hiermem.llm.token_counter import count_tokens
+from hiermem.core.constraint_store import ConstraintStore
+from hiermem.core.archive import HierarchicalArchive
+from hiermem.core.curator import ContextCurator, CuratorDecision
+from hiermem.core.assembler import ContextAssembler, ContextChunk, AssembledContext
+from hiermem.core.post_processor import PostProcessor
+from hiermem.retrieval.router import RetrievalRouter
+from hiermem import config
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +111,7 @@ class HierMemPipeline:
                 Defaults to config.CLEAR_VECTOR_ON_START.
             persist_archive: If True, persists L0/L1 archive state on disk.
         """
-        from memory.vector_store import VectorStore
+        from hiermem.memory.vector_store import VectorStore
         
         provider = provider or config.MAIN_PROVIDER
         reset_storage = config.CLEAR_VECTOR_ON_START if reset_storage is None else reset_storage

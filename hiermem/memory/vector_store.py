@@ -12,7 +12,7 @@ try:
 except ImportError:
     HAS_CHROMADB = False
 
-import config
+from hiermem import config
 
 
 class VectorStore:

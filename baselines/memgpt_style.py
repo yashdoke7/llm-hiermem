@@ -8,10 +8,10 @@ via function calls. Simulates the MemGPT approach.
 from typing import List, Optional
 from dataclasses import dataclass
 
-from llm.client import LLMClient
-from llm.token_counter import count_tokens
-from memory.vector_store import VectorStore
-import config
+from hiermem.llm.client import LLMClient
+from hiermem.llm.token_counter import count_tokens
+from hiermem.memory.vector_store import VectorStore
+from hiermem import config
 import json
 
 

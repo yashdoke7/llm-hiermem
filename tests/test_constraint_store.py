@@ -1,7 +1,7 @@
 """Tests for the Constraint Store."""
 
 import pytest
-from core.constraint_store import ConstraintStore, Constraint
+from hiermem.core.constraint_store import ConstraintStore, Constraint
 
 
 class TestConstraintStore:

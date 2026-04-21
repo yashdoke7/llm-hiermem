@@ -21,8 +21,8 @@ from dataclasses import dataclass
 from typing import List, Optional
 from pathlib import Path
 
-from llm.client import LLMClient
-import config
+from hiermem.llm.client import LLMClient
+from hiermem import config
 
 
 CURATOR_SYSTEM_PROMPT = (Path(config.PROMPTS_PATH) / "curator_system.txt").read_text() \

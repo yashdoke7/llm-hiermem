@@ -7,7 +7,7 @@ manual similarity computations.
 
 from typing import List, Optional
 
-import config
+from hiermem import config
 
 # Lazy-loaded to avoid import cost when not needed
 _model = None

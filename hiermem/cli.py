@@ -26,7 +26,7 @@ def cmd_chat(args):
         os.environ["TOTAL_CONTEXT_BUDGET"] = str(args.budget)
         os.environ["HIERMEM_CONTEXT_BUDGET"] = str(args.budget)
 
-    from core.pipeline import HierMemPipeline
+    from hiermem.core.pipeline import HierMemPipeline
 
     print("\n" + "=" * 60)
     print("  🧠 HierMem — Hierarchical Context Memory")
@@ -123,7 +123,7 @@ def cmd_ask(args):
     if args.model:
         os.environ["MAIN_LLM_MODEL"] = args.model
 
-    from core.pipeline import HierMemPipeline
+    from hiermem.core.pipeline import HierMemPipeline
 
     pipeline = HierMemPipeline.create()
     if args.constraint:
@@ -136,7 +136,7 @@ def cmd_ask(args):
 
 def cmd_config(args):
     """Display current configuration."""
-    import config as cfg
+    import hiermem.config as cfg
     print("\n🧠 HierMem Configuration")
     print("=" * 50)
     print(f"  MAIN_PROVIDER        : {cfg.MAIN_PROVIDER}")

@@ -3,7 +3,7 @@ Semantic Retrieval — Vector similarity search via ChromaDB.
 """
 
 from typing import List, Dict, Optional
-from memory.vector_store import VectorStore
+from hiermem.memory.vector_store import VectorStore
 
 
 def semantic_search(vector_store: VectorStore, query: str,

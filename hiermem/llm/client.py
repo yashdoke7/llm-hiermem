@@ -11,7 +11,7 @@ import re
 import json
 from typing import Optional, List, Tuple
 
-import config
+from hiermem import config
 
 
 class TokenBudget:

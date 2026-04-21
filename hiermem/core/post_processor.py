@@ -13,10 +13,10 @@ import logging
 import re
 from typing import List, Optional, Tuple
 
-from llm.client import LLMClient
-from core.constraint_store import Constraint, ConstraintStore
-from core.archive import HierarchicalArchive
-import config
+from hiermem.llm.client import LLMClient
+from hiermem.core.constraint_store import Constraint, ConstraintStore
+from hiermem.core.archive import HierarchicalArchive
+from hiermem import config
 
 logger = logging.getLogger(__name__)
 

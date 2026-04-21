@@ -13,7 +13,7 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import List, Optional, Dict
 
-from memory.vector_store import VectorStore
+from hiermem.memory.vector_store import VectorStore
 
 
 @dataclass

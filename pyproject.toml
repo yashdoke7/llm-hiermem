@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hiermem"
-version = "1.0.3"
+version = "1.0.4"
 description = "Hierarchical Paged Context Management for Constraint-Preserving LLM Conversations"
 readme = "README.md"
 license = "MIT"
@@ -63,17 +63,17 @@ Documentation = "https://github.com/yashdoke7/llm-hiermem#readme"
 "Bug Tracker" = "https://github.com/yashdoke7/llm-hiermem/issues"
 
 [project.scripts]
-hiermem = "cli:main"
+hiermem = "hiermem.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["core*", "llm*", "memory*", "retrieval*", "baselines*"]
+include = ["hiermem*"]
 exclude = ["tests*", "eval*", "demo*", "notebooks*", "docs*", "results*"]
 
 [tool.setuptools]
-py-modules = ["cli", "config"]
+py-modules = []
 
 [tool.setuptools.package-data]
-llm = ["prompts/*.txt"]
+"hiermem.llm" = ["prompts/*.txt"]
 
 [tool.ruff]
 line-length = 120
