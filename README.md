@@ -8,13 +8,14 @@
   [![GitHub Release](https://img.shields.io/github/v/release/yashdoke7/llm-hiermem?color=success&label=Release)](https://github.com/yashdoke7/llm-hiermem/releases/latest)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+  [![PyPI Downloads](https://static.pepy.tech/personalized-badge/hiermem?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/hiermem)
   <a href="https://linkedin.com/in/yashdoke"><img src="https://img.shields.io/badge/-LinkedIn-blue?style=flat&logo=Linkedin&logoColor=white" alt="LinkedIn"></a>
 
 </div>
 
-## 📌 Release Summary (v1.0.3)
+## 📌 Release Summary (v1.0.4)
 
-The v1.0.3 release marks our transition to a stable, research-grade python package available on PyPI while solidifying the architecture for the upcoming research paper publication. It introduces:
+The v1.0.4 release marks our transition to a stable, research-grade python package available on PyPI while solidifying the architecture for the upcoming research paper publication. It introduces:
 - **Full multi-provider support** (Ollama, OpenAI, Anthropic, Google Gemini, Groq) via integrated LiteLLM routing.
 - **Rigorous constraint-adherence benchmarking**, proving efficiency gains over standard RAG and baseline LLM techniques.
 - **Dynamic Context Pacing**, automatically balancing L0-L3 memory access via the underlying curator model.
@@ -197,7 +198,7 @@ HierMem achieves profound efficiency and reliability enhancements, validated by 
 
 Our rigorous synthetic benchmarks reveal strong architectural integrity against memory decay in lengthy contexts. Find the draft manuscript in the repository under `docs/paper.tex`.
 
-- **Release Paper Snapshot:** [v1.0.3-paper Release Tag](https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.3-paper)
+- **Release Paper Snapshot:** [v1.0.4-paper Release Tag](https://github.com/yashdoke7/llm-hiermem/releases/tag/v1.0.4-paper)
 - **Dataset Access:** [HF Datasets: hiermem-constraint-tracking](https://huggingface.co/datasets/yashdoke7/hiermem-constraint-tracking)
 
 ### Citation
